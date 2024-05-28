@@ -14,4 +14,5 @@ RUN apt-get update -yq \
 # Installation des bibliotheques Python on another layer
 RUN pip install dicom2nifti pandas flask
 
+# Ajout des fichiers
 ADD app.py jsonifier.py license.txt nifti.py routine.sh segmenter.sh ./

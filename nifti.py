@@ -11,7 +11,7 @@ if __name__ == "__main__":
         help="input folder where the DICOM images have been uploaded"
     )
     args = parser.parse_args()
-    # print(f"Dict format: {vars(args)}")
+
     INPUT_FOLDER = pathlib.Path(f"./DICOM/{args.input_folder}")
     INPUT_FOLDER.mkdir(parents=True, exist_ok=True)
     OUTPUT_FOLDER = pathlib.Path("./NIFTI")
