@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import subprocess
 
 app = Flask(__name__)
@@ -10,8 +10,13 @@ def home() -> str:
 
 
 @app.route("/run_script", methods=["POST"])
-def run_script():
-    subprocess.run("echo coucou", shell=True, executable="/bin/bash")
+def run_script() -> str:
+    subject = request.form["subject"]
+    series = request.form["series"]
+    notes = request.form["notes"]
+    dicom_files = request.form["dicoms"]
+    subprocess.run(f'echo "coucou {subject} {series}"', shell=True, executable="/bin/bash")
+    return "tu veux voir"
 
 
 if __name__ == "__main__":

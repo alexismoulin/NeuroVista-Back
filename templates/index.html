@@ -5,7 +5,7 @@
 		<title>NeuroVista</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-		<link rel="stylesheet" href="static/assets/css/main.css" />
+		<link rel="stylesheet" href="static/css/main.css" />
 	</head>
 	<body class="is-preload">
 
@@ -16,12 +16,39 @@
 					<p>An innovation platform for processing, analyzing, and visualizing human brain MR images</p>
 				</header>
 				<footer>
-					<a href="#first" class="button scrolly">Upload MRI</a>
+					<a href="#form" class="button scrolly">Process MRI</a>
 				</footer>
 			</section>
 
+		<!-- Form -->
+			<section id="form" class="main">
+				<header>
+					<div class="container">
+						<h2>Upload & Process MRI Series</h2>
+						<p>Please upload & process <b>one</b> MRI series at a time</p>
+					</div>
+				</header>
+				<div class="content style4 featured">
+					<div class="container medium">
+						<form action="/run_script" method="post">
+							<div class="row gtr-50">
+								<div class="col-6 col-12-mobile"><input type="text" name="subject" placeholder="Subject" /></div>
+								<div class="col-6 col-12-mobile"><input type="text" name="series" placeholder="Series" /></div>
+								<div class="col-12"><textarea name="notes" placeholder="Notes"></textarea></div>
+								<div class="col-12">
+									<ul class="actions special">
+										<li><input type="file" name="dicoms" class="button" value="Upload Dicoms" multiple/></li>
+										<li><input type="submit" class="button alt" value="Process" /></li>
+									</ul>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</section>
+
 		<!-- Infos -->
-			<section id="third" class="main">
+			<section id="infos" class="main">
 				<div class="content dark style3">
 					<div class="container">
 						<div class="row">
@@ -62,5 +89,12 @@
 				</div>
 			</section>
 
+			<!-- Scripts -->
+			<script src="static/js/jquery.min.js"></script>
+			<script src="static/js/jquery.scrolly.min.js"></script>
+			<script src="static/js/browser.min.js"></script>
+			<script src="static/js/breakpoints.min.js"></script>
+			<script src="static/js/util.js"></script>
+			<script src="static/js/main.js"></script>
 	</body>
 </html>

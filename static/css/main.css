@@ -2005,6 +2005,7 @@ input, select, textarea {
 	input[type="button"],
 	input[type="submit"],
 	input[type="reset"],
+	input[type="file"],
 	button,
 	.button {
 		-moz-transition: all 0.25s ease-in-out;
@@ -2027,6 +2028,7 @@ input, select, textarea {
 		input[type="button"]:hover,
 		input[type="submit"]:hover,
 		input[type="reset"]:hover,
+		input[type="file"]:hover,
 		button:hover,
 		.button:hover {
 			background: #4f4f4f;
@@ -2035,6 +2037,7 @@ input, select, textarea {
 		input[type="button"].alt,
 		input[type="submit"].alt,
 		input[type="reset"].alt,
+		input[type="file"].alt,
 		button.alt,
 		.button.alt {
 			color: inherit;
@@ -2045,6 +2048,7 @@ input, select, textarea {
 			input[type="button"].alt:hover,
 			input[type="submit"].alt:hover,
 			input[type="reset"].alt:hover,
+			input[type="file"].alt:hover,
 			button.alt:hover,
 			.button.alt:hover {
 				background: rgba(0, 0, 0, 0.025);
@@ -2053,6 +2057,7 @@ input, select, textarea {
 	.dark input[type="button"],
 	.dark input[type="submit"],
 	.dark input[type="reset"],
+	.dark input[type="file"],
 	.dark button,
 	.dark .button {
 		background: rgba(255, 255, 255, 0.15);
@@ -2063,6 +2068,7 @@ input, select, textarea {
 		.dark input[type="button"]:hover,
 		.dark input[type="submit"]:hover,
 		.dark input[type="reset"]:hover,
+		.dark input[type="file"]:hover,
 		.dark button:hover,
 		.dark .button:hover {
 			background: rgba(255, 255, 255, 0.25);
@@ -2071,6 +2077,7 @@ input, select, textarea {
 		.dark input[type="button"].alt,
 		.dark input[type="submit"].alt,
 		.dark input[type="reset"].alt,
+		.dark input[type="file"].alt,
 		.dark button.alt,
 		.dark .button.alt {
 			background: none;
@@ -2080,6 +2087,7 @@ input, select, textarea {
 			.dark input[type="button"].alt:hover,
 			.dark input[type="submit"].alt:hover,
 			.dark input[type="reset"].alt:hover,
+			.dark input[type="file"].alt:hover,
 			.dark button.alt:hover,
 			.dark .button.alt:hover {
 				background: rgba(255, 255, 255, 0.15);
@@ -2182,7 +2190,8 @@ input, select, textarea {
 	#header {
 		position: relative;
 		margin: 0;
-		background-image: url("images/overlay.png"), url("../../images/header.jpg");
+		background-color: #2d3436;
+		background-image: url("images/overlay.png");
 		background-size: auto, cover;
 		background-position: top left, center center;
 		background-repeat: repeat, no-repeat;
