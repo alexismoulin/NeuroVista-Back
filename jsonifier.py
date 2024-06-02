@@ -122,4 +122,6 @@ if __name__ == "__main__":
     parcellation_dict = get_parcellations()
 
     stats_dict = {"volumes": volume_dict, "parcellations": parcellation_dict}
-    stats_json = json.dumps(obj=stats_dict)
+    # Convert and write JSON object to file
+    with open(file="./stats.json", mode="w") as outfile:
+        json.dump(stats_dict, outfile)
