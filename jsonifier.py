@@ -7,7 +7,7 @@ import argparse
 
 def get_subcortical():
     # Hippocampus volumes
-    # LHS
+    # LHS'
     with open(file=MRI / "lh.hippoSfVolumes.txt", mode="r") as f:
         temp_list = [row.split() for row in f.readlines()]
         lh_hippo_volumes = {field[0]: float(field[1]) for field in temp_list}
