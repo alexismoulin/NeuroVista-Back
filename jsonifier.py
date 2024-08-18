@@ -1,55 +1,94 @@
 import pandas as pd
 import json
 import pathlib
-from typing import Dict
+from typing import Dict, List
 import argparse
 
 
-def get_subcortical():
-    # Hippocampus volumes
-    # LHS'
-    with open(file=MRI / "lh.hippoSfVolumes.txt", mode="r") as f:
-        temp_list = [row.split() for row in f.readlines()]
-        lh_hippo_volumes = {field[0]: float(field[1]) for field in temp_list}
+def get_volume(name: str, nuclei: List[Dict[str, float]]) -> float:
+    for d in nuclei:
+        try:
+            return d[name]
+        except KeyError:
+            pass
 
+
+def get_subcortical() -> Dict[str, list]:
+    # Hippocampus volumes
+    # LHS
+    with open(file=MRI / "lh.hippoSfVolumes.txt", mode="r") as lhs:
+        lhs_temp_list = [row.split() for row in lhs.readlines()]
     # RHS
-    with open(file=MRI / "rh.hippoSfVolumes.txt", mode="r") as f:
-        temp_list = [row.split() for row in f.readlines()]
-        rh_hippo_volumes = {field[0]: float(field[1]) for field in temp_list}
+    with open(file=MRI / "rh.hippoSfVolumes.txt", mode="r") as rhs:
+        rhs_temp_list = [row.split() for row in rhs.readlines()]
+
+    hippo_volumes = [{
+        "name": field[0][0],
+        "lhs_volume": round(float(field[0][1]), 2),
+        "rhs_volume": round(float(field[1][1]), 2)
+    } for field in zip(lhs_temp_list, rhs_temp_list)]
 
     # Thalamus volumes
     with open(file=MRI / "ThalamicNuclei.volumes.txt", mode="r") as f:
         temp_list = [row.split() for row in f.readlines()]
-        thalamic_nuclei = {field[0]: float(field[1]) for field in temp_list}
+
+    lhs_thalamic_nuclei = [
+        {field[0].replace("Left-", ""): round(float(field[1]), 2)} for field in temp_list if "Left" in field[0]
+    ]
+    rhs_thalamic_nuclei = [
+        {field[0].replace("Right-", ""): round(float(field[1]), 2)} for field in temp_list if "Right" in field[0]
+    ]
+    names = [field[0].replace("Left-", "") for field in temp_list if "Left" in field[0]]
+
+    thalamic_nuclei: List[Dict[str, float]] = [{
+        "name": name,
+        "lhs_volume": get_volume(name=name, nuclei=lhs_thalamic_nuclei),
+        "rhs_volume": get_volume(name=name, nuclei=rhs_thalamic_nuclei),
+    } for name in names]
 
     # Amygdala volumes
     # LHS
-    with open(file=MRI / "lh.amygNucVolumes.txt", mode="r") as f:
-        temp_list = [row.split() for row in f.readlines()]
-        lh_amygdala = {field[0]: float(field[1]) for field in temp_list}
-
+    with open(file=MRI / "lh.amygNucVolumes.txt", mode="r") as lhs:
+        lhs_temp_list = [row.split() for row in lhs.readlines()]
     # RHS
-    with open(file=MRI / "rh.amygNucVolumes.txt", mode="r") as f:
-        temp_list = [row.split() for row in f.readlines()]
-        rh_amygdala = {field[0]: float(field[1]) for field in temp_list}
+    with open(file=MRI / "rh.amygNucVolumes.txt", mode="r") as rhs:
+        rhs_temp_list = [row.split() for row in rhs.readlines()]
+
+    amygdala = [{
+        "name": field[0][0],
+        "lhs_volume": round(float(field[0][1]), 2),
+        "rhs_volume": round(float(field[1][1]), 2)
+    } for field in zip(lhs_temp_list, rhs_temp_list)]
 
     # Brain Stem
     with open(file=MRI / "brainstemSsLabels.volumes.txt", mode="r") as f:
         temp_list = [row.split() for row in f.readlines()]
-        brain_stem = {field[0]: float(field[1]) for field in temp_list}
+        brain_stem = [{"name": field[0], "volume": round(float(field[1]), 2)} for field in temp_list]
 
     # Hypothalamus
     hypothalamus = pd.read_csv(MRI / "hypothalamic_subunits_volumes.v1.csv").to_dict(orient="records")[0]
     del hypothalamus["subject"]
+    hypothalamus["left whole"] = hypothalamus.pop("whole left")
+    hypothalamus["right whole"] = hypothalamus.pop("whole right")
 
-    subcortical: Dict[str, Dict[str, float]] = {
-        "lh_hippocampus": lh_hippo_volumes,
-        "rh_hippocampus": rh_hippo_volumes,
+    lhs_hypothalamus = [{key.replace("left ", ""): value} for key, value in hypothalamus.items() if "left" in key]
+    rhs_hypothalamus = [{key.replace("right ", ""): value} for key, value in hypothalamus.items() if "right" in key]
+
+    names = [key.replace("left ", "") for key, _ in hypothalamus.items() if "left" in key]
+
+    hypothalamic_nuclei = [{
+        "name": name,
+        "lhs_volume": get_volume(name=name, nuclei=lhs_hypothalamus),
+        "rhs_volume": get_volume(name=name, nuclei=rhs_hypothalamus),
+    } for name in names]
+
+    # Create dictionary
+    subcortical: Dict[str, list] = {
+        "hippocampus": hippo_volumes,
         "thalamus": thalamic_nuclei,
-        "lh_amygdala": lh_amygdala,
-        "rh_amygdala": rh_amygdala,
+        "amygdala": amygdala,
         "brain_stem": brain_stem,
-        "hypothalamus": hypothalamus,
+        "hypothalamus": hypothalamic_nuclei,
     }
 
     return subcortical
@@ -60,25 +99,39 @@ def get_cortical():
     with open(file=STATS / "aseg.stats", mode="r") as f:
         lines = [line for line in f.readlines()][79:]
         temp = [row.split() for row in lines]
-    aseg = {row[4]: float(row[3]) for row in temp}
+
+    aseg = [{"name": row[4], "volume": float(row[3])} for row in temp]
 
     # General Brain Volumes
     with open(file=STATS / "brainvol.stats", mode="r") as f:
         lines = [line for line in f.readlines()]
         temp = [row.split() for row in lines]
-    brainvol = {row[2]: float(row[-2][:-1]) for row in temp}
+
+    brainvol = [{"name": row[2].replace(",", ""), "volume": int(float(row[-2][:-1]))} for row in temp]
 
     # White Matter
     with open(file=STATS / "wmparc.stats", mode="r") as f:
         lines = [line for line in f.readlines()][65:]
         temp = [row.split() for row in lines]
-    wmvol = {row[4]: float(row[3]) for row in temp}
+
+    wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in temp if "wm-lh" in row[4]]
+    wm_vol_rhs = [{row[4].replace("wm-rh-", ""): float(row[3])} for row in temp if "wm-rh" in row[4]]
+
+    names = [row[4].replace("wm-lh-", "") for row in temp if "wm-lh" in row[4]]
+
+    wm_vols = [{
+        "name": name,
+        "lhs_volume": get_volume(name=name, nuclei=wm_vol_lhs),
+        "rhs_volume": get_volume(name=name, nuclei=wm_vol_rhs),
+    } for name in names]
+
+    # LHS parcellations
 
     with open(file=STATS / "lh.aparc.DKTatlas.stats", mode="r") as f:
         lines = [line for line in f.readlines()][61:]
         temp = [row.split() for row in lines]
-        # colonnes 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
-    lh_dkatlas = [
+        # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
+    lh_dkt_atlas = [
         {
             'StructName': row[0],
             'SurfArea': int(row[2]),
@@ -91,8 +144,8 @@ def get_cortical():
     with open(file=STATS / "rh.aparc.DKTatlas.stats", mode="r") as f:
         lines = [line for line in f.readlines()][61:]
         temp = [row.split() for row in lines]
-        # colonnes 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
-    rh_dkatlas = [
+        # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
+    rh_dkt_atlas = [
         {
             'StructName': row[0],
             'SurfArea': int(row[2]),
@@ -105,9 +158,9 @@ def get_cortical():
     cortical = {
         "aseg": aseg,
         "brain": brainvol,
-        "whitematter": wmvol,
-        "lh_dkatlas": lh_dkatlas,
-        "rh_dkatlas": rh_dkatlas
+        "whitematter": wm_vols,
+        "lh_dkatlas": lh_dkt_atlas,
+        "rh_dkatlas": rh_dkt_atlas
     }
 
     return cortical
