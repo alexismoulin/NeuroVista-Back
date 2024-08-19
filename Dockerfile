@@ -20,9 +20,9 @@ RUN pip install dicom2nifti pandas flask
 EXPOSE 5000
 
 # files addition
-COPY . /app
+COPY . /root
 
-WORKDIR /app
+WORKDIR /root
 
 # Server launch
 CMD ["flask", "run", "--host", "0.0.0.0"]
