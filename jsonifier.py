@@ -3,6 +3,7 @@ import json
 import pathlib
 from typing import Dict, List
 import argparse
+from sys import platform
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> float:
@@ -82,6 +83,9 @@ def get_subcortical() -> Dict[str, list]:
         "rhs_volume": get_volume(name=name, nuclei=rhs_hypothalamus),
     } for name in names]
 
+    # Hypothalamus 2
+    # To be done later
+
     # Create dictionary
     subcortical: Dict[str, list] = {
         "hippocampus": hippo_volumes,
@@ -133,7 +137,7 @@ def get_cortical():
         # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
     lh_dkt_atlas = [
         {
-            'StructName': row[0],
+            'name': row[0],
             'SurfArea': int(row[2]),
             'GrayVol': int(row[3]),
             'ThickAvg': float(row[4]),
@@ -147,7 +151,7 @@ def get_cortical():
         # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
     rh_dkt_atlas = [
         {
-            'StructName': row[0],
+            'name': row[0],
             'SurfArea': int(row[2]),
             'GrayVol': int(row[3]),
             'ThickAvg': float(row[4]),
@@ -175,7 +179,8 @@ if __name__ == "__main__":
         help="input folder where the DICOM images have been uploaded"
     )
     args = parser.parse_args()
-    SUBJECTS = pathlib.Path("/usr/local/freesurfer/7.4.1/subjects")
+    SUBJECTS = pathlib.Path("/usr/local/freesurfer/7.4.1/subjects") if (
+            platform == "linux" or platform == "linux2") else pathlib.Path("/Applications/freesurfer/7.4.1/subjects")
     MRI = SUBJECTS / f"{args.input_folder}/mri"
     STATS = SUBJECTS / f"{args.input_folder}/stats"
 

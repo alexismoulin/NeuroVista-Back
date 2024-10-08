@@ -1,3 +1,3 @@
 # NeuroVista
 
-Python & bash backend running on Ubuntu 22.4
+Python & bash backend running on Ubuntu 22.04
