@@ -1,7 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, Response, stream_with_context, jsonify, request
 from flask_cors import CORS
 import subprocess
 from pathlib import Path
+import dicom2nifti
+import os
 
 app = Flask(__name__)
 CORS(app=app, supports_credentials=True)
@@ -28,7 +30,7 @@ def upload():
     if 'dicoms' in request.files:
         files = request.files.getlist('dicoms')
         for file in files:
-            file_names.append(file.filename)
+            file_names.append(os.path.basename(file.filename))
 
     # Prepare the response
     response = {
@@ -40,17 +42,39 @@ def upload():
 
 
 @app.route("/run_script", methods=["POST"])
-def run_script() -> str:
-    subject = request.form["subject"]  # To be done afterward
-    study = request.form["study"]  # To be done afterward
-    series = request.form["series"]
-    dicom_directory = Path(f"./{series}/dicom_directory")
-    dicom_directory.mkdir(parents=True, exist_ok=True)
-    for file in request.files.getlist("dicoms"):
-        file.save(dst=dicom_directory / file.filename)
-    bash_script = f"./routine.sh {subject} {study} {series}"
-    subprocess.run(args=bash_script, shell=True, executable="/bin/bash")
-    return 'Files uploaded successfully'
+def run_script():
+    @stream_with_context
+    def generate():
+        subject = request.form["subject"]
+        study = "ST1"  # To be done afterwards
+        series = request.form["series"]
+        BASE_PATH = Path(f"./{subject}/{study}/{series}")
+        
+        # Save dicoms on server
+        dicom_directory = BASE_PATH / "DICOM"
+        dicom_directory.mkdir(parents=True, exist_ok=True)
+        for file in request.files.getlist("dicoms"):
+            file.save(dst=dicom_directory / os.path.basename(file.filename))
+        
+        yield jsonify({"dicom": True})
+        
+        # Process NIFTI
+        nifti_directory = BASE_PATH / "NIFTI"
+        nifti_directory.mkdir(parents=True, exist_ok=True)
+        dicom2nifti.dicom_series_to_nifti(
+            original_dicom_directory=dicom_directory,
+            output_file=nifti_directory / f"nifti.nii"
+        )
+        
+        yield jsonify({"nifti": True})
+        
+        # FreeSurfer
+        bash_script = f"./routine.sh {subject} {study} {series}"
+        subprocess.run(args=bash_script, shell=True, executable="/bin/bash")
+        
+        yield jsonify({"freesurfer": True})
+
+    return Response(generate(), content_type='application/json')
 
 
 @app.route("/output")

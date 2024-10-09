@@ -2,12 +2,6 @@
 set -e
 
 uploaded_folder_name=$3
-mkdir -p "DICOM/$uploaded_folder_name"
-mv "$uploaded_folder_name/dicom_directory/"* "DICOM/$uploaded_folder_name"
-echo "Dicom move completed"
-
-python3 nifti.py -i="$uploaded_folder_name"
-echo "nifti creation completed"
 
 export FS_LICENSE=$HOME/license.txt
 export FREESURFER_HOME=/usr/local/freesurfer/7.4.1
