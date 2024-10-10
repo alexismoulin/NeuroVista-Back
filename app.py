@@ -4,10 +4,10 @@ import subprocess
 from pathlib import Path
 import dicom2nifti
 import os
+from utils import add_dcm_extension_if_pixel_array
 
 app = Flask(__name__)
 CORS(app=app, supports_credentials=True)
-
 
 @app.route("/")
 def home() -> str:
@@ -48,18 +48,19 @@ def run_script():
         subject = request.form["subject"]
         study = "ST1"  # To be done afterwards
         series = request.form["series"]
-        BASE_PATH = Path(f"./{subject}/{study}/{series}")
+        base_path = Path(f"./SUBJECTS/{subject}/{study}/{series}")
         
         # Save dicoms on server
-        dicom_directory = BASE_PATH / "DICOM"
+        dicom_directory = base_path / "DICOM"
         dicom_directory.mkdir(parents=True, exist_ok=True)
         for file in request.files.getlist("dicoms"):
-            file.save(dst=dicom_directory / os.path.basename(file.filename))
+            renamed_file = add_dcm_extension_if_pixel_array(filename=os.path.basename(file.filename))
+            file.save(dst=dicom_directory / renamed_file)
         
         yield jsonify({"dicom": True})
         
         # Process NIFTI
-        nifti_directory = BASE_PATH / "NIFTI"
+        nifti_directory = base_path / "NIFTI"
         nifti_directory.mkdir(parents=True, exist_ok=True)
         dicom2nifti.dicom_series_to_nifti(
             original_dicom_directory=dicom_directory,
