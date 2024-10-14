@@ -4,7 +4,8 @@ import subprocess
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension_if_pixel_array
+from utils import add_dcm_extension
+from jsonifier import run_jsonifier
 
 app = Flask(__name__)
 CORS(app=app, supports_credentials=True)
@@ -42,40 +43,46 @@ def upload():
 
 
 @app.route("/run_script", methods=["POST"])
-def run_script():
-    @stream_with_context
-    def generate():
-        subject = request.form["subject"]
-        study = "ST1"  # To be done afterwards
-        series = request.form["series"]
-        base_path = Path(f"./SUBJECTS/{subject}/{study}/{series}")
-        
-        # Save dicoms on server
-        dicom_directory = base_path / "DICOM"
-        dicom_directory.mkdir(parents=True, exist_ok=True)
-        for file in request.files.getlist("dicoms"):
-            renamed_file = add_dcm_extension_if_pixel_array(filename=os.path.basename(file.filename))
-            file.save(dst=dicom_directory / renamed_file)
-        
-        yield jsonify({"dicom": True})
-        
-        # Process NIFTI
-        nifti_directory = base_path / "NIFTI"
-        nifti_directory.mkdir(parents=True, exist_ok=True)
-        dicom2nifti.dicom_series_to_nifti(
-            original_dicom_directory=dicom_directory,
-            output_file=nifti_directory / f"nifti.nii"
-        )
-        
-        yield jsonify({"nifti": True})
-        
-        # FreeSurfer
-        bash_script = f"./routine.sh {subject} {study} {series}"
-        subprocess.run(args=bash_script, shell=True, executable="/bin/bash")
-        
-        yield jsonify({"freesurfer": True})
+def run_script() -> str:
 
-    return Response(generate(), content_type='application/json')
+    subject = request.form["subject"]
+    study = "ST1"  # To be done afterwards
+    series = request.form["series"]
+    base_path = Path(f"./SUBJECTS/{subject}/{study}/{series}")
+    
+    # Save dicoms on server
+    dicom_directory = base_path / "DICOM"
+    dicom_directory.mkdir(parents=True, exist_ok=True)
+    for file in request.files.getlist("dicoms"):
+        renamed_file = add_dcm_extension(filename=os.path.basename(file.filename))
+        file.save(dst=dicom_directory / renamed_file)
+    
+    print({"dicom": True})
+    
+    # Process NIFTI
+    nifti_directory = base_path / "NIFTI"
+    nifti_directory.mkdir(parents=True, exist_ok=True)
+    dicom2nifti.dicom_series_to_nifti(
+        original_dicom_directory=dicom_directory,
+        output_file=nifti_directory / f"nifti.nii"
+    )
+    
+    print({"nifti": True})
+    
+    # FreeSurfer
+    bash_script = f"./routine.sh {subject} {study} {series}"
+    p = subprocess.run(args=bash_script, shell=True, executable="/bin/bash")
+    if p == 0:
+        print({"freesurfer": True})
+    else:
+        raise Exception( f'Freesurfer crash: { p.returncode }' )
+
+    # Jsonifier
+    run_jsonifier(fs_subject_folder=subject, output_folder=base_path)
+    print({"json": True})
+
+    return "done"
+
 
 
 @app.route("/output")

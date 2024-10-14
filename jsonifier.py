@@ -14,7 +14,7 @@ def get_volume(name: str, nuclei: List[Dict[str, float]]) -> float:
             pass
 
 
-def get_subcortical() -> Dict[str, list]:
+def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
     # Hippocampus volumes
     # LHS
     with open(file=MRI / "lh.hippoSfVolumes.txt", mode="r") as lhs:
@@ -98,7 +98,7 @@ def get_subcortical() -> Dict[str, list]:
     return subcortical
 
 
-def get_cortical():
+def get_cortical(STATS: pathlib.Path):
     # General segmentations
     with open(file=STATS / "aseg.stats", mode="r") as f:
         lines = [line for line in f.readlines()][79:]
@@ -170,26 +170,18 @@ def get_cortical():
     return cortical
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "-i",
-        "--input_folder",
-        required=True,
-        help="input folder where the DICOM images have been uploaded"
-    )
-    args = parser.parse_args()
+def run_jsonifier(fs_subject_folder: str, output_folder: pathlib.Path):
     SUBJECTS = pathlib.Path("/usr/local/freesurfer/7.4.1/subjects") if (
             platform == "linux" or platform == "linux2") else pathlib.Path("/Applications/freesurfer/7.4.1/subjects")
-    MRI = SUBJECTS / f"{args.input_folder}/mri"
-    STATS = SUBJECTS / f"{args.input_folder}/stats"
+    MRI = SUBJECTS / f"{fs_subject_folder}/mri"
+    STATS = SUBJECTS / f"{fs_subject_folder}/stats"
 
-    subcortical_dict = get_subcortical()
-    cortical_dict = get_cortical()
+    subcortical_dict = get_subcortical(MRI=MRI)
+    cortical_dict = get_cortical(STATS=STATS)
 
     # Convert and write JSON object to file
-    with open(file="./subcortical.json", mode="w") as outfile:
+    with open(file=f"{output_folder}/JSON/subcortical.json", mode="w") as outfile:
         json.dump(subcortical_dict, outfile)
 
-    with open(file="./cortical.json", mode="w") as outfile:
+    with open(file=f"{output_folder}/JSON/cortical.json", mode="w") as outfile:
         json.dump(cortical_dict, outfile)
