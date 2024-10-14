@@ -2,8 +2,6 @@ import pandas as pd
 import json
 import pathlib
 from typing import Dict, List
-import argparse
-from sys import platform
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> float:
@@ -14,13 +12,13 @@ def get_volume(name: str, nuclei: List[Dict[str, float]]) -> float:
             pass
 
 
-def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
+def get_subcortical(mri: pathlib.Path) -> Dict[str, list]:
     # Hippocampus volumes
     # LHS
-    with open(file=MRI / "lh.hippoSfVolumes.txt", mode="r") as lhs:
+    with open(file=mri / "lh.hippoSfVolumes.txt", mode="r") as lhs:
         lhs_temp_list = [row.split() for row in lhs.readlines()]
     # RHS
-    with open(file=MRI / "rh.hippoSfVolumes.txt", mode="r") as rhs:
+    with open(file=mri / "rh.hippoSfVolumes.txt", mode="r") as rhs:
         rhs_temp_list = [row.split() for row in rhs.readlines()]
 
     hippo_volumes = [{
@@ -30,7 +28,7 @@ def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
     } for field in zip(lhs_temp_list, rhs_temp_list)]
 
     # Thalamus volumes
-    with open(file=MRI / "ThalamicNuclei.volumes.txt", mode="r") as f:
+    with open(file=mri / "ThalamicNuclei.volumes.txt", mode="r") as f:
         temp_list = [row.split() for row in f.readlines()]
 
     lhs_thalamic_nuclei = [
@@ -49,10 +47,10 @@ def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
 
     # Amygdala volumes
     # LHS
-    with open(file=MRI / "lh.amygNucVolumes.txt", mode="r") as lhs:
+    with open(file=mri / "lh.amygNucVolumes.txt", mode="r") as lhs:
         lhs_temp_list = [row.split() for row in lhs.readlines()]
     # RHS
-    with open(file=MRI / "rh.amygNucVolumes.txt", mode="r") as rhs:
+    with open(file=mri / "rh.amygNucVolumes.txt", mode="r") as rhs:
         rhs_temp_list = [row.split() for row in rhs.readlines()]
 
     amygdala = [{
@@ -62,12 +60,12 @@ def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
     } for field in zip(lhs_temp_list, rhs_temp_list)]
 
     # Brain Stem
-    with open(file=MRI / "brainstemSsLabels.volumes.txt", mode="r") as f:
+    with open(file=mri / "brainstemSsLabels.volumes.txt", mode="r") as f:
         temp_list = [row.split() for row in f.readlines()]
         brain_stem = [{"name": field[0], "volume": round(float(field[1]), 2)} for field in temp_list]
 
     # Hypothalamus
-    hypothalamus = pd.read_csv(MRI / "hypothalamic_subunits_volumes.v1.csv").to_dict(orient="records")[0]
+    hypothalamus = pd.read_csv(mri / "hypothalamic_subunits_volumes.v1.csv").to_dict(orient="records")[0]
     del hypothalamus["subject"]
     hypothalamus["left whole"] = hypothalamus.pop("whole left")
     hypothalamus["right whole"] = hypothalamus.pop("whole right")
@@ -98,23 +96,23 @@ def get_subcortical(MRI: pathlib.Path) -> Dict[str, list]:
     return subcortical
 
 
-def get_cortical(STATS: pathlib.Path):
+def get_cortical(stats: pathlib.Path):
     # General segmentations
-    with open(file=STATS / "aseg.stats", mode="r") as f:
+    with open(file=stats / "aseg.stats", mode="r") as f:
         lines = [line for line in f.readlines()][79:]
         temp = [row.split() for row in lines]
 
     aseg = [{"name": row[4], "volume": float(row[3])} for row in temp]
 
     # General Brain Volumes
-    with open(file=STATS / "brainvol.stats", mode="r") as f:
+    with open(file=stats / "brainvol.stats", mode="r") as f:
         lines = [line for line in f.readlines()]
         temp = [row.split() for row in lines]
 
     brainvol = [{"name": row[2].replace(",", ""), "volume": int(float(row[-2][:-1]))} for row in temp]
 
     # White Matter
-    with open(file=STATS / "wmparc.stats", mode="r") as f:
+    with open(file=stats / "wmparc.stats", mode="r") as f:
         lines = [line for line in f.readlines()][65:]
         temp = [row.split() for row in lines]
 
@@ -131,7 +129,7 @@ def get_cortical(STATS: pathlib.Path):
 
     # LHS parcellations
 
-    with open(file=STATS / "lh.aparc.DKTatlas.stats", mode="r") as f:
+    with open(file=stats / "lh.aparc.DKTatlas.stats", mode="r") as f:
         lines = [line for line in f.readlines()][61:]
         temp = [row.split() for row in lines]
         # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
@@ -145,7 +143,7 @@ def get_cortical(STATS: pathlib.Path):
         } for row in temp
     ]
 
-    with open(file=STATS / "rh.aparc.DKTatlas.stats", mode="r") as f:
+    with open(file=stats / "rh.aparc.DKTatlas.stats", mode="r") as f:
         lines = [line for line in f.readlines()][61:]
         temp = [row.split() for row in lines]
         # columns 0, 2, 3, 4 et 6 ('StructName', 'SurfArea', 'GrayVol', 'ThickAvg', 'MeanCurv')
@@ -170,18 +168,14 @@ def get_cortical(STATS: pathlib.Path):
     return cortical
 
 
-def run_jsonifier(fs_subject_folder: str, output_folder: pathlib.Path):
-    SUBJECTS = pathlib.Path("/usr/local/freesurfer/7.4.1/subjects") if (
-            platform == "linux" or platform == "linux2") else pathlib.Path("/Applications/freesurfer/7.4.1/subjects")
-    MRI = SUBJECTS / f"{fs_subject_folder}/mri"
-    STATS = SUBJECTS / f"{fs_subject_folder}/stats"
+def run_jsonifier(fs_subject_folder: pathlib.Path, output_folder: pathlib.Path):
 
-    subcortical_dict = get_subcortical(MRI=MRI)
-    cortical_dict = get_cortical(STATS=STATS)
+    subcortical_dict = get_subcortical(mri=fs_subject_folder / "mri")
+    cortical_dict = get_cortical(stats=fs_subject_folder/ "stats")
 
     # Convert and write JSON object to file
-    with open(file=f"{output_folder}/JSON/subcortical.json", mode="w") as outfile:
+    with open(file=f"{output_folder}/subcortical.json", mode="w") as outfile:
         json.dump(subcortical_dict, outfile)
 
-    with open(file=f"{output_folder}/JSON/cortical.json", mode="w") as outfile:
+    with open(file=f"{output_folder}/cortical.json", mode="w") as outfile:
         json.dump(cortical_dict, outfile)

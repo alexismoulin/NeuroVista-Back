@@ -17,7 +17,7 @@ RUN apt-get update -y
 RUN apt-get upgrade -y
 
 # Installation of Python libraries on another layer
-RUN pip install dicom2nifti Flask Flask-Cors
+RUN pip install dicom2nifti Flask Flask-Cors nipype
 
 #Port 5000 pour flask
 EXPOSE 5000

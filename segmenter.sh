@@ -1,9 +1,8 @@
 #!/bin/bash
 
-subjects=$FREESURFER_HOME/subjects
+series=$1
 
 function segment() {
-    series=$subjects/$1
     # Hypothalamus
     echo "Hypothalamic segmentation for $1"
     if [ -f "$series/mri/hypothalamic_subunits_seg.v1.mgz" ]; then

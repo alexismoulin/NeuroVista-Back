@@ -1,11 +1,11 @@
 from flask import Flask, Response, stream_with_context, jsonify, request
 from flask_cors import CORS
-import subprocess
 from pathlib import Path
+import subprocess
 import dicom2nifti
-import os
-from utils import add_dcm_extension
+from utils import add_dcm_extension, freesurfer
 from jsonifier import run_jsonifier
+import os
 
 app = Flask(__name__)
 CORS(app=app, supports_credentials=True)
@@ -41,14 +41,23 @@ def upload():
 
     return jsonify(response)
 
+@app.post(rule="/test")
+def test():
+    @stream_with_context
+    def generate():
+        yield jsonify({"dicom": True})
+        yield jsonify({"nifti": True})
+        yield jsonify({"recon": True})
+        yield jsonify({"subs": True})
+        yield jsonify({"json": True})
+
 
 @app.route("/run_script", methods=["POST"])
 def run_script() -> str:
 
-    subject = request.form["subject"]
-    study = "ST1"  # To be done afterwards
+    # subject = request.form["subject"]
     series = request.form["series"]
-    base_path = Path(f"./SUBJECTS/{subject}/{study}/{series}")
+    base_path = Path("./DATA")
     
     # Save dicoms on server
     dicom_directory = base_path / "DICOM"
@@ -60,25 +69,36 @@ def run_script() -> str:
     print({"dicom": True})
     
     # Process NIFTI
-    nifti_directory = base_path / "NIFTI"
+    t1_identifier = "struct.nii.gz"
+    nifti_directory = base_path / "NIFTI" / series
     nifti_directory.mkdir(parents=True, exist_ok=True)
     dicom2nifti.dicom_series_to_nifti(
         original_dicom_directory=dicom_directory,
-        output_file=nifti_directory / f"nifti.nii"
+        output_file=nifti_directory / t1_identifier
     )
     
     print({"nifti": True})
     
-    # FreeSurfer
-    bash_script = f"./routine.sh {subject} {study} {series}"
-    p = subprocess.run(args=bash_script, shell=True, executable="/bin/bash")
-    if p == 0:
+    # FreeSurfer recon all
+    experiment_dir = str(base_path.absolute())
+    freesurfer(experiment_dir=experiment_dir, series=series)
+
+    print({"recon": True})
+
+    # FreeSurfer subcortical segmentations
+    bash_script = f"./segmenter.sh {experiment_dir}/FREESURFER/{series}"
+    result = subprocess.run(args=bash_script, shell=True, executable="/bin/bash", capture_output=True, text=True)
+    if result == 0:
         print({"freesurfer": True})
     else:
-        raise Exception( f'Freesurfer crash: { p.returncode }' )
+        raise Exception(f"Freesurfer crash: { result.stderr }")
+
+    print({"subs": True})
 
     # Jsonifier
-    run_jsonifier(fs_subject_folder=subject, output_folder=base_path)
+    json_folder = base_path / "JSON" / series
+    json_folder.mkdir(parents=True, exist_ok=True)
+    run_jsonifier(fs_subject_folder=base_path / "FREESURFER" /series, output_folder=json_folder)
     print({"json": True})
 
     return "done"
