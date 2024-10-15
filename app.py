@@ -1,119 +1,73 @@
-from flask import Flask, Response, stream_with_context, jsonify, request
+from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from pathlib import Path
-import subprocess
 import dicom2nifti
+import os
 from utils import add_dcm_extension, freesurfer, segment_subregions, segment_hypothalamus
 from jsonifier import run_jsonifier
-import os
+import logging
 
 app = Flask(__name__)
-CORS(app=app, supports_credentials=True)
+CORS(app, supports_credentials=True)
+logging.basicConfig(level=logging.INFO)
 
 @app.route("/")
 def home() -> str:
     return "Home"
 
-
 @app.route('/upload', methods=['POST'])
 def upload():
-    # Initialize a dictionary to hold the regular data
-    form_data = {}
+    try:
+        form_data = {key: request.form[key] for key in request.form}
+        file_names = [os.path.basename(file.filename) for file in request.files.getlist('dicoms')]
 
-    # Extract regular form data
-    for key in request.form:
-        form_data[key] = request.form[key]
-
-    # Initialize a list to hold the names of uploaded files
-    file_names = []
-
-    # Extract files and store their names
-    if 'dicoms' in request.files:
-        files = request.files.getlist('dicoms')
-        for file in files:
-            file_names.append(os.path.basename(file.filename))
-
-    # Prepare the response
-    response = {
-        'form_data': form_data,
-        'file_names': file_names
-    }
-
-    return jsonify(response)
-
-@app.post(rule="/test")
-def test():
-    @stream_with_context
-    def generate():
-        yield jsonify({"dicom": True})
-        yield jsonify({"nifti": True})
-        yield jsonify({"recon": True})
-        yield jsonify({"subs": True})
-        yield jsonify({"json": True})
-
+        return jsonify({'form_data': form_data, 'file_names': file_names}), 200
+    except Exception as e:
+        logging.error(f"Error during file upload: {e}")
+        return jsonify({"error": "File upload failed"}), 500
 
 @app.route("/run_script", methods=["POST"])
-def run_script() -> str:
+def run_script() -> tuple[Response, int] | tuple[str, int]:
+    series = request.form.get("series")
+    if not series:
+        return jsonify({"error": "Series not provided"}), 400
 
-    # subject = request.form["subject"]
-    series = request.form["series"]
     base_path = Path("./DATA")
-    
-    # Save dicoms on server
     dicom_directory = base_path / "DICOM"
-    dicom_directory.mkdir(parents=True, exist_ok=True)
-    for file in request.files.getlist("dicoms"):
-        renamed_file = add_dcm_extension(filename=os.path.basename(file.filename))
-        file.save(dst=dicom_directory / renamed_file)
-    
-    print({"dicom": True})
-    
-    # Process NIFTI
-    t1_identifier = "struct.nii.gz"
     nifti_directory = base_path / "NIFTI" / series
-    nifti_directory.mkdir(parents=True, exist_ok=True)
-    dicom2nifti.dicom_series_to_nifti(
-        original_dicom_directory=dicom_directory,
-        output_file=nifti_directory / t1_identifier
-    )
-    
-    print({"nifti": True})
-    
-    # FreeSurfer recon all
-    experiment_dir = str(base_path.absolute())
-    freesurfer(experiment_dir=experiment_dir, series=series)
-
-    print({"recon": True})
-
-    # FreeSurfer subcortical segmentations
-    freesurfer_path = base_path / "FREESURFER" / series
-    segment_subregions(structure="thalamus", subject_dir=freesurfer_path)
-    segment_subregions(structure="brainstem", subject_dir=freesurfer_path)
-    segment_subregions(structure="hippo-amygdala", subject_dir=freesurfer_path)
-    segment_hypothalamus(subject_id=series, subject_dir=freesurfer_path)
-
-    print({"subs": True})
-
-    # Jsonifier
     json_folder = base_path / "JSON" / series
-    json_folder.mkdir(parents=True, exist_ok=True)
-    run_jsonifier(fs_subject_folder=base_path / "FREESURFER" /series, output_folder=json_folder)
-    print({"json": True})
+    freesurfer_path = base_path / "FREESURFER" / series
 
-    return "done"
-
-
-
-@app.route("/output")
-def output() -> str:
     try:
-        _ = Path("./subcortical.json").read_text()
-        _ = Path("./cortical.json").read_text()
-        output_text = "Success"
-    except FileNotFoundError:
-        output_text = "Data processing not yet completed - please wait until completion"
-    return output_text
+        dicom_directory.mkdir(parents=True, exist_ok=True)
+        for file in request.files.getlist("dicoms"):
+            file.save(dicom_directory / add_dcm_extension(os.path.basename(file.filename)))
 
+        logging.info("DICOM files saved successfully")
+
+        nifti_directory.mkdir(parents=True, exist_ok=True)
+        dicom2nifti.dicom_series_to_nifti(
+            original_dicom_directory=dicom_directory,
+            output_file=nifti_directory / "struct.nii.gz"
+        )
+        logging.info("NIFTI conversion completed")
+
+        freesurfer(str(base_path.absolute()), series)
+        logging.info("FreeSurfer processing completed")
+
+        for structure in ["thalamus", "brainstem", "hippo-amygdala"]:
+            segment_subregions(structure=structure, subject_dir=freesurfer_path)
+        segment_hypothalamus(subject_id=series, subject_dir=freesurfer_path)
+        logging.info("Subregion segmentation completed")
+
+        json_folder.mkdir(parents=True, exist_ok=True)
+        run_jsonifier(fs_subject_folder=freesurfer_path, output_folder=json_folder)
+        logging.info("JSON file generation completed")
+
+        return "done", 200
+    except Exception as e:
+        logging.error(f"Error during script execution: {e}")
+        return jsonify({"error": "Processing failed"}), 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
