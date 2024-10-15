@@ -4,6 +4,7 @@ import pathlib
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.utility import IdentityInterface
 from nipype.pipeline.engine import Workflow, Node
+from nipype.interfaces.base import CommandLine
 
 def add_dcm_extension(filename):
     if not filename.lower().endswith('.dcm'):
@@ -46,3 +47,22 @@ def freesurfer(experiment_dir: str, series: str):
 
     # This command runs the recon-all pipeline in parallel (using cpu_count cores)
     reconflow.run('MultiProc', plugin_args={'n_procs': os.cpu_count()})
+
+
+def segment_subregions(structure: str, subject_dir: str):
+    # Configure the FreeSurfer command with the required arguments
+    thalamus_segmentation = CommandLine(
+        command="segment_subregions",
+        args=f"{structure} --cross --sd {subject_path}"
+    )
+    # Execute the command
+    thalamus_segmentation.run()
+
+def segment_hypothalamus(subject_id: str, subject_dir: str):
+# Set up the FreeSurfer command with Nipype
+    hypothalamus_segmentation = CommandLine(
+        command="mri_segment_hypothalamic_subunits",
+        args=f"--s {subject_id} --sd {subjects_dir}"
+    )
+    # Execute the command
+    hypothalamus_segmentation.run()

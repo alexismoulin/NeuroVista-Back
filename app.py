@@ -3,7 +3,7 @@ from flask_cors import CORS
 from pathlib import Path
 import subprocess
 import dicom2nifti
-from utils import add_dcm_extension, freesurfer
+from utils import add_dcm_extension, freesurfer, segment_subregions, segment_hypothalamus
 from jsonifier import run_jsonifier
 import os
 
@@ -86,12 +86,11 @@ def run_script() -> str:
     print({"recon": True})
 
     # FreeSurfer subcortical segmentations
-    bash_script = f"./segmenter.sh {experiment_dir}/FREESURFER/{series}"
-    result = subprocess.run(args=bash_script, shell=True, executable="/bin/bash", capture_output=True, text=True)
-    if result == 0:
-        print({"freesurfer": True})
-    else:
-        raise Exception(f"Freesurfer crash: { result.stderr }")
+    freesurfer_path = base_path / "FREESURFER" / series
+    segment_subregions(structure="thalamus", subject_dir=freesurfer_path)
+    segment_subregions(structure="brainstem", subject_dir=freesurfer_path)
+    segment_subregions(structure="hippo-amygdala", subject_dir=freesurfer_path)
+    segment_hypothalamus(subject_id=series, subject_dir=freesurfer_path)
 
     print({"subs": True})
 
