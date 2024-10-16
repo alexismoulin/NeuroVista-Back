@@ -81,10 +81,10 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: pathlib.Pat
         logging.error(f"Error during {structure} segmentation: {e}")
 
 
-def segment_hypothalamus(subject_dir: pathlib.Path):
+def segment_hypothalamus(subject_id: str, subject_dir: str):
     command = CommandLine(
         command="mri_segment_hypothalamic_subunits", 
-        args=f"--s --sd {subject_dir} --threads {os.cpu_count()}"
+        args=f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
     )
     logging.info(command.cmdline)
     try:

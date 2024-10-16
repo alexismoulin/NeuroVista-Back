@@ -59,7 +59,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
             segment_subregions(structure=structure, subject_id=series, subject_dir=base_path / "FREESURFER")
             logging.info(f"{structure} segmentation completed")
         
-        segment_hypothalamus(subject_dir=str((base_path / "FREESURFER").absolute()))
+        segment_hypothalamus(subject_id=series, subject_dir=str((base_path / "FREESURFER").absolute()))
         logging.info("Hypothalamus segmentation completed")
 
         json_folder.mkdir(parents=True, exist_ok=True)
