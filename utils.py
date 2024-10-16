@@ -41,16 +41,52 @@ def freesurfer(experiment_dir: str, series: str):
     except Exception as e:
         logging.error(f"Error in FreeSurfer recon-all: {e}")
 
-def segment_subregions(structure: str, subject_id):
-    command = CommandLine(command="segment_subregions", args=f"{structure} --cross {subject_id}")
+
+def segment_subregions(structure: str, subject_id: str, subject_dir: pathlib.Path):
+    # Define output files based on the structure
+    output_files = {
+        "thalamus": [
+            subject_dir / subject_id / "mri" / "ThalamicNuclei.mgz",
+            subject_dir / subject_id / "mri" / "ThalamicNuclei.volumes.txt"
+        ],
+        "brainstem": [
+            subject_dir / subject_id / "mri" / "brainstemSsLabels.mgz",
+            subject_dir / subject_id / "mri" / "brainstemSsLabels.volumes.txt"
+        ],
+        "hippo-amygdala": [
+            subject_dir / subject_id / "mri" / "rh.amygNucVolumes.txt",
+            subject_dir / subject_id / "mri" / "rh.hippoSfVolumes.txt",
+            subject_dir / subject_id / "mri" / "lh.amygNucVolumes.txt",
+            subject_dir / subject_id / "mri" / "lh.hippoSfVolumes.txt",
+            subject_dir / subject_id / "mri" / "lh.hippoAmygLabels.mgz",
+            subject_dir / subject_id / "mri" / "rh.hippoAmygLabels.mgz"
+        ]
+    }
+
+    # Check for missing output files
+    missing_files = [file for file in output_files[structure] if not file.exists()]
+
+    # Log and skip if all files are present
+    if not missing_files:
+        logging.info(f"Skipping {structure} segmentation as all output files already exist")
+        return
+
+    # Log missing files and run the segmentation command
+    logging.info(f"Missing output files for {structure}: {missing_files}. Running segmentation.")
+    command = CommandLine(command="segment_subregions", args=f"{structure} --cross {subject_id} --sd {subject_dir}")
     try:
         command.run()
         logging.info(f"{structure} segmentation completed")
     except Exception as e:
         logging.error(f"Error during {structure} segmentation: {e}")
 
-def segment_hypothalamus(subject_id: str, subject_dir: pathlib.Path):
-    command = CommandLine(command="mri_segment_hypothalamic_subunits", args=f"--s {subject_id} --sd {subject_dir}")
+
+def segment_hypothalamus(subject_dir: pathlib.Path):
+    command = CommandLine(
+        command="mri_segment_hypothalamic_subunits", 
+        args=f"--s --sd {subject_dir} --threads {os.cpu_count()}"
+    )
+    logging.info(command.cmdline)
     try:
         command.run()
         logging.info("Hypothalamus segmentation completed")
