@@ -3,7 +3,7 @@ from flask_cors import CORS
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension, freesurfer, segment_subregions, segment_hypothalamus
+from utils import add_dcm_extension, freesurfer, segment_subregions
 from jsonifier import run_jsonifier
 import logging
 
@@ -37,6 +37,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
     nifti_directory = base_path / "NIFTI" / series
     json_folder = base_path / "JSON" / series
     freesurfer_path = base_path / "FREESURFER" / series
+    fastsurfer_path = base_path / "FASTSURFER" / series
 
     try:
         dicom_directory.mkdir(parents=True, exist_ok=True)
@@ -59,8 +60,10 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
             segment_subregions(structure=structure, subject_id=series, subject_dir=base_path / "FREESURFER")
             logging.info(f"{structure} segmentation completed")
         
-        segment_hypothalamus(subject_id=series, subject_dir=str((base_path / "FREESURFER").absolute()))
-        logging.info("Hypothalamus segmentation completed")
+        # segment_hypothalamus(subject_id=series, subject_dir=str((base_path / "FREESURFER").absolute()))
+        # logging.info("Hypothalamus segmentation completed")
+
+        fastsurfer_path.mkdir(parents=True, exist_ok=True)
 
         json_folder.mkdir(parents=True, exist_ok=True)
         run_jsonifier(fs_subject_folder=freesurfer_path, output_folder=json_folder)

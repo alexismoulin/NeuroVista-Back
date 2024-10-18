@@ -19,6 +19,11 @@ RUN echo "source $FREESURFER_HOME/SetUpFreeSurfer.sh" >> $HOME/.bashrc
 # Install Python libraries
 RUN pip install dicom2nifti Flask Flask-Cors nipype
 
+# FastSurfer installs
+RUN apt-get install -y git ca-certificates file
+RUN git clone --branch stable https://github.com/Deep-MI/FastSurfer.git
+RUN pip install torch torchvision yacs scikit-image h5py SimpleITK
+
 # Expose port for Flask
 EXPOSE 5000
 
