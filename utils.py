@@ -4,7 +4,7 @@ import pathlib
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.interfaces.utility import IdentityInterface
 from nipype.pipeline.engine import Workflow, Node
-from nipype.interfaces.base import CommandLine
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +20,7 @@ def freesurfer(experiment_dir: str, series: str):
 
     pathlib.Path(fs_folder).mkdir(parents=True, exist_ok=True)
     reconflow = Workflow(name="reconflow")
-    reconflow.base_dir = opj(experiment_dir, 'workingdir_reconflow')
+    reconflow.base_dir = opj(experiment_dir, "WORKFLOWS", "workingdir_reconflow")
 
     infosource = Node(IdentityInterface(fields=['subject_id']), name="infosource")
     infosource.iterables = ('subject_id', subject_list)
@@ -92,3 +92,47 @@ def segment_hypothalamus(subject_id: str, subject_dir: str):
         logging.info("Hypothalamus segmentation completed")
     except Exception as e:
         logging.error(f"Error during hypothalamus segmentation: {e}")
+
+# Define a custom interface for run_fastsurfer.sh
+class RunFastSurfer(CommandLine):
+    _cmd = './run_fastsurfer.sh'  # Command to run FastSurfer
+    input_spec = CommandLineInputSpec
+    output_spec = TraitedSpec
+
+    # Define the input fields for the command
+    class input_spec(CommandLineInputSpec):
+        t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
+        sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
+        sd = Directory(argstr="--sd %s", mandatory=True, desc="Directory for FastSurfer output")
+        parallel = traits.Bool(argstr="--parallel", usedefault=True, desc="Use parallel processing")
+        threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
+
+
+def run_fastsurfer(fs_dir: pathlib.Path,
+                   t1: pathlib.Path,
+                   sid: str,
+                   sd: pathlib.Path,
+                   wf_dir: pathlib.Path,
+                   parallel: bool,
+                   threads: int):
+
+    # Set up the FastSurfer node with inputs
+    fastsurfer_instance = RunFastSurfer()
+    fastsurfer_instance._cmd = f"{fs_dir}/run_fastsurfer.sh --no_asegdkt"
+    fastsurfer_node = Node(fastsurfer_instance, name="run_fastsurfer")
+
+    # Specify the inputs
+    fastsurfer_node.inputs.t1 = t1
+    fastsurfer_node.inputs.sid = sid
+    fastsurfer_node.inputs.sd = sd
+    fastsurfer_node.inputs.parallel = parallel
+    fastsurfer_node.inputs.threads = threads
+
+    # Create a workflow
+    wf = Workflow(name="fastsurfer_workflow", base_dir=wf_dir)
+
+    # Add the node to the workflow
+    wf.add_nodes([fastsurfer_node])
+
+    # Run the workflow
+    wf.run()

@@ -1,11 +1,15 @@
+import pathlib
+
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension, freesurfer, segment_subregions
+from utils import add_dcm_extension, freesurfer, segment_subregions, run_fastsurfer
 from jsonifier import run_jsonifier
 import logging
+import subprocess
+from sys import platform
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -37,7 +41,10 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
     nifti_directory = base_path / "NIFTI" / series
     json_folder = base_path / "JSON" / series
     freesurfer_path = base_path / "FREESURFER" / series
-    fastsurfer_path = base_path / "FASTSURFER" / series
+    fastsurfer_path = base_path / "FASTSURFER"
+    workflows_path = base_path / "WORKFLOWS"
+
+    workflows_path.mkdir(parents=True, exist_ok=True)
 
     try:
         dicom_directory.mkdir(parents=True, exist_ok=True)
@@ -64,6 +71,21 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         # logging.info("Hypothalamus segmentation completed")
 
         fastsurfer_path.mkdir(parents=True, exist_ok=True)
+
+        if platform == "darwin":
+            os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
+
+        # Set up the FastSurfer node with inputs
+        run_fastsurfer(
+            fs_dir=pathlib.Path.home() / "FastSurfer",
+            t1=freesurfer_path.absolute() / "mri" / "T1.mgz",
+            sid=series,
+            sd=fastsurfer_path.absolute(),
+            wf_dir=workflows_path,
+            parallel=True,
+            threads=os.cpu_count()
+        )
+
 
         json_folder.mkdir(parents=True, exist_ok=True)
         run_jsonifier(fs_subject_folder=freesurfer_path, output_folder=json_folder)
