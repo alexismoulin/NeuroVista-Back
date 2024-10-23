@@ -8,7 +8,6 @@ import os
 from utils import add_dcm_extension, freesurfer, segment_subregions, run_fastsurfer
 from jsonifier import run_jsonifier
 import logging
-import subprocess
 from sys import platform
 
 app = Flask(__name__)

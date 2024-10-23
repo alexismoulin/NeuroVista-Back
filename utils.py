@@ -118,7 +118,7 @@ def run_fastsurfer(fs_dir: pathlib.Path,
 
     # Set up the FastSurfer node with inputs
     fastsurfer_instance = RunFastSurfer()
-    fastsurfer_instance._cmd = f"{fs_dir}/run_fastsurfer.sh --no_asegdkt"
+    fastsurfer_instance._cmd = f"{fs_dir}/run_fastsurfer.sh"
     fastsurfer_node = Node(fastsurfer_instance, name="run_fastsurfer")
 
     # Specify the inputs
