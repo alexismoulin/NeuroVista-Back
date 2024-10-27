@@ -1,4 +1,5 @@
 import os
+from configparser import Error
 from os.path import join as opj
 import pathlib
 from nipype.interfaces.freesurfer import ReconAll
@@ -104,6 +105,7 @@ class RunFastSurfer(CommandLine):
         t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
         sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
         sd = Directory(argstr="--sd %s", mandatory=True, desc="Directory for FastSurfer output")
+        no_asegdkt = traits.Bool(argstr="--no_asegdkt", usedefault=True, desc="Omit ASEG and DKT segmentations")
         parallel = traits.Bool(argstr="--parallel", usedefault=True, desc="Use parallel processing")
         threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
 
@@ -115,6 +117,23 @@ def run_fastsurfer(fs_dir: pathlib.Path,
                    wf_dir: pathlib.Path,
                    parallel: bool,
                    threads: int):
+
+    # Check if files already exist
+    output_files = [
+        pathlib.Path("./DATA/FASTSURFER") / sid / "mri" / "cerebellum.CerebNet.nii.gz",
+        pathlib.Path("./DATA/FASTSURFER") / sid / "mri" / "hypothalamus.HypVINN.nii.gz",
+        pathlib.Path("./DATA/FASTSURFER") / sid / "mri" / "hypothalamus_mask.HypVINN.nii.gz",
+        pathlib.Path("./DATA/FASTSURFER") / sid / "stats" / "cerebellum.CerebNet.stats",
+        pathlib.Path("./DATA/FASTSURFER") / sid / "stats" / "hypothalamus.HypVINN.stats"
+    ]
+    print(output_files)
+
+    missing_files = [file for file in output_files if not file.exists()]
+
+    # Log and skip if all files are present
+    if not missing_files:
+        logging.info(f"Skipping Hypothalamus and Cerebellum segmentations as all output files already exist")
+        return
 
     # Set up the FastSurfer node with inputs
     fastsurfer_instance = RunFastSurfer()
@@ -135,4 +154,9 @@ def run_fastsurfer(fs_dir: pathlib.Path,
     wf.add_nodes([fastsurfer_node])
 
     # Run the workflow
-    wf.run()
+    try:
+        wf.run()
+        logging.info("FastSurfer workflow completed")
+    except Exception as e:
+        logging.error(f"Error during FastSurfer: {e}")
+

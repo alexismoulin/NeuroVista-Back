@@ -87,7 +87,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
 
 
         json_folder.mkdir(parents=True, exist_ok=True)
-        run_jsonifier(fs_subject_folder=freesurfer_path, output_folder=json_folder)
+        run_jsonifier(freesurfer_path=freesurfer_path, fastsurfer_path=fastsurfer_path / series, output_folder=json_folder)
         logging.info("JSON file generation completed")
 
         return "done", 200

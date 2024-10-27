@@ -92,22 +92,65 @@ def process_hypothalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]
 
 
 # FastSurfer files
-def process_hypothalamus_v2(mri: pathlib.Path):
-    return None
+def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, float]]:
+    """Processes hypothalamus MRI data file, extracting only the name and volume accurately."""
+    hypothalamus_data = read_volume_file(file_path=path)[55:]  # Skipping header
+
+    hypothalamus = []
+    for line in hypothalamus_data:
+        # Ensure the line has enough columns for both name and volume
+        if len(line) >= 5:
+            try:
+                # Parsing volume and struct name based on expected positions
+                volume = float(line[3])  # Volume_mm3 column
+                name = line[4]  # Start with the StructName part (ignoring additional numbers)
+
+                # Replace prefixes "L-" and "R-" with "LHS" and "RHS" respectively
+                if name.startswith("L-"):
+                    name = "Left" + name[1:]
+                elif name.startswith("R-"):
+                    name = "Right" + name[1:]
+
+                # Add the structured data to the result list
+                hypothalamus.append({"name": name, "volume": volume})
+            except ValueError:
+                # Skip rows where volume is not a valid float
+                continue
+
+    return hypothalamus
 
 
-def process_cerebellum(mri: pathlib.Path):
-    return None
+def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, float]]:
+    """Processes MRI data file, extracting only the name and volume accurately."""
+    data = read_volume_file(file_path)[55:]  # Skipping header
+
+    result = []
+    for line in data:
+        # Ensure the line has enough columns for both name and volume
+        if len(line) >= 5:
+            try:
+                # Parsing volume and struct name based on expected positions
+                volume = float(line[3])  # Volume_mm3 column
+                name = line[4]  # Start with the StructName part (ignoring additional numbers)
+
+                # Add the structured data to the result list
+                result.append({"name": name, "volume": volume})
+            except ValueError:
+                # Skip rows where volume is not a valid float
+                continue
+
+    return result
 
 
-def get_subcortical(mri: pathlib.Path) -> Dict[str, list]:
+def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path) -> Dict[str, list]:
     """Extracts subcortical volumes."""
     subcortical = {
-        "hippocampus": process_hippocampus(mri),
-        "thalamus": process_thalamus(mri),
-        "amygdala": process_amygdala(mri),
-        "brain_stem": process_brain_stem(mri),
-        "hypothalamus": process_hypothalamus(mri)
+        "hippocampus": process_hippocampus(mri=freesurfer_path),
+        "thalamus": process_thalamus(mri=freesurfer_path),
+        "amygdala": process_amygdala(mri=freesurfer_path),
+        "brain_stem": process_brain_stem(mri=freesurfer_path),
+        "hypothalamus": process_hypothalamus_v2(path=fastsurfer_path / "hypothalamus.HypVINN.stats"),
+        "cerebellum": process_cerebellum(file_path=fastsurfer_path / "cerebellum.CerebNet.stats")
     }
     return subcortical
 
@@ -142,9 +185,9 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
     return cortical
 
 
-def run_jsonifier(freesurfer_path: pathlib.Path, output_folder: pathlib.Path):
+def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, output_folder: pathlib.Path):
     """Runs the process of generating JSON files for subcortical and cortical volumes."""
-    subcortical_dict = get_subcortical(mri=freesurfer_path / "mri")
+    subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri", fastsurfer_path=fastsurfer_path / "stats")
     cortical_dict = get_cortical(stats=freesurfer_path / "stats")
 
     # Write JSON objects to files
