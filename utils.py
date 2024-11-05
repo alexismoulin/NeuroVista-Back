@@ -191,7 +191,6 @@ def run_fastsurfer(fs_dir: pathlib.Path,
         sd / sid / "stats" / "cerebellum.CerebNet.stats",
         sd / sid / "stats" / "hypothalamus.HypVINN.stats"
     ]
-    print(output_files)
 
     missing_files = [file for file in output_files if not file.exists()]
 

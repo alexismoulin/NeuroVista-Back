@@ -7,7 +7,7 @@ from pathlib import Path
 import dicom2nifti
 import os
 from utils import add_dcm_extension, get_folder_names, create_folders, reconall, segment_subregions, run_fastsurfer
-from jsonifier import run_jsonifier
+from jsonifier import run_jsonifier, run_json_average
 import logging
 from sys import platform
 
@@ -101,7 +101,11 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
                 output_folder=json_folder / folder
             )
 
-        logging.info("JSON file generation completed")
+        (json_folder / "AVERAGES").mkdir(parents=True, exist_ok=True)
+        run_json_average(json_path=json_folder, folders=folders, main_type="cortical.json")
+        run_json_average(json_path=json_folder, folders=folders, main_type="subcortical.json")
+
+        logging.info("JSON files generation completed")
 
         return "done", 200
     except Exception as e:

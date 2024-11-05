@@ -1,7 +1,8 @@
 import pandas as pd
 import json
 import pathlib
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Any
+from collections import defaultdict
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Union[float, None]:
@@ -191,8 +192,85 @@ def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, 
     cortical_dict = get_cortical(stats=freesurfer_path / "stats")
 
     # Write JSON objects to files
-    with open(output_folder / "subcortical.json", mode="w") as outfile:
-        json.dump(subcortical_dict, outfile, indent=4)
+    with open(file=output_folder / "subcortical.json", mode="w") as outfile:
+        json.dump(obj=subcortical_dict, fp=outfile, indent=4)
 
-    with open(output_folder / "cortical.json", mode="w") as outfile:
-        json.dump(cortical_dict, outfile, indent=4)
+    with open(file=output_folder / "cortical.json", mode="w") as outfile:
+        json.dump(obj=cortical_dict, fp=outfile, indent=4)
+
+
+def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str):
+    """
+    Averages the numerical values in 'cortical.json' files across multiple folders.
+
+    Parameters:
+    - json_path (Path): The base path where the folders are located.
+    - folders (List[str]): A list of folder names containing 'cortical.json' files.
+
+    The function writes the averaged result to 'cortical.json' in the base path.
+    """
+
+    # Initialize dictionaries to hold the cumulative sums and counts
+    cumulative_data = {}
+    counts = {}
+    json_paths = [json_path / f / main_type for f in folders]
+
+    for path in json_paths:
+        if not path.exists():
+            print(f"Warning: File not found - {path}")
+            continue
+        try:
+            with open(path, 'r') as file:
+                data = json.load(file)
+        except json.JSONDecodeError as e:
+            print(f"Warning: JSON decode error in file {path}: {e}")
+            continue
+        except Exception as e:
+            print(f"Warning: Unexpected error reading file {path}: {e}")
+            continue
+
+        for top_key, entries in data.items():
+            if top_key not in cumulative_data:
+                cumulative_data[top_key] = {}
+                counts[top_key] = {}
+            for entry in entries:
+                name = entry.get('name')
+                if not name:
+                    print(f"Warning: Missing 'name' in entry {entry} in file {path}")
+                    continue
+                if name not in cumulative_data[top_key]:
+                    cumulative_data[top_key][name] = defaultdict(float)
+                    counts[top_key][name] = 0
+                counts[top_key][name] += 1
+                for key, value in entry.items():
+                    if key != 'name':
+                        if isinstance(value, (int, float)):
+                            cumulative_data[top_key][name][key] += value
+                        else:
+                            print(f"Warning: Non-numeric value for key '{key}' in entry {entry} in file {path}")
+                            continue
+
+    # Compute the averages
+    averaged_result = {}
+    for top_key, names_dict in cumulative_data.items():
+        averaged_result[top_key] = []
+        for name, values_dict in names_dict.items():
+            count = counts[top_key][name]
+            if count == 0:
+                print(f"Warning: No data to average for '{name}' under '{top_key}'")
+                continue
+            averaged_entry = {'name': name}
+            for key, total in values_dict.items():
+                average_value = total / count
+                averaged_entry[key] = round(average_value, 2)
+            averaged_result[top_key].append(averaged_entry)
+        # Optionally sort the entries by 'name'
+        averaged_result[top_key].sort(key=lambda x: x['name'])
+
+    output_file = json_path / "AVERAGES" / main_type
+    try:
+        with open(output_file, mode="w") as outfile:
+            json.dump(obj=averaged_result, fp=outfile, indent=4)
+        print(f"Averaged data written to {output_file}")
+    except Exception as e:
+        print(f"Error writing to file {output_file}: {e}")
