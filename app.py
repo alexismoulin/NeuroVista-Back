@@ -1,11 +1,12 @@
 import pathlib
-
+import pydicom
+import json
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension, freesurfer, segment_subregions, run_fastsurfer
+from utils import add_dcm_extension, get_folder_names, create_folders, reconall, segment_subregions, run_fastsurfer
 from jsonifier import run_jsonifier
 import logging
 from sys import platform
@@ -31,69 +32,90 @@ def upload():
 
 @app.route("/run_script", methods=["POST"])
 def run_script() -> tuple[Response, int] | tuple[str, int]:
-    series = request.form.get("series")
-    if not series:
-        return jsonify({"error": "Series not provided"}), 400
+    print("FORM: ", request.form)
+    study = request.form.get("study").replace(" ", "_")
+    if not study:
+        return jsonify({"error": "Study not provided"}), 400
+    notes = request.form.get("notes")
 
-    base_path = Path("./DATA")
-    dicom_directory = base_path / "DICOM"
-    nifti_directory = base_path / "NIFTI" / series
-    json_folder = base_path / "JSON" / series
-    freesurfer_path = base_path / "FREESURFER" / series
-    fastsurfer_path = base_path / "FASTSURFER"
-    workflows_path = base_path / "WORKFLOWS"
+    base_path = Path("./DATA") / study
+    dicom_directory, nifti_directory, freesurfer_path, fastsurfer_path, workflows_path, json_folder = create_folders(base_path=base_path)
 
-    workflows_path.mkdir(parents=True, exist_ok=True)
+    with open(json_folder / 'notes.json', 'w') as f:
+        json.dump({"notes": notes}, f)
 
     try:
-        dicom_directory.mkdir(parents=True, exist_ok=True)
         for file in request.files.getlist("dicoms"):
-            file.save(dicom_directory / add_dcm_extension(os.path.basename(file.filename)))
+            try:
+                series_description = pydicom.dcmread(file).SeriesDescription.replace(" ", "_")
+                ser_desc = series_description.replace(" ", "_")
+                (dicom_directory / ser_desc).mkdir(parents=True, exist_ok=True)
+                file.stream.seek(0)  # Reset the file pointer to the beginning
+                file.save(dst=dicom_directory / ser_desc / add_dcm_extension(os.path.basename(file.filename)))
+            except AttributeError:
+                pass
 
+        folders = get_folder_names(directory=dicom_directory)
+        print("Folders: ", folders)
         logging.info("DICOM files saved successfully")
 
-        nifti_directory.mkdir(parents=True, exist_ok=True)
-        dicom2nifti.dicom_series_to_nifti(
-            original_dicom_directory=dicom_directory,
-            output_file=nifti_directory / "struct.nii.gz"
-        )
+        for folder in folders:
+            dicom2nifti.dicom_series_to_nifti(
+                original_dicom_directory=dicom_directory / folder,
+                output_file=nifti_directory / f"{folder}.nii.gz"
+            )
         logging.info("NIFTI conversion completed")
 
-        freesurfer(str(base_path.absolute()), series)
+        reconall(base_dir=str(base_path.absolute()))
         logging.info("FreeSurfer processing completed")
 
-        for structure in ["thalamus", "brainstem", "hippo-amygdala"]:
-            segment_subregions(structure=structure, subject_id=series, subject_dir=base_path / "FREESURFER")
-            logging.info(f"{structure} segmentation completed")
-        
-        # segment_hypothalamus(subject_id=series, subject_dir=str((base_path / "FREESURFER").absolute()))
-        # logging.info("Hypothalamus segmentation completed")
+        for folder in folders:
+            for structure in ["thalamus", "brainstem", "hippo-amygdala"]:
+                segment_subregions(structure=structure, subject_id=folder, subject_dir=base_path / "FREESURFER")
+                logging.info(f"{structure} segmentation completed")
 
-        fastsurfer_path.mkdir(parents=True, exist_ok=True)
+        logging.info("Subcortical segmentation completed")
 
         if platform == "darwin":
             os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
         # Set up the FastSurfer node with inputs
-        run_fastsurfer(
-            fs_dir=pathlib.Path.home() / "FastSurfer",
-            t1=freesurfer_path.absolute() / "mri" / "T1.mgz",
-            sid=series,
-            sd=fastsurfer_path.absolute(),
-            wf_dir=workflows_path,
-            parallel=True,
-            threads=os.cpu_count()
-        )
+        for folder in folders:
+            run_fastsurfer(
+                fs_dir=pathlib.Path.home() / "FastSurfer",
+                t1=freesurfer_path.absolute() / folder / "mri" / "T1.mgz",
+                sid=folder,
+                sd=fastsurfer_path.absolute(),
+                wf_dir=workflows_path,
+                parallel=True,
+                threads=os.cpu_count()
+            )
 
+        logging.info("Extra subcortical segmentation completed")
 
-        json_folder.mkdir(parents=True, exist_ok=True)
-        run_jsonifier(freesurfer_path=freesurfer_path, fastsurfer_path=fastsurfer_path / series, output_folder=json_folder)
+        for folder in folders:
+            (json_folder / folder).mkdir(parents=True, exist_ok=True)
+            run_jsonifier(
+                freesurfer_path=freesurfer_path / folder,
+                fastsurfer_path=fastsurfer_path / folder,
+                output_folder=json_folder / folder
+            )
+
         logging.info("JSON file generation completed")
 
         return "done", 200
     except Exception as e:
         logging.error(f"Error during script execution: {e}")
         return jsonify({"error": "Processing failed"}), 500
+
+@app.route("/results")
+def results() -> tuple:
+    with open(file=Path("./DATA/JSON/SE1/cortical.json"), mode="r") as f:
+        cortical = json.load(f)
+    with open(file=Path("./DATA/JSON/SE1/subcortical.json"), mode="r") as f:
+        subcortical = json.load(f)
+    return cortical, subcortical
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
