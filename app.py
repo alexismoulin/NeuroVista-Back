@@ -112,13 +112,17 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         logging.error(f"Error during script execution: {e}")
         return jsonify({"error": "Processing failed"}), 500
 
-@app.route("/results")
-def results() -> tuple:
-    with open(file=Path("./DATA/JSON/SE1/cortical.json"), mode="r") as f:
-        cortical = json.load(f)
-    with open(file=Path("./DATA/JSON/SE1/subcortical.json"), mode="r") as f:
-        subcortical = json.load(f)
-    return cortical, subcortical
+@app.route("/cortical")
+def cortical():
+    with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/cortical.json"), mode="r") as f:
+        cortical = json.load(fp=f)
+    return jsonify(cortical)
+
+@app.route("/subcortical")
+def subcortical():
+    with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/subcortical.json"), mode="r") as f:
+        subcortical = json.load(fp=f)
+    return jsonify(subcortical)
 
 
 if __name__ == "__main__":

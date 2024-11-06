@@ -28,9 +28,9 @@ def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]
     rhs_data = read_volume_file(mri / "rh.hippoSfVolumes.txt")
     
     return [{
-        "name": field[0][0],
-        "lhs_volume": round(float(field[0][1]), 2),
-        "rhs_volume": round(float(field[1][1]), 2)
+        "Structure": field[0][0],
+        "LHS Volume (mm3)": round(float(field[0][1]), 2),
+        "RHS Volume (mm3)": round(float(field[1][1]), 2)
     } for field in zip(lhs_data, rhs_data)]
 
 
@@ -48,9 +48,9 @@ def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     names = [field[0].replace("Left-", "") for field in thalamic_data if "Left" in field[0]]
     
     return [{
-        "name": name,
-        "lhs_volume": get_volume(name=name, nuclei=lhs_thalamic_nuclei),
-        "rhs_volume": get_volume(name=name, nuclei=rhs_thalamic_nuclei),
+        "Structure": name,
+        "LHS Volume (mm3)": get_volume(name=name, nuclei=lhs_thalamic_nuclei),
+        "RHS Volume (mm3)": get_volume(name=name, nuclei=rhs_thalamic_nuclei),
     } for name in names]
 
 
@@ -60,16 +60,16 @@ def process_amygdala(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     rhs_data = read_volume_file(mri / "rh.amygNucVolumes.txt")
 
     return [{
-        "name": field[0][0],
-        "lhs_volume": round(float(field[0][1]), 2),
-        "rhs_volume": round(float(field[1][1]), 2)
+        "Structure": field[0][0],
+        "LHS Volume (mm3)": round(float(field[0][1]), 2),
+        "RHS Volume (mm3)": round(float(field[1][1]), 2)
     } for field in zip(lhs_data, rhs_data)]
 
 
 def process_brain_stem(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """Process brain stem volumes."""
     brain_stem_data = read_volume_file(mri / "brainstemSsLabels.volumes.txt")
-    return [{"name": field[0], "volume": round(float(field[1]), 2)} for field in brain_stem_data]
+    return [{"Structure": field[0], "Volume (mm3)": round(float(field[1]), 2)} for field in brain_stem_data]
 
 
 def process_hypothalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
@@ -113,7 +113,7 @@ def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, float]]:
                     name = "Right" + name[1:]
 
                 # Add the structured data to the result list
-                hypothalamus.append({"name": name, "volume": volume})
+                hypothalamus.append({"Structure": name, "Volume (mm3)": volume})
             except ValueError:
                 # Skip rows where volume is not a valid float
                 continue
@@ -135,7 +135,7 @@ def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, float]]:
                 name = line[4]  # Start with the StructName part (ignoring additional numbers)
 
                 # Add the structured data to the result list
-                result.append({"name": name, "volume": volume})
+                result.append({"Structure": name, "Volume (mm3)": volume})
             except ValueError:
                 # Skip rows where volume is not a valid float
                 continue
@@ -158,8 +158,8 @@ def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path
 
 def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
     """Extracts cortical volumes and parcellations."""
-    aseg = [{"name": row[4], "volume": float(row[3])} for row in read_volume_file(stats / "aseg.stats")[79:]]
-    brainvol = [{"name": row[2].replace(",", ""), "volume": int(float(row[-2][:-1]))} for row in read_volume_file(stats / "brainvol.stats")]
+    aseg = [{"Structure": row[4], "Volume (mm3)": float(row[3])} for row in read_volume_file(stats / "aseg.stats")[79:]]
+    brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in read_volume_file(stats / "brainvol.stats")]
 
     wm_data = read_volume_file(stats / "wmparc.stats")[65:]
     wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in wm_data if "wm-lh" in row[4]]
@@ -167,13 +167,26 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
     names = [row[4].replace("wm-lh-", "") for row in wm_data if "wm-lh" in row[4]]
 
     wm_vols = [{
-        "name": name,
-        "lhs_volume": get_volume(name=name, nuclei=wm_vol_lhs),
-        "rhs_volume": get_volume(name=name, nuclei=wm_vol_rhs),
+        "Structure": name,
+        "LHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_lhs),
+        "RHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_rhs),
     } for name in names]
 
-    lh_dkt_atlas = [{"name": row[0], "SurfArea": int(row[2]), "GrayVol": int(row[3]), "ThickAvg": float(row[4]), "MeanCurv": float(row[6])} for row in read_volume_file(stats / "lh.aparc.DKTatlas.stats")[61:]]
-    rh_dkt_atlas = [{"name": row[0], "SurfArea": int(row[2]), "GrayVol": int(row[3]), "ThickAvg": float(row[4]), "MeanCurv": float(row[6])} for row in read_volume_file(stats / "rh.aparc.DKTatlas.stats")[61:]]
+    lh_dkt_atlas = [{
+        "Structure": row[0],
+        "Surface Area (mm2)": int(row[2]),
+        "Gray Matter Vol (mm3)": int(row[3]),
+        "Thickness Avg (mm)": float(row[4]),
+        "Mean Curvature (mm-1)": float(row[6])
+    } for row in read_volume_file(stats / "lh.aparc.DKTatlas.stats")[61:]]
+
+    rh_dkt_atlas = [{
+        "Structure": row[0],
+        "Surface Area (mm2)": int(row[2]),
+        "Gray Matter Vol (mm3)": int(row[3]),
+        "Thickness Avg (mm)": float(row[4]),
+        "Mean Curvature (mm-1)": float(row[6])
+    } for row in read_volume_file(stats / "rh.aparc.DKTatlas.stats")[61:]]
 
     cortical = {
         "aseg": aseg,
@@ -234,16 +247,16 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
                 cumulative_data[top_key] = {}
                 counts[top_key] = {}
             for entry in entries:
-                name = entry.get('name')
+                name = entry.get("Structure")
                 if not name:
-                    print(f"Warning: Missing 'name' in entry {entry} in file {path}")
+                    print(f"Warning: Missing 'Structure' in entry {entry} in file {path}")
                     continue
                 if name not in cumulative_data[top_key]:
                     cumulative_data[top_key][name] = defaultdict(float)
                     counts[top_key][name] = 0
                 counts[top_key][name] += 1
                 for key, value in entry.items():
-                    if key != 'name':
+                    if key != "Structure":
                         if isinstance(value, (int, float)):
                             cumulative_data[top_key][name][key] += value
                         else:
@@ -259,13 +272,13 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
             if count == 0:
                 print(f"Warning: No data to average for '{name}' under '{top_key}'")
                 continue
-            averaged_entry = {'name': name}
+            averaged_entry = {"Structure": name}
             for key, total in values_dict.items():
                 average_value = total / count
                 averaged_entry[key] = round(average_value, 2)
             averaged_result[top_key].append(averaged_entry)
         # Optionally sort the entries by 'name'
-        averaged_result[top_key].sort(key=lambda x: x['name'])
+        averaged_result[top_key].sort(key=lambda x: x["Structure"])
 
     output_file = json_path / "AVERAGES" / main_type
     try:
