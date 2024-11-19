@@ -114,15 +114,23 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
 
 @app.route("/cortical")
 def cortical():
-    with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/cortical.json"), mode="r") as f:
-        cortical = json.load(fp=f)
-    return jsonify(cortical)
+    try:
+        with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/cortical.json"), mode="r") as f:
+            cortical = json.load(fp=f)
+        return jsonify(cortical)
+    except FileNotFoundError as e:
+        print(e)
+        return "No Data"
 
 @app.route("/subcortical")
 def subcortical():
-    with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/subcortical.json"), mode="r") as f:
-        subcortical = json.load(fp=f)
-    return jsonify(subcortical)
+    try:
+        with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/subcortical.json"), mode="r") as f:
+            subcortical = json.load(fp=f)
+        return jsonify(subcortical)
+    except FileNotFoundError as e:
+        print(e)
+        return "No Data"
 
 
 if __name__ == "__main__":
