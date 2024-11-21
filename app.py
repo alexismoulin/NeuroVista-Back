@@ -132,6 +132,11 @@ def subcortical():
         print(e)
         return "No Data"
 
+@app.route("/series")
+def series():
+    series_list = get_folder_names(directory=Path("./DATA/ST1/DICOM"))
+    return jsonify({"series": series_list})
+
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5001)
