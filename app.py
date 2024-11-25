@@ -6,7 +6,7 @@ from flask_cors import CORS
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension, get_folder_names, create_folders, reconall, segment_subregions, run_fastsurfer
+from utils import add_dcm_extension, get_folder_names, create_folders, reconall, process_lesions, segment_subregions, run_fastsurfer
 from jsonifier import run_jsonifier, run_json_average
 import logging
 from sys import platform
@@ -32,6 +32,7 @@ def upload():
 
 @app.route("/run_script", methods=["POST"])
 def run_script() -> tuple[Response, int] | tuple[str, int]:
+    # Preparing files
     print("FORM: ", request.form)
     study = request.form.get("study").replace(" ", "_")
     if not study:
@@ -39,11 +40,13 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
     notes = request.form.get("notes")
 
     base_path = Path("./DATA") / study
-    dicom_directory, nifti_directory, freesurfer_path, fastsurfer_path, workflows_path, json_folder = create_folders(base_path=base_path)
+    (dicom_directory, nifti_directory, freesurfer_path,
+     samseg_path, fastsurfer_path, workflows_path, json_folder) = create_folders(base_path=base_path)
 
     with open(json_folder / 'notes.json', 'w') as f:
         json.dump({"notes": notes}, f)
 
+    # Copying DICOMS
     try:
         for file in request.files.getlist("dicoms"):
             try:
@@ -59,6 +62,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         print("Folders: ", folders)
         logging.info("DICOM files saved successfully")
 
+        # Creating NIFTI
         for folder in folders:
             dicom2nifti.dicom_series_to_nifti(
                 original_dicom_directory=dicom_directory / folder,
@@ -66,9 +70,15 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
             )
         logging.info("NIFTI conversion completed")
 
+        # Freesurfer Recon-all
         reconall(base_dir=str(base_path.absolute()))
-        logging.info("FreeSurfer processing completed")
+        logging.info("FreeSurfer recon-all processing completed")
 
+        # Freesurfer SAMSEG
+        for folder in folders:
+            process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
+
+        # Freesurfer subcortical
         for folder in folders:
             for structure in ["thalamus", "brainstem", "hippo-amygdala"]:
                 segment_subregions(structure=structure, subject_id=folder, subject_dir=base_path / "FREESURFER")
@@ -76,10 +86,10 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
 
         logging.info("Subcortical segmentation completed")
 
+        # Fastsurfer subcortical
         if platform == "darwin":
             os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
-        # Set up the FastSurfer node with inputs
         for folder in folders:
             run_fastsurfer(
                 fs_dir=pathlib.Path.home() / "FastSurfer",
@@ -93,6 +103,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
 
         logging.info("Extra subcortical segmentation completed")
 
+        # Creating JSON Files
         for folder in folders:
             (json_folder / folder).mkdir(parents=True, exist_ok=True)
             run_jsonifier(
@@ -101,6 +112,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
                 output_folder=json_folder / folder
             )
 
+        # Creating JSON Averages
         (json_folder / "AVERAGES").mkdir(parents=True, exist_ok=True)
         run_json_average(json_path=json_folder, folders=folders, main_type="cortical.json")
         run_json_average(json_path=json_folder, folders=folders, main_type="subcortical.json")

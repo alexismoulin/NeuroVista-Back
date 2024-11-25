@@ -9,13 +9,16 @@ import logging
 
 logging.basicConfig(level=logging.INFO)
 
+
 def add_dcm_extension(filename: str) -> str:
     return filename if filename.lower().endswith('.dcm') else filename + '.dcm'
+
 
 def get_folder_names(directory):
     # List all items in the directory and filter to include only directories
     folder_names = [name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]
     return folder_names
+
 
 def create_folders(base_path: pathlib.Path) -> tuple:
     dicom_directory = base_path / "DICOM"
@@ -24,13 +27,15 @@ def create_folders(base_path: pathlib.Path) -> tuple:
     nifti_directory.mkdir(parents=True, exist_ok=True)
     freesurfer_path = base_path / "FREESURFER"
     freesurfer_path.mkdir(parents=True, exist_ok=True)
+    samseg_path = base_path / "SAMSEG"
+    samseg_path.mkdir(parents=True, exist_ok=True)
     fastsurfer_path = base_path / "FASTSURFER"
     fastsurfer_path.mkdir(parents=True, exist_ok=True)
     workflows_path = base_path / "WORKFLOWS"
     workflows_path.mkdir(parents=True, exist_ok=True)
     json_folder = base_path / "JSON"
     json_folder.mkdir(parents=True, exist_ok=True)
-    return dicom_directory, nifti_directory, freesurfer_path, fastsurfer_path, workflows_path, json_folder
+    return dicom_directory, nifti_directory, freesurfer_path, samseg_path, fastsurfer_path, workflows_path, json_folder
 
 
 def reconall(base_dir: str):
@@ -106,6 +111,22 @@ def reconall(base_dir: str):
         logging.info("Recon-all completed for all subjects.")
     except Exception as e:
         logging.error(f"Error in FreeSurfer recon-all: {e}")
+
+
+def process_lesions(freesurfer_path: pathlib.Path, samseg_path: pathlib.Path, series: str):
+    if (samseg_path/series/"samseg.stats").is_file():
+        logging.info(msg=f"{samseg_path/series/'samseg.stats'} already exists - skipping ")
+        return
+    else:
+        # Define the SAMSEG command
+        samseg_cmd = CommandLine(
+            command='run_samseg',
+            args=f"--input {freesurfer_path/series}/mri/brain.mgz --output {samseg_path/series} --lesion"
+        )
+
+        # Execute the command
+        samseg_cmd.run()
+        logging.info(msg=f"{samseg_path / series} created ")
 
 
 def segment_subregions(structure: str, subject_id: str, subject_dir: pathlib.Path):
