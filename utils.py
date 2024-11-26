@@ -1,6 +1,7 @@
 import os
 from os.path import join as opj
 import pathlib
+import nibabel as nib
 
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, Node, MapNode
@@ -36,6 +37,16 @@ def create_folders(base_path: pathlib.Path) -> tuple:
     json_folder = base_path / "JSON"
     json_folder.mkdir(parents=True, exist_ok=True)
     return dicom_directory, nifti_directory, freesurfer_path, samseg_path, fastsurfer_path, workflows_path, json_folder
+
+
+def get_nifti_dimensions(file_path: pathlib.Path) -> tuple:
+    # Load the NIfTI file
+    nifti_image = nib.load(filename=file_path)
+
+    # Get the image shape (dimensions)
+    dimensions = nifti_image.shape
+
+    return dimensions
 
 
 def reconall(base_dir: str):

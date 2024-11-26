@@ -6,7 +6,8 @@ from flask_cors import CORS
 from pathlib import Path
 import dicom2nifti
 import os
-from utils import add_dcm_extension, get_folder_names, create_folders, reconall, process_lesions, segment_subregions, run_fastsurfer
+from utils import (add_dcm_extension, get_folder_names, create_folders, get_nifti_dimensions,
+                   reconall, process_lesions, segment_subregions, run_fastsurfer)
 from jsonifier import run_jsonifier, run_json_average
 import logging
 from sys import platform
@@ -146,8 +147,10 @@ def subcortical():
 
 @app.route("/series")
 def series():
-    series_list = get_folder_names(directory=Path("./DATA/ST1/DICOM"))
-    return jsonify({"series": series_list})
+    dicoms = Path("./DATA/ST1/DICOM")
+    series_list = get_folder_names(directory=dicoms)
+    series_dict = {s: get_nifti_dimensions(file_path=Path(f"./DATA/ST1/NIFTI/{s}.nii.gz")) for s in series_list}
+    return jsonify(series_dict)
 
 
 if __name__ == "__main__":
