@@ -287,3 +287,28 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
         print(f"Averaged data written to {output_file}")
     except Exception as e:
         print(f"Error writing to file {output_file}: {e}")
+
+
+def run_global_json(folders: List[str]):
+
+    global_subcortical_dict = dict()
+    global_cortical_dict = dict()
+    json_path = pathlib.Path("./DATA/ST1/JSON")
+
+    for folder in folders:
+        with open(file=json_path / folder / "subcortical.json", mode='r') as file:
+            global_subcortical_dict[folder] = json.load(file)
+        with open(file=json_path / folder / "cortical.json", mode='r') as file:
+            global_cortical_dict[folder] = json.load(file)
+
+    with open(file=json_path / "AVERAGES" / "subcortical.json", mode='r') as file:
+        global_subcortical_dict["AVERAGES"] = json.load(file)
+
+    with open(file=json_path / "AVERAGES" / "cortical.json", mode='r') as file:
+        global_cortical_dict["AVERAGES"] = json.load(file)
+
+    with open(file=json_path / "subcortical.json", mode="w") as outfile:
+        json.dump(obj=global_subcortical_dict, fp=outfile, indent=4)
+
+    with open(file=json_path / "cortical.json", mode="w") as outfile:
+        json.dump(obj=global_cortical_dict, fp=outfile, indent=4)

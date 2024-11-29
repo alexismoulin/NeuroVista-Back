@@ -8,7 +8,7 @@ import dicom2nifti
 import os
 from utils import (add_dcm_extension, get_folder_names, create_folders, get_nifti_dimensions,
                    reconall, process_lesions, segment_subregions, run_fastsurfer)
-from jsonifier import run_jsonifier, run_json_average
+from jsonifier import run_jsonifier, run_json_average, run_global_json
 import logging
 from sys import platform
 
@@ -76,8 +76,8 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         logging.info("FreeSurfer recon-all processing completed")
 
         # Freesurfer SAMSEG
-        for folder in folders:
-            process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
+        # for folder in folders:
+        #     process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
 
         # Freesurfer subcortical
         for folder in folders:
@@ -118,6 +118,8 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         run_json_average(json_path=json_folder, folders=folders, main_type="cortical.json")
         run_json_average(json_path=json_folder, folders=folders, main_type="subcortical.json")
 
+        run_global_json(folders=folders)
+
         logging.info("JSON files generation completed")
 
         return "done", 200
@@ -125,25 +127,28 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         logging.error(f"Error during script execution: {e}")
         return jsonify({"error": "Processing failed"}), 500
 
+
 @app.route("/cortical")
 def cortical():
     try:
-        with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/cortical.json"), mode="r") as f:
+        with open(file="./DATA/ST1/JSON/cortical.json", mode="r") as f:
             cortical = json.load(fp=f)
         return jsonify(cortical)
     except FileNotFoundError as e:
         print(e)
         return "No Data"
 
+
 @app.route("/subcortical")
 def subcortical():
     try:
-        with open(file=Path(f"./DATA/ST1/JSON/AVERAGES/subcortical.json"), mode="r") as f:
+        with open(file="./DATA/ST1/JSON/subcortical.json", mode="r") as f:
             subcortical = json.load(fp=f)
         return jsonify(subcortical)
     except FileNotFoundError as e:
         print(e)
         return "No Data"
+
 
 @app.route("/series")
 def series():
