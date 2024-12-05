@@ -156,10 +156,31 @@ def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path
     return subcortical
 
 
-def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
+def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict]:
+    hypointensities = [
+        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
+        for row in read_volume_file(fs_stats / "aseg.stats")[79:] if "hypointensities" in row[4]
+    ]
+    lesions = [
+        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
+        for row in read_volume_file(samseg_path / "samseg.fs.stats") if "Lesions" in row[4]
+    ]
+
+    return hypointensities + lesions
+
+
+def get_cortical(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, list]:
     """Extracts cortical volumes and parcellations."""
-    aseg = [{"Structure": row[4], "Volume (mm3)": float(row[3])} for row in read_volume_file(stats / "aseg.stats")[79:]]
+    # ASEG
+    aseg = [
+        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
+        for row in read_volume_file(stats / "aseg.stats")[79:]
+        if "hypointensities" not in row[4]
+    ]
+    # Brain
     brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in read_volume_file(stats / "brainvol.stats")]
+    # Lesions
+    lesions = get_lesions(fs_stats=stats, samseg_path=samseg_path)
 
     wm_data = read_volume_file(stats / "wmparc.stats")[65:]
     wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in wm_data if "wm-lh" in row[4]]
@@ -193,16 +214,17 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
         "brain": brainvol,
         "whitematter": wm_vols,
         "lh_dkatlas": lh_dkt_atlas,
-        "rh_dkatlas": rh_dkt_atlas
+        "rh_dkatlas": rh_dkt_atlas,
+        "lesions": lesions
     }
 
     return cortical
 
 
-def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, output_folder: pathlib.Path):
+def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, samseg_path: pathlib.Path, output_folder: pathlib.Path):
     """Runs the process of generating JSON files for subcortical and cortical volumes."""
     subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri", fastsurfer_path=fastsurfer_path / "stats")
-    cortical_dict = get_cortical(stats=freesurfer_path / "stats")
+    cortical_dict = get_cortical(stats=freesurfer_path / "stats", samseg_path=samseg_path)
 
     # Write JSON objects to files
     with open(file=output_folder / "subcortical.json", mode="w") as outfile:

@@ -76,8 +76,8 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         logging.info("FreeSurfer recon-all processing completed")
 
         # Freesurfer SAMSEG
-        # for folder in folders:
-        #     process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
+        for folder in folders:
+            process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
 
         # Freesurfer subcortical
         for folder in folders:
@@ -110,6 +110,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
             run_jsonifier(
                 freesurfer_path=freesurfer_path / folder,
                 fastsurfer_path=fastsurfer_path / folder,
+                samseg_path=samseg_path / folder,
                 output_folder=json_folder / folder
             )
 
