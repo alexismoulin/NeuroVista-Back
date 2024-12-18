@@ -118,6 +118,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         (json_folder / "AVERAGES").mkdir(parents=True, exist_ok=True)
         run_json_average(json_path=json_folder, folders=folders, main_type="cortical.json")
         run_json_average(json_path=json_folder, folders=folders, main_type="subcortical.json")
+        run_json_average(json_path=json_folder, folders=folders, main_type="general.json")
 
         run_global_json(folders=folders)
 
@@ -146,6 +147,17 @@ def subcortical():
         with open(file="./DATA/ST1/JSON/subcortical.json", mode="r") as f:
             subcortical = json.load(fp=f)
         return jsonify(subcortical)
+    except FileNotFoundError as e:
+        print(e)
+        return "No Data"
+
+
+@app.route("/general")
+def general():
+    try:
+        with open(file="./DATA/ST1/JSON/general.json", mode="r") as f:
+            general = json.load(fp=f)
+        return jsonify(general)
     except FileNotFoundError as e:
         print(e)
         return "No Data"

@@ -169,19 +169,11 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict]
     return hypointensities + lesions
 
 
-def get_cortical(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, list]:
+def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
     """Extracts cortical volumes and parcellations."""
-    # ASEG
-    aseg = [
-        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
-        for row in read_volume_file(stats / "aseg.stats")[79:]
-        if "hypointensities" not in row[4]
-    ]
     # Brain
     brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in read_volume_file(stats / "brainvol.stats")]
-    # Lesions
-    lesions = get_lesions(fs_stats=stats, samseg_path=samseg_path)
-
+    # White Matter
     wm_data = read_volume_file(stats / "wmparc.stats")[65:]
     wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in wm_data if "wm-lh" in row[4]]
     wm_vol_rhs = [{row[4].replace("wm-rh-", ""): float(row[3])} for row in wm_data if "wm-rh" in row[4]]
@@ -192,7 +184,7 @@ def get_cortical(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, li
         "LHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_lhs),
         "RHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_rhs),
     } for name in names]
-
+    # Cortical Parcellations
     lh_dkt_atlas = [{
         "Structure": row[0],
         "Surface Area (mm2)": int(row[2]),
@@ -210,21 +202,38 @@ def get_cortical(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, li
     } for row in read_volume_file(stats / "rh.aparc.DKTatlas.stats")[61:]]
 
     cortical = {
-        "aseg": aseg,
         "brain": brainvol,
         "whitematter": wm_vols,
         "lh_dkatlas": lh_dkt_atlas,
         "rh_dkatlas": rh_dkt_atlas,
-        "lesions": lesions
     }
 
     return cortical
 
 
+def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, list]:
+    # ASEG
+    aseg = [
+        {"Structure": row[4], "Volume (mm3)": float(row[3])}
+        for row in read_volume_file(stats / "aseg.stats")[79:]
+        if "hypointensities" not in row[4]
+    ]
+    # Lesions
+    lesions = get_lesions(fs_stats=stats, samseg_path=samseg_path)
+
+    general = {
+        "aseg": aseg,
+        "lesions": lesions
+    }
+
+    return general
+
+
 def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, samseg_path: pathlib.Path, output_folder: pathlib.Path):
     """Runs the process of generating JSON files for subcortical and cortical volumes."""
     subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri", fastsurfer_path=fastsurfer_path / "stats")
-    cortical_dict = get_cortical(stats=freesurfer_path / "stats", samseg_path=samseg_path)
+    cortical_dict = get_cortical(stats=freesurfer_path / "stats")
+    general_dict = get_general(stats=freesurfer_path / "stats", samseg_path=samseg_path)
 
     # Write JSON objects to files
     with open(file=output_folder / "subcortical.json", mode="w") as outfile:
@@ -232,6 +241,9 @@ def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, 
 
     with open(file=output_folder / "cortical.json", mode="w") as outfile:
         json.dump(obj=cortical_dict, fp=outfile, indent=4)
+
+    with open(file=output_folder / "general.json", mode="w") as outfile:
+        json.dump(obj=general_dict, fp=outfile, indent=4)
 
 
 def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str):
@@ -315,6 +327,7 @@ def run_global_json(folders: List[str]):
 
     global_subcortical_dict = dict()
     global_cortical_dict = dict()
+    global_general_dict = dict()
     json_path = pathlib.Path("./DATA/ST1/JSON")
 
     for folder in folders:
@@ -322,6 +335,8 @@ def run_global_json(folders: List[str]):
             global_subcortical_dict[folder] = json.load(file)
         with open(file=json_path / folder / "cortical.json", mode='r') as file:
             global_cortical_dict[folder] = json.load(file)
+        with open(file=json_path / folder / "general.json", mode='r') as file:
+            global_general_dict[folder] = json.load(file)
 
     with open(file=json_path / "AVERAGES" / "subcortical.json", mode='r') as file:
         global_subcortical_dict["AVERAGES"] = json.load(file)
@@ -329,8 +344,14 @@ def run_global_json(folders: List[str]):
     with open(file=json_path / "AVERAGES" / "cortical.json", mode='r') as file:
         global_cortical_dict["AVERAGES"] = json.load(file)
 
+    with open(file=json_path / "AVERAGES" / "general.json", mode='r') as file:
+        global_general_dict["AVERAGES"] = json.load(file)
+
     with open(file=json_path / "subcortical.json", mode="w") as outfile:
         json.dump(obj=global_subcortical_dict, fp=outfile, indent=4)
 
     with open(file=json_path / "cortical.json", mode="w") as outfile:
         json.dump(obj=global_cortical_dict, fp=outfile, indent=4)
+
+    with open(file=json_path / "general.json", mode="w") as outfile:
+        json.dump(obj=global_general_dict, fp=outfile, indent=4)
