@@ -1,8 +1,9 @@
-import pandas as pd
 import json
 import pathlib
-from typing import Dict, List, Union, Any
 from collections import defaultdict
+from typing import Dict, List, Union
+
+import pandas as pd
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Union[float, None]:
@@ -26,7 +27,7 @@ def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]
     """Process hippocampus volumes from MRI files."""
     lhs_data = read_volume_file(mri / "lh.hippoSfVolumes.txt")
     rhs_data = read_volume_file(mri / "rh.hippoSfVolumes.txt")
-    
+
     return [{
         "Structure": field[0][0],
         "LHS Volume (mm3)": round(float(field[0][1]), 2),
@@ -44,9 +45,9 @@ def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     rhs_thalamic_nuclei = [
         {field[0].replace("Right-", ""): round(float(field[1]), 2)} for field in thalamic_data if "Right" in field[0]
     ]
-    
+
     names = [field[0].replace("Left-", "") for field in thalamic_data if "Left" in field[0]]
-    
+
     return [{
         "Structure": name,
         "LHS Volume (mm3)": get_volume(name=name, nuclei=lhs_thalamic_nuclei),
@@ -81,7 +82,8 @@ def process_hypothalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]
     hypothalamus_data["right whole"] = hypothalamus_data.pop("whole right")
 
     lhs_hypothalamus = [{key.replace("left ", ""): value} for key, value in hypothalamus_data.items() if "left" in key]
-    rhs_hypothalamus = [{key.replace("right ", ""): value} for key, value in hypothalamus_data.items() if "right" in key]
+    rhs_hypothalamus = [{key.replace("right ", ""): value} for key, value in hypothalamus_data.items() if
+                        "right" in key]
 
     names = [key.replace("left ", "") for key in hypothalamus_data.keys() if "left" in key]
 
@@ -158,11 +160,11 @@ def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path
 
 def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict]:
     hypointensities = [
-        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
+        {"Structure": row[4], "Volume (mm3)": float(row[3])}
         for row in read_volume_file(fs_stats / "aseg.stats")[79:] if "hypointensities" in row[4]
     ]
     lesions = [
-        {"Structure": row[4], "Volume (mm3)": float(row[3])} 
+        {"Structure": row[4], "Volume (mm3)": float(row[3])}
         for row in read_volume_file(samseg_path / "samseg.fs.stats") if "Lesions" in row[4]
     ]
 
@@ -172,7 +174,8 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict]
 def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
     """Extracts cortical volumes and parcellations."""
     # Brain
-    brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in read_volume_file(stats / "brainvol.stats")]
+    brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in
+                read_volume_file(stats / "brainvol.stats")]
     # White Matter
     wm_data = read_volume_file(stats / "wmparc.stats")[65:]
     wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in wm_data if "wm-lh" in row[4]]
@@ -229,9 +232,11 @@ def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, lis
     return general
 
 
-def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, samseg_path: pathlib.Path, output_folder: pathlib.Path):
+def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, samseg_path: pathlib.Path,
+                  output_folder: pathlib.Path):
     """Runs the process of generating JSON files for subcortical and cortical volumes."""
-    subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri", fastsurfer_path=fastsurfer_path / "stats")
+    subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri",
+                                       fastsurfer_path=fastsurfer_path / "stats")
     cortical_dict = get_cortical(stats=freesurfer_path / "stats")
     general_dict = get_general(stats=freesurfer_path / "stats", samseg_path=samseg_path)
 
@@ -324,7 +329,6 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
 
 
 def run_global_json(folders: List[str]):
-
     global_subcortical_dict = dict()
     global_cortical_dict = dict()
     global_general_dict = dict()

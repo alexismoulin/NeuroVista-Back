@@ -1,24 +1,27 @@
-import pathlib
-import pydicom
 import json
+import logging
+import os
+from pathlib import Path
+from sys import platform
+
+import dicom2nifti
+import pydicom
 from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
-from pathlib import Path
-import dicom2nifti
-import os
+
+from jsonifier import run_jsonifier, run_json_average, run_global_json
 from utils import (add_dcm_extension, get_folder_names, create_folders, get_nifti_dimensions,
                    reconall, process_lesions, segment_subregions, run_fastsurfer)
-from jsonifier import run_jsonifier, run_json_average, run_global_json
-import logging
-from sys import platform
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 logging.basicConfig(level=logging.INFO)
 
+
 @app.route("/")
 def home() -> str:
     return "Home"
+
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -30,6 +33,7 @@ def upload():
     except Exception as e:
         logging.error(f"Error during file upload: {e}")
         return jsonify({"error": "File upload failed"}), 500
+
 
 @app.route("/run_script", methods=["POST"])
 def run_script() -> tuple[Response, int] | tuple[str, int]:
@@ -93,7 +97,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
 
         for folder in folders:
             run_fastsurfer(
-                fs_dir=pathlib.Path.home() / "FastSurfer",
+                fs_dir=Path.home() / "FastSurfer",
                 t1=freesurfer_path.absolute() / folder / "mri" / "T1.mgz",
                 sid=folder,
                 sd=fastsurfer_path.absolute(),

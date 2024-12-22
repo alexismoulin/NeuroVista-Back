@@ -1,12 +1,12 @@
+import logging
 import os
-from os.path import join as opj
 import pathlib
-import nibabel as nib
+from os.path import join as opj
 
+import nibabel as nib
+from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, Node, MapNode
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits
-import logging
 
 logging.basicConfig(level=logging.INFO)
 
@@ -125,14 +125,14 @@ def reconall(base_dir: str):
 
 
 def process_lesions(freesurfer_path: pathlib.Path, samseg_path: pathlib.Path, series: str):
-    if (samseg_path/series/"samseg.stats").is_file():
-        logging.info(msg=f"{samseg_path/series/'samseg.stats'} already exists - skipping ")
+    if (samseg_path / series / "samseg.stats").is_file():
+        logging.info(msg=f"{samseg_path / series / 'samseg.stats'} already exists - skipping ")
         return
     else:
         # Define the SAMSEG command
         samseg_cmd = CommandLine(
             command='run_samseg',
-            args=f"--input {freesurfer_path/series}/mri/brain.mgz --output {samseg_path/series} --lesion"
+            args=f"--input {freesurfer_path / series}/mri/brain.mgz --output {samseg_path / series} --lesion"
         )
 
         # Execute the command
@@ -181,7 +181,7 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: pathlib.Pat
 
 def segment_hypothalamus(subject_id: str, subject_dir: str):
     command = CommandLine(
-        command="mri_segment_hypothalamic_subunits", 
+        command="mri_segment_hypothalamic_subunits",
         args=f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
     )
     logging.info(command.cmdline)
@@ -190,6 +190,7 @@ def segment_hypothalamus(subject_id: str, subject_dir: str):
         logging.info("Hypothalamus segmentation completed")
     except Exception as e:
         logging.error(f"Error during hypothalamus segmentation: {e}")
+
 
 # Define a custom interface for run_fastsurfer.sh
 class RunFastSurfer(CommandLine):
@@ -214,7 +215,6 @@ def run_fastsurfer(fs_dir: pathlib.Path,
                    wf_dir: pathlib.Path,
                    parallel: bool,
                    threads: int):
-
     # Check if files already exist
     output_files = [
         sd / sid / "mri" / "cerebellum.CerebNet.nii.gz",
@@ -255,4 +255,3 @@ def run_fastsurfer(fs_dir: pathlib.Path,
         logging.info("FastSurfer workflow completed")
     except Exception as e:
         logging.error(f"Error during FastSurfer: {e}")
-
