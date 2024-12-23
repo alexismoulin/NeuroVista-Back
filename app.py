@@ -3,6 +3,7 @@ import logging
 import os
 from pathlib import Path
 from sys import platform
+import time
 
 import dicom2nifti
 import pydicom
@@ -16,11 +17,40 @@ from utils import (add_dcm_extension, get_folder_names, create_folders, get_nift
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 logging.basicConfig(level=logging.INFO)
+# A global queue (in-memory) to hold messages about step completions
+# In production, you might use Redis or a thread-safe queue, especially for multi-process setups
+STEP_COMPLETION_QUEUE = []
 
 
 @app.route("/")
 def home() -> str:
     return "Home"
+
+
+@app.route("/stream", methods=["GET"])
+def stream():
+    """
+    This endpoint streams events to the frontend in real time using SSE.
+    """
+    def event_stream():
+        """
+        Generator function that yields Server-Sent Events (SSE) whenever a step is completed.
+        We’ll use a while-True loop to wait for new messages from an internal queue,
+        or we could yield them directly from the script if we integrate them differently.
+        """
+        # For demonstration, we’ll just listen to some global or internal queue.
+
+        # If you store events in a queue, you can pop from that queue here.
+        # or keep reading from a queue
+        # This is a naive example of a wait/notify mechanism
+        while True:
+            if len(STEP_COMPLETION_QUEUE) > 0:
+                step_completed = STEP_COMPLETION_QUEUE.pop(0)
+                # SSE format: data: <your message>\n\n
+                yield f"data: {step_completed}\n\n"
+            time.sleep(1)  # Prevent 100% CPU usage
+
+    return Response(event_stream(), mimetype="text/event-stream")
 
 
 @app.route('/upload', methods=['POST'])
@@ -66,6 +96,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         folders = get_folder_names(directory=dicom_directory)
         print("Folders: ", folders)
         logging.info("DICOM files saved successfully")
+        STEP_COMPLETION_QUEUE.append("dicom")  # Notify SSE after step 1 completes
 
         # Creating NIFTI
         for folder in folders:
@@ -74,14 +105,18 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
                 output_file=nifti_directory / f"{folder}.nii.gz"
             )
         logging.info("NIFTI conversion completed")
+        STEP_COMPLETION_QUEUE.append("nifti")  # Notify SSE after step 2 completes
 
         # Freesurfer Recon-all
         reconall(base_dir=str(base_path.absolute()))
         logging.info("FreeSurfer recon-all processing completed")
+        STEP_COMPLETION_QUEUE.append("recon")  # Notify SSE after step 3 completes
 
         # Freesurfer SAMSEG
         for folder in folders:
             process_lesions(freesurfer_path=freesurfer_path, samseg_path=samseg_path, series=folder)
+        logging.info("SAMSEG processing completed")
+        STEP_COMPLETION_QUEUE.append("lesions")  # Notify SSE after step 4 completes
 
         # Freesurfer subcortical
         for folder in folders:
@@ -90,6 +125,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
                 logging.info(f"{structure} segmentation completed")
 
         logging.info("Subcortical segmentation completed")
+        STEP_COMPLETION_QUEUE.append("subs1")  # Notify SSE after step 5 completes
 
         # Fastsurfer subcortical
         if platform == "darwin":
@@ -107,6 +143,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
             )
 
         logging.info("Extra subcortical segmentation completed")
+        STEP_COMPLETION_QUEUE.append("subs2")  # Notify SSE after step 6 completes
 
         # Creating JSON Files
         for folder in folders:
@@ -127,6 +164,7 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         run_global_json(folders=folders)
 
         logging.info("JSON files generation completed")
+        STEP_COMPLETION_QUEUE.append("json")  # Notify SSE after step 7 completes
 
         return "done", 200
     except Exception as e:
