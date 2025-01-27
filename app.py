@@ -72,6 +72,9 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
     study = request.form.get("study").replace(" ", "_")
     if not study:
         return jsonify({"error": "Study not provided"}), 400
+    patient = request.form.get("patient").replace(" ", "_")
+    if not patient:
+        return jsonify({"error": "Patient name not provided"}), 400
     notes = request.form.get("notes")
 
     base_path = Path("./DATA") / study

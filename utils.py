@@ -75,12 +75,13 @@ def reconall(base_dir: str):
         subj_dir = opj(fs_folder, subj_id)
         if os.path.exists(subj_dir):
             # Check for expected FreeSurfer key output files
-            lh_white = opj(subj_dir, 'surf', 'lh.white')
-            rh_white = opj(subj_dir, 'surf', 'rh.white')
-            aparc_stats = opj(subj_dir, 'stats', 'aparc.stats')
-            aparc_aseg = opj(subj_dir, "mri", "aparc + aseg.mgz")
+            lh_white = opj(subj_dir, "surf", "lh.white")
+            rh_white = opj(subj_dir, "surf", "rh.white")
+            lh_aparc_stats = opj(subj_dir, "stats", "lh.aparc.stats")
+            rh_aparc_stats = opj(subj_dir, "stats", "rh.aparc.stats")
+            aparc_aseg = opj(subj_dir, "mri", "aparc+aseg.mgz")
             # Check if the key output files exist
-            if all(os.path.exists(f) for f in [lh_white, rh_white, aparc_stats, aparc_aseg]):
+            if all(os.path.exists(f) for f in [lh_white, rh_white, lh_aparc_stats, rh_aparc_stats, aparc_aseg]):
                 logging.info(f"Subject {subj_id} already processed. Skipping.")
                 continue
             else:
@@ -122,6 +123,11 @@ def reconall(base_dir: str):
         logging.info("Recon-all completed for all subjects.")
     except Exception as e:
         logging.error(f"Error in FreeSurfer recon-all: {e}")
+
+    logging.info(f"Subjects processed: {subjects_to_process}")
+    for f in [lh_white, rh_white, lh_aparc_stats, rh_aparc_stats, aparc_aseg]:
+        print(f)
+        print("\n----------------\n")
 
 
 def process_lesions(freesurfer_path: pathlib.Path, samseg_path: pathlib.Path, series: str):

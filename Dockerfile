@@ -36,4 +36,4 @@ WORKDIR /root
 EXPOSE 5001
 
 # Start Flask server
-CMD ["bash", "-c", "source $FREESURFER_HOME/SetUpFreeSurfer.sh && python app.py"]
+CMD ["bash", "-c", "source $FREESURFER_HOME/SetUpFreeSurfer.sh && python3.10 app.py"]
