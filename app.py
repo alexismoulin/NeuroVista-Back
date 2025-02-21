@@ -12,22 +12,22 @@ from flask_cors import CORS
 
 from jsonifier import run_jsonifier, run_json_average, run_global_json
 from utils import (add_dcm_extension, get_folder_names, create_folders, get_nifti_dimensions,
-                   reconall, process_lesions, segment_subregions, run_fastsurfer)
+                   reconall, process_lesions, segment_subregions, run_fastsurfer, process_corestats)
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 logging.basicConfig(level=logging.INFO)
 # A global queue (in-memory) to hold messages about step completions
-# In production, you might use Redis or a thread-safe queue, especially for multi-process setups
+# In production, you might use Redis or a thread-safe queue, especially for multiprocess setups
 STEP_COMPLETION_QUEUE = []
 
 
-@app.route("/")
+@app.get(rule="/")
 def home() -> str:
     return "Home"
 
 
-@app.route("/stream", methods=["GET"])
+@app.get(rule="/stream")
 def stream():
     """
     This endpoint streams events to the frontend in real time using SSE.
@@ -53,7 +53,7 @@ def stream():
     return Response(event_stream(), mimetype="text/event-stream")
 
 
-@app.route('/upload', methods=['POST'])
+@app.post(rule="/upload")
 def upload():
     try:
         form_data = {key: request.form[key] for key in request.form}
@@ -65,7 +65,7 @@ def upload():
         return jsonify({"error": "File upload failed"}), 500
 
 
-@app.route("/run_script", methods=["POST"])
+@app.post(rule="/run_script")
 def run_script() -> tuple[Response, int] | tuple[str, int]:
     # Preparing files
     print("FORM: ", request.form)
@@ -78,11 +78,11 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
     notes = request.form.get("notes")
 
     base_path = Path("./DATA") / study
-    (dicom_directory, nifti_directory, freesurfer_path,
-     samseg_path, fastsurfer_path, workflows_path, json_folder) = create_folders(base_path=base_path)
+    (dicom_directory, nifti_directory, freesurfer_path, samseg_path,
+     fastsurfer_path, workflows_path, json_folder, corestats_folder) = create_folders(base_path=base_path)
 
-    with open(json_folder / 'notes.json', 'w') as f:
-        json.dump({"notes": notes}, f)
+    note_path: Path = json_folder / "notes.json"
+    note_path.write_text(data=json.dumps(obj={"notes": notes}), encoding="utf-8")
 
     # Copying DICOMS
     try:
@@ -167,6 +167,16 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         run_global_json(folders=folders)
 
         logging.info("JSON files generation completed")
+
+        # Creating Core Stats
+        for folder in folders:
+            (corestats_folder / folder).mkdir(parents=True, exist_ok=True)
+            process_corestats(
+                folder=folder,
+                freesurfer_path=freesurfer_path,
+                fastsurfer_path=fastsurfer_path,
+                corestats_dir=corestats_folder)
+
         STEP_COMPLETION_QUEUE.append("json")  # Notify SSE after step 7 completes
 
         return "done", 200
@@ -175,40 +185,40 @@ def run_script() -> tuple[Response, int] | tuple[str, int]:
         return jsonify({"error": "Processing failed"}), 500
 
 
-@app.route("/cortical")
+@app.get(rule="/cortical")
 def cortical():
     try:
         with open(file="./DATA/ST1/JSON/cortical.json", mode="r") as f:
-            cortical = json.load(fp=f)
-        return jsonify(cortical)
+            cortical_json = json.load(fp=f)
+        return jsonify(cortical_json)
     except FileNotFoundError as e:
         print(e)
         return "No Data"
 
 
-@app.route("/subcortical")
+@app.get(rule="/subcortical")
 def subcortical():
     try:
         with open(file="./DATA/ST1/JSON/subcortical.json", mode="r") as f:
-            subcortical = json.load(fp=f)
-        return jsonify(subcortical)
+            subcortical_json = json.load(fp=f)
+        return jsonify(subcortical_json)
     except FileNotFoundError as e:
         print(e)
         return "No Data"
 
 
-@app.route("/general")
+@app.get(rule="/general")
 def general():
     try:
         with open(file="./DATA/ST1/JSON/general.json", mode="r") as f:
-            general = json.load(fp=f)
-        return jsonify(general)
+            general_json = json.load(fp=f)
+        return jsonify(general_json)
     except FileNotFoundError as e:
         print(e)
         return "No Data"
 
 
-@app.route("/series")
+@app.get(rule="/series")
 def series():
     dicoms = Path("./DATA/ST1/DICOM")
     series_list = get_folder_names(directory=dicoms)

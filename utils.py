@@ -1,6 +1,7 @@
 import logging
 import os
 import pathlib
+import shutil
 from os.path import join as opj
 
 import nibabel as nib
@@ -12,16 +13,17 @@ logging.basicConfig(level=logging.INFO)
 
 
 def add_dcm_extension(filename: str) -> str:
-    return filename if filename.lower().endswith('.dcm') else filename + '.dcm'
+    """
+    Append '.dcm' to the filename if it doesn't already end with it.
+    """
+    return filename if filename.lower().endswith(".dcm") else filename + ".dcm"
 
 
-def get_folder_names(directory) -> list:
-    # List all items in the directory and filter to include only directories
-    folder_names = [name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]
-    return folder_names
+def get_folder_names(directory: pathlib.Path) -> list[str]:
+    return [p.name for p in directory.iterdir() if p.is_dir()]
 
 
-def create_folders(base_path: pathlib.Path) -> tuple[pathlib.Path]:
+def create_folders(base_path: pathlib.Path) -> tuple:
     dicom_directory = base_path / "DICOM"
     dicom_directory.mkdir(parents=True, exist_ok=True)
     nifti_directory = base_path / "NIFTI"
@@ -100,22 +102,22 @@ def reconall(base_dir: str):
         logging.info("All subjects have been processed. Nothing to do.")
         return
 
-    reconall = MapNode(
+    reconall_node = MapNode(
         interface=ReconAll(),
         name='reconall',
         iterfield=['subject_id', 'T1_files']
     )
 
-    reconall.inputs.subject_id = subjects_to_process
-    reconall.inputs.directive = 'all'
-    reconall.inputs.subjects_dir = fs_folder
-    reconall.inputs.T1_files = nifti_files_to_process
-    reconall.inputs.flags = "-qcache"
+    reconall_node.inputs.subject_id = subjects_to_process
+    reconall_node.inputs.directive = 'all'
+    reconall_node.inputs.subjects_dir = fs_folder
+    reconall_node.inputs.T1_files = nifti_files_to_process
+    reconall_node.inputs.flags = "-qcache"
 
     # Create a workflow and add the ReconAll MapNode
     wf = Workflow(name='reconall_workflow')
     wf.base_dir = opj(base_dir, "WORKFLOWS", "workingdir_reconflow")
-    wf.add_nodes([reconall])
+    wf.add_nodes([reconall_node])
 
     # Configure the workflow to continue even if one subject fails
     wf.config['execution'] = {'stop_on_first_crash': False}
@@ -201,20 +203,21 @@ def segment_hypothalamus(subject_id: str, subject_dir: str):
         logging.error(f"Error during hypothalamus segmentation: {e}")
 
 
+# Define the input fields for the command
+class RunFastSurferInputSpec(CommandLineInputSpec):
+    t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
+    sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
+    sd = Directory(argstr="--sd %s", mandatory=True, desc="Directory for FastSurfer output")
+    no_asegdkt = traits.Bool(argstr="--no_asegdkt", usedefault=True, desc="Omit ASEG and DKT segmentations")
+    parallel = traits.Bool(argstr="--parallel", usedefault=True, desc="Use parallel processing")
+    threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
+
+
 # Define a custom interface for run_fastsurfer.sh
 class RunFastSurfer(CommandLine):
-    _cmd = './run_fastsurfer.sh'  # Command to run FastSurfer
-    input_spec = CommandLineInputSpec
+    _cmd = "./run_fastsurfer.sh"  # Command to run FastSurfer
+    input_spec = RunFastSurferInputSpec
     output_spec = TraitedSpec
-
-    # Define the input fields for the command
-    class input_spec(CommandLineInputSpec):
-        t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
-        sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
-        sd = Directory(argstr="--sd %s", mandatory=True, desc="Directory for FastSurfer output")
-        no_asegdkt = traits.Bool(argstr="--no_asegdkt", usedefault=True, desc="Omit ASEG and DKT segmentations")
-        parallel = traits.Bool(argstr="--parallel", usedefault=True, desc="Use parallel processing")
-        threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
 
 
 def run_fastsurfer(fs_dir: pathlib.Path,
@@ -265,5 +268,24 @@ def run_fastsurfer(fs_dir: pathlib.Path,
     except Exception as e:
         logging.error(f"Error during FastSurfer: {e}")
 
-def process_corestats():
-    pass
+
+def process_corestats(folder: str, freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, corestats_dir: pathlib.Path):
+    # get all FreeSurfer stats files
+    stats_dir = freesurfer_path / folder / "stats"
+    stats_files = stats_dir.glob(pattern="*.stats")
+    for f in stats_files:
+        shutil.copy(src=f, dst=corestats_dir / folder)
+    # get all FreeSurfer mri txt files
+    mri_dir = freesurfer_path / folder / "mri"
+    mri_text_files = mri_dir.glob(pattern="*.txt")
+    for f in mri_text_files:
+        shutil.copy(src=f, dst=corestats_dir / folder)
+    # get all FastSurfer stats files
+    stats_dir2 = fastsurfer_path / folder / "stats"
+    stats_files2 = stats_dir2.glob(pattern="*.stats")
+    for f in stats_files2:
+        shutil.copy(src=f, dst=corestats_dir / folder)
+    # change file extension from .stats to .txt
+    for f in (corestats_dir / folder).glob(pattern="*.stats"):
+        renamed_file = f.with_suffix(".txt")  # Properly renames file extension
+        os.rename(src=f, dst=renamed_file)
