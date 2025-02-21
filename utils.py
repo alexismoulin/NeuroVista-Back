@@ -15,7 +15,7 @@ def add_dcm_extension(filename: str) -> str:
     return filename if filename.lower().endswith('.dcm') else filename + '.dcm'
 
 
-def get_folder_names(directory):
+def get_folder_names(directory) -> list:
     # List all items in the directory and filter to include only directories
     folder_names = [name for name in os.listdir(directory) if os.path.isdir(os.path.join(directory, name))]
     return folder_names
