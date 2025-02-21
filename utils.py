@@ -21,7 +21,7 @@ def get_folder_names(directory):
     return folder_names
 
 
-def create_folders(base_path: pathlib.Path) -> tuple:
+def create_folders(base_path: pathlib.Path) -> tuple[pathlib.Path]:
     dicom_directory = base_path / "DICOM"
     dicom_directory.mkdir(parents=True, exist_ok=True)
     nifti_directory = base_path / "NIFTI"
@@ -36,7 +36,10 @@ def create_folders(base_path: pathlib.Path) -> tuple:
     workflows_path.mkdir(parents=True, exist_ok=True)
     json_folder = base_path / "JSON"
     json_folder.mkdir(parents=True, exist_ok=True)
-    return dicom_directory, nifti_directory, freesurfer_path, samseg_path, fastsurfer_path, workflows_path, json_folder
+    corestats_folder = base_path / "CORESTATS"
+    corestats_folder.mkdir(parents=True, exist_ok=True)
+    return (dicom_directory, nifti_directory, freesurfer_path, samseg_path, 
+            fastsurfer_path, workflows_path, json_folder, corestats_folder)
 
 
 def get_nifti_dimensions(file_path: pathlib.Path) -> tuple:
@@ -261,3 +264,6 @@ def run_fastsurfer(fs_dir: pathlib.Path,
         logging.info("FastSurfer workflow completed")
     except Exception as e:
         logging.error(f"Error during FastSurfer: {e}")
+
+def process_corestats():
+    pass

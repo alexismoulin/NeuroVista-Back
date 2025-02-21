@@ -3,3 +3,4 @@
 .git
 DATA
 crash-*
+__pycache__
