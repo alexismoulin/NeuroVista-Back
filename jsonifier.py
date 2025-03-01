@@ -1,284 +1,330 @@
 import json
+import logging
 import pathlib
 from collections import defaultdict
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
+# Set up basic logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Union[float, None]:
-    """Helper function to retrieve the volume for a given nucleus name."""
-    for d in nuclei:
-        if name in d:
-            return d[name]
-    return None
+
+def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Optional[float]:
+    """
+    Retrieve the volume for a given nucleus name from a list of dictionaries.
+    """
+    return next((entry[name] for entry in nuclei if name in entry), None)
 
 
 def read_volume_file(file_path: pathlib.Path) -> List[List[str]]:
-    """Reads a text file and returns a list of split rows."""
-    if file_path.exists():
-        with open(file=file_path, mode="r") as f:
-            return [row.split() for row in f.readlines()]
-    else:
+    """
+    Reads a text file and returns a list of split rows.
+    Empty lines are skipped.
+    """
+    if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
+    lines = file_path.read_text().splitlines()
+    return [line.strip().split() for line in lines if line.strip()]
+
+
+def read_volume_file_skip(file_path: pathlib.Path, skip: int = 0) -> List[List[str]]:
+    """
+    Reads a file and skips the first `skip` lines.
+    """
+    return read_volume_file(file_path)[skip:]
+
+
+def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Processes two files containing paired volume information.
+    """
+    left_data = read_volume_file(left_file)
+    right_data = read_volume_file(right_file)
+    volumes = []
+    for left_row, right_row in zip(left_data, right_data):
+        try:
+            structure = left_row[0]
+            lhs_volume = round(float(left_row[1]), 2)
+            rhs_volume = round(float(right_row[1]), 2)
+            volumes.append({
+                "Structure": structure,
+                "LHS Volume (mm3)": lhs_volume,
+                "RHS Volume (mm3)": rhs_volume
+            })
+        except (IndexError, ValueError) as e:
+            logger.warning(f"Skipping row due to error: {e}")
+    return volumes
 
 
 def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """Process hippocampus volumes from MRI files."""
-    lhs_data = read_volume_file(mri / "lh.hippoSfVolumes.txt")
-    rhs_data = read_volume_file(mri / "rh.hippoSfVolumes.txt")
-
-    return [{
-        "Structure": field[0][0],
-        "LHS Volume (mm3)": round(float(field[0][1]), 2),
-        "RHS Volume (mm3)": round(float(field[1][1]), 2)
-    } for field in zip(lhs_data, rhs_data)]
-
-
-def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """Process thalamic nuclei volumes."""
-    thalamic_data = read_volume_file(mri / "ThalamicNuclei.volumes.txt")
-
-    lhs_thalamic_nuclei = [
-        {field[0].replace("Left-", ""): round(float(field[1]), 2)} for field in thalamic_data if "Left" in field[0]
-    ]
-    rhs_thalamic_nuclei = [
-        {field[0].replace("Right-", ""): round(float(field[1]), 2)} for field in thalamic_data if "Right" in field[0]
-    ]
-
-    names = [field[0].replace("Left-", "") for field in thalamic_data if "Left" in field[0]]
-
-    return [{
-        "Structure": name,
-        "LHS Volume (mm3)": get_volume(name=name, nuclei=lhs_thalamic_nuclei),
-        "RHS Volume (mm3)": get_volume(name=name, nuclei=rhs_thalamic_nuclei),
-    } for name in names]
+    """
+    Process hippocampus volumes from MRI files.
+    """
+    return process_paired_volumes(mri / "lh.hippoSfVolumes.txt", mri / "rh.hippoSfVolumes.txt")
 
 
 def process_amygdala(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """Process amygdala volumes."""
-    lhs_data = read_volume_file(mri / "lh.amygNucVolumes.txt")
-    rhs_data = read_volume_file(mri / "rh.amygNucVolumes.txt")
-
-    return [{
-        "Structure": field[0][0],
-        "LHS Volume (mm3)": round(float(field[0][1]), 2),
-        "RHS Volume (mm3)": round(float(field[1][1]), 2)
-    } for field in zip(lhs_data, rhs_data)]
+    """
+    Process amygdala volumes from MRI files.
+    """
+    return process_paired_volumes(mri / "lh.amygNucVolumes.txt", mri / "rh.amygNucVolumes.txt")
 
 
 def process_brain_stem(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """Process brain stem volumes."""
-    brain_stem_data = read_volume_file(mri / "brainstemSsLabels.volumes.txt")
-    return [{"Structure": field[0], "Volume (mm3)": round(float(field[1]), 2)} for field in brain_stem_data]
+    """
+    Process brain stem volumes from MRI files.
+    """
+    data = read_volume_file(mri / "brainstemSsLabels.volumes.txt")
+    volumes = []
+    for row in data:
+        try:
+            volumes.append({
+                "Structure": row[0],
+                "Volume (mm3)": round(float(row[1]), 2)
+            })
+        except (IndexError, ValueError) as e:
+            logger.warning(f"Error processing brain stem row {row}: {e}")
+    return volumes
 
 
-def process_hypothalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """Process hypothalamus volumes."""
-    hypothalamus_data = pd.read_csv(mri / "hypothalamic_subunits_volumes.v1.csv").to_dict(orient="records")[0]
-    del hypothalamus_data["subject"]
+def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Process thalamic nuclei volumes from MRI files.
+    """
+    data = read_volume_file(mri / "ThalamicNuclei.volumes.txt")
+    lhs_nuclei = [
+        {row[0].replace("Left-", ""): round(float(row[1]), 2)}
+        for row in data if "Left" in row[0]
+    ]
+    rhs_nuclei = [
+        {row[0].replace("Right-", ""): round(float(row[1]), 2)}
+        for row in data if "Right" in row[0]
+    ]
+    structure_names = [row[0].replace("Left-", "") for row in data if "Left" in row[0]]
+    return [{
+        "Structure": name,
+        "LHS Volume (mm3)": get_volume(name, lhs_nuclei),
+        "RHS Volume (mm3)": get_volume(name, rhs_nuclei),
+    } for name in structure_names]
 
-    hypothalamus_data["left whole"] = hypothalamus_data.pop("whole left")
-    hypothalamus_data["right whole"] = hypothalamus_data.pop("whole right")
 
-    lhs_hypothalamus = [{key.replace("left ", ""): value} for key, value in hypothalamus_data.items() if "left" in key]
-    rhs_hypothalamus = [{key.replace("right ", ""): value} for key, value in hypothalamus_data.items() if
-                        "right" in key]
+def process_hypothalamus_v1(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Process FreeSurfer hypothalamus volumes from a CSV file.
+    """
+    df = pd.read_csv(mri / "hypothalamic_subunits_volumes.v1.csv")
+    records = df.to_dict(orient="records")[0]
+    records.pop("subject", None)
 
-    names = [key.replace("left ", "") for key in hypothalamus_data.keys() if "left" in key]
+    # Rename keys for consistency
+    records["left whole"] = records.pop("whole left")
+    records["right whole"] = records.pop("whole right")
+
+    lhs = [{k.replace("left ", ""): v} for k, v in records.items() if "left" in k]
+    rhs = [{k.replace("right ", ""): v} for k, v in records.items() if "right" in k]
+    names = [k.replace("left ", "") for k in records if "left" in k]
 
     return [{
-        "name": name,
-        "lhs_volume": get_volume(name=name, nuclei=lhs_hypothalamus),
-        "rhs_volume": get_volume(name=name, nuclei=rhs_hypothalamus),
+        "Structure": name,
+        "LHS Volume (mm3)": get_volume(name, lhs),
+        "RHS Volume (mm3)": get_volume(name, rhs),
     } for name in names]
 
 
-# FastSurfer files
-def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, float]]:
-    """Processes hypothalamus MRI data file, extracting only the name and volume accurately."""
-    hypothalamus_data = read_volume_file(file_path=path)[55:]  # Skipping header
-
-    hypothalamus = []
-    for line in hypothalamus_data:
-        # Ensure the line has enough columns for both name and volume
-        if len(line) >= 5:
-            try:
-                # Parsing volume and struct name based on expected positions
-                volume = float(line[3])  # Volume_mm3 column
-                name = line[4]  # Start with the StructName part (ignoring additional numbers)
-
-                # Replace prefixes "L-" and "R-" with "LHS" and "RHS" respectively
-                if name.startswith("L-"):
-                    name = "Left" + name[1:]
-                elif name.startswith("R-"):
-                    name = "Right" + name[1:]
-
-                # Add the structured data to the result list
-                hypothalamus.append({"Structure": name, "Volume (mm3)": volume})
-            except ValueError:
-                # Skip rows where volume is not a valid float
-                continue
-
-    return hypothalamus
+def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Process FastSurfer hypothalamus MRI data from a stats file.
+    """
+    lines = read_volume_file_skip(path, skip=55)  # Skip header lines
+    volumes = []
+    for row in lines:
+        if len(row) < 5:
+            continue
+        try:
+            volume = float(row[3])
+            name = row[4]
+            if name.startswith("L-"):
+                name = "Left" + name[2:]
+            elif name.startswith("R-"):
+                name = "Right" + name[2:]
+            volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
+        except ValueError as e:
+            logger.warning(f"Skipping row {row} due to error: {e}")
+    return volumes
 
 
-def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, float]]:
-    """Processes MRI data file, extracting only the name and volume accurately."""
-    data = read_volume_file(file_path)[55:]  # Skipping header
-
-    result = []
-    for line in data:
-        # Ensure the line has enough columns for both name and volume
-        if len(line) >= 5:
-            try:
-                # Parsing volume and struct name based on expected positions
-                volume = float(line[3])  # Volume_mm3 column
-                name = line[4]  # Start with the StructName part (ignoring additional numbers)
-
-                # Add the structured data to the result list
-                result.append({"Structure": name, "Volume (mm3)": volume})
-            except ValueError:
-                # Skip rows where volume is not a valid float
-                continue
-
-    return result
+def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Process cerebellum volumes from a stats file.
+    """
+    lines = read_volume_file_skip(file_path, skip=55)  # Skip header lines
+    volumes = []
+    for row in lines:
+        if len(row) < 5:
+            continue
+        try:
+            volume = float(row[3])
+            name = row[4]
+            volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
+        except ValueError as e:
+            logger.warning(f"Skipping row {row} due to error: {e}")
+    return volumes
 
 
-def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path) -> Dict[str, list]:
-    """Extracts subcortical volumes."""
-    subcortical = {
-        "hippocampus": process_hippocampus(mri=freesurfer_path),
-        "thalamus": process_thalamus(mri=freesurfer_path),
-        "amygdala": process_amygdala(mri=freesurfer_path),
-        "brain_stem": process_brain_stem(mri=freesurfer_path),
-        "hypothalamus": process_hypothalamus_v2(path=fastsurfer_path / "hypothalamus.HypVINN.stats"),
-        "cerebellum": process_cerebellum(file_path=fastsurfer_path / "cerebellum.CerebNet.stats")
+def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path) -> Dict[str, Any]:
+    """
+    Extract subcortical volumes from various MRI data files.
+    """
+    return {
+        "hippocampus": process_hippocampus(freesurfer_path / "mri"),
+        "thalamus": process_thalamus(freesurfer_path / "mri"),
+        "amygdala": process_amygdala(freesurfer_path / "mri"),
+        "brain_stem": process_brain_stem(freesurfer_path / "mri"),
+        "hypothalamus": process_hypothalamus_v2(fastsurfer_path / "stats" / "hypothalamus.HypVINN.stats"),
+        "cerebellum": process_cerebellum(fastsurfer_path / "stats" / "cerebellum.CerebNet.stats")
     }
-    return subcortical
 
 
-def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict]:
+def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Extract lesions and hypointensities from MRI stats files.
+    """
     hypointensities = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
-        for row in read_volume_file(fs_stats / "aseg.stats")[79:] if "hypointensities" in row[4]
+        for row in read_volume_file_skip(fs_stats / "aseg.stats", skip=79)
+        if "hypointensities" in row[4]
     ]
     lesions = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
-        for row in read_volume_file(samseg_path / "samseg.fs.stats") if "Lesions" in row[4]
+        for row in read_volume_file(samseg_path / "samseg.fs.stats")
+        if "Lesions" in row[4]
     ]
-
     return hypointensities + lesions
 
 
-def get_cortical(stats: pathlib.Path) -> Dict[str, list]:
-    """Extracts cortical volumes and parcellations."""
-    # Brain
-    brainvol = [{"Structure": row[2].replace(",", ""), "Volume (mm3)": int(float(row[-2][:-1]))} for row in
-                read_volume_file(stats / "brainvol.stats")]
-    # White Matter
-    wm_data = read_volume_file(stats / "wmparc.stats")[65:]
-    wm_vol_lhs = [{row[4].replace("wm-lh-", ""): float(row[3])} for row in wm_data if "wm-lh" in row[4]]
-    wm_vol_rhs = [{row[4].replace("wm-rh-", ""): float(row[3])} for row in wm_data if "wm-rh" in row[4]]
-    names = [row[4].replace("wm-lh-", "") for row in wm_data if "wm-lh" in row[4]]
+def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
+    # Process brain volumes
+    brainvol = []
+    for row in read_volume_file(stats / "brainvol.stats"):
+        try:
+            brainvol.append({
+                "Structure": row[2].replace(",", ""),
+                "Volume (mm3)": int(float(row[-2][:-1]))
+            })
+        except (IndexError, ValueError) as e:
+            logger.warning(f"Skipping brainvol row {row} due to error: {e}")
 
+    # Process white matter data
+    wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=65)
+    wm_vol_lhs = [
+        {row[4].replace("wm-lh-", ""): float(row[3])}
+        for row in wm_data if "wm-lh" in row[4]
+    ]
+    wm_vol_rhs = [
+        {row[4].replace("wm-rh-", ""): float(row[3])}
+        for row in wm_data if "wm-rh" in row[4]
+    ]
+    names = [row[4].replace("wm-lh-", "") for row in wm_data if "wm-lh" in row[4]]
     wm_vols = [{
         "Structure": name,
-        "LHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_lhs),
-        "RHS Volume (mm3)": get_volume(name=name, nuclei=wm_vol_rhs),
+        "LHS Volume (mm3)": get_volume(name, wm_vol_lhs),
+        "RHS Volume (mm3)": get_volume(name, wm_vol_rhs)
     } for name in names]
-    # Cortical Parcellations
-    lh_dkt_atlas = [{
-        "Structure": row[0],
-        "Surface Area (mm2)": int(row[2]),
-        "Gray Matter Vol (mm3)": int(row[3]),
-        "Thickness Avg (mm)": float(row[4]),
-        "Mean Curvature (mm-1)": float(row[6])
-    } for row in read_volume_file(stats / "lh.aparc.DKTatlas.stats")[61:]]
 
-    rh_dkt_atlas = [{
-        "Structure": row[0],
-        "Surface Area (mm2)": int(row[2]),
-        "Gray Matter Vol (mm3)": int(row[3]),
-        "Thickness Avg (mm)": float(row[4]),
-        "Mean Curvature (mm-1)": float(row[6])
-    } for row in read_volume_file(stats / "rh.aparc.DKTatlas.stats")[61:]]
+    # Process cortical parcellations for left and right hemispheres
+    def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+        entries = []
+        for fields in read_volume_file_skip(file, skip=61):
+            try:
+                entries.append({
+                    "Structure": fields[0],
+                    "Surface Area (mm2)": int(fields[2]),
+                    "Gray Matter Vol (mm3)": int(fields[3]),
+                    "Thickness Avg (mm)": float(fields[4]),
+                    "Mean Curvature (mm-1)": float(fields[6])
+                })
+            except (IndexError, ValueError) as err:
+                logger.warning(f"Skipping DKT row {fields} due to error: {err}")
+        return entries
 
-    cortical = {
+    lh_dkt_atlas = parse_dkt(stats / "lh.aparc.DKTatlas.stats")
+    rh_dkt_atlas = parse_dkt(stats / "rh.aparc.DKTatlas.stats")
+
+    return {
         "brain": brainvol,
         "whitematter": wm_vols,
         "lh_dkatlas": lh_dkt_atlas,
         "rh_dkatlas": rh_dkt_atlas,
     }
 
-    return cortical
 
-
-def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, list]:
-    # ASEG
+def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, Any]:
+    """
+    Extract general subcortical volumes (ASEG) and lesion information.
+    """
     aseg = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
-        for row in read_volume_file(stats / "aseg.stats")[79:]
+        for row in read_volume_file_skip(stats / "aseg.stats", skip=79)
         if "hypointensities" not in row[4]
     ]
-    # Lesions
     lesions = get_lesions(fs_stats=stats, samseg_path=samseg_path)
-
-    general = {
-        "aseg": aseg,
-        "lesions": lesions
-    }
-
-    return general
+    return {"aseg": aseg, "lesions": lesions}
 
 
-def run_jsonifier(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, samseg_path: pathlib.Path,
-                  output_folder: pathlib.Path):
-    """Runs the process of generating JSON files for subcortical and cortical volumes."""
-    subcortical_dict = get_subcortical(freesurfer_path=freesurfer_path / "mri",
-                                       fastsurfer_path=fastsurfer_path / "stats")
-    cortical_dict = get_cortical(stats=freesurfer_path / "stats")
-    general_dict = get_general(stats=freesurfer_path / "stats", samseg_path=samseg_path)
-
-    # Write JSON objects to files
-    with open(file=output_folder / "subcortical.json", mode="w") as outfile:
-        json.dump(obj=subcortical_dict, fp=outfile, indent=4)
-
-    with open(file=output_folder / "cortical.json", mode="w") as outfile:
-        json.dump(obj=cortical_dict, fp=outfile, indent=4)
-
-    with open(file=output_folder / "general.json", mode="w") as outfile:
-        json.dump(obj=general_dict, fp=outfile, indent=4)
-
-
-def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str):
+def run_jsonifier(
+    freesurfer_path: pathlib.Path,
+    fastsurfer_path: pathlib.Path,
+    samseg_path: pathlib.Path,
+    output_folder: pathlib.Path
+) -> None:
     """
-    Averages the numerical values in 'cortical.json' files across multiple folders.
-
-    Parameters:
-    - json_path (Path): The base path where the folders are located.
-    - folders (List[str]): A list of folder names containing 'cortical.json' files.
-
-    The function writes the averaged result to 'cortical.json' in the base path.
+    Generate JSON files for subcortical, cortical, and general volumes.
     """
+    # Ensure output directory exists
+    output_folder.mkdir(parents=True, exist_ok=True)
 
-    # Initialize dictionaries to hold the cumulative sums and counts
-    cumulative_data = {}
-    counts = {}
-    json_paths = [json_path / f / main_type for f in folders]
+    subcortical = get_subcortical(
+        freesurfer_path=freesurfer_path / "mri",
+        fastsurfer_path=fastsurfer_path / "stats"
+    )
+    cortical = get_cortical(stats=freesurfer_path / "stats")
+    general = get_general(stats=freesurfer_path / "stats", samseg_path=samseg_path)
 
-    for path in json_paths:
+    for fname, data in [
+        ("subcortical.json", subcortical),
+        ("cortical.json", cortical),
+        ("general.json", general)
+    ]:
+        out_file = output_folder / fname
+        try:
+            with out_file.open("w") as f:
+                # noinspection PyTypeChecker
+                json.dump(data, f, indent=4)
+            logger.info(f"Wrote {fname} to {out_file}")
+        except Exception as e:
+            logger.error(f"Error writing {fname}: {e}")
+
+
+def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str) -> None:
+    """
+    Averages the numerical values in JSON files across multiple folders.
+    The result is written to an "AVERAGES" subfolder.
+    """
+    cumulative_data: Dict[str, Dict[str, defaultdict]] = {}
+    counts: Dict[str, Dict[str, int]] = {}
+    json_files = [json_path / folder / main_type for folder in folders]
+
+    for path in json_files:
         if not path.exists():
-            print(f"Warning: File not found - {path}")
+            logger.warning(f"File not found: {path}")
             continue
         try:
-            with open(path, 'r') as file:
-                data = json.load(file)
+            with path.open("r") as f:
+                data = json.load(f)
         except json.JSONDecodeError as e:
-            print(f"Warning: JSON decode error in file {path}: {e}")
-            continue
-        except Exception as e:
-            print(f"Warning: Unexpected error reading file {path}: {e}")
+            logger.warning(f"JSON decode error in file {path}: {e}")
             continue
 
         for top_key, entries in data.items():
@@ -286,76 +332,88 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
                 cumulative_data[top_key] = {}
                 counts[top_key] = {}
             for entry in entries:
-                name = entry.get("Structure")
-                if not name:
-                    print(f"Warning: Missing 'Structure' in entry {entry} in file {path}")
+                structure = entry.get("Structure")
+                if not structure:
+                    logger.warning(f"Missing 'Structure' in entry {entry} in file {path}")
                     continue
-                if name not in cumulative_data[top_key]:
-                    cumulative_data[top_key][name] = defaultdict(float)
-                    counts[top_key][name] = 0
-                counts[top_key][name] += 1
+                if structure not in cumulative_data[top_key]:
+                    cumulative_data[top_key][structure] = defaultdict(float)
+                    counts[top_key][structure] = 0
+                counts[top_key][structure] += 1
                 for key, value in entry.items():
-                    if key != "Structure":
-                        if isinstance(value, (int, float)):
-                            cumulative_data[top_key][name][key] += value
-                        else:
-                            print(f"Warning: Non-numeric value for key '{key}' in entry {entry} in file {path}")
-                            continue
+                    if key == "Structure":
+                        continue
+                    if isinstance(value, (int, float)):
+                        cumulative_data[top_key][structure][key] += value
+                    else:
+                        logger.warning(
+                            f"Non-numeric value for key '{key}' in entry {entry} in file {path}"
+                        )
 
-    # Compute the averages
     averaged_result = {}
-    for top_key, names_dict in cumulative_data.items():
+    for top_key, structures in cumulative_data.items():
         averaged_result[top_key] = []
-        for name, values_dict in names_dict.items():
-            count = counts[top_key][name]
+        for structure, totals in structures.items():
+            count = counts[top_key][structure]
             if count == 0:
-                print(f"Warning: No data to average for '{name}' under '{top_key}'")
+                logger.warning(f"No data to average for '{structure}' under '{top_key}'")
                 continue
-            averaged_entry = {"Structure": name}
-            for key, total in values_dict.items():
-                average_value = total / count
-                averaged_entry[key] = round(average_value, 2)
+            averaged_entry = {"Structure": structure}
+            for key, total in totals.items():
+                averaged_entry[key] = round(total / count, 2)
             averaged_result[top_key].append(averaged_entry)
-        # Optionally sort the entries by 'name'
         averaged_result[top_key].sort(key=lambda x: x["Structure"])
 
-    output_file = json_path / "AVERAGES" / main_type
+    averages_folder = json_path / "AVERAGES"
+    averages_folder.mkdir(parents=True, exist_ok=True)
+    output_file = averages_folder / main_type
     try:
-        with open(output_file, mode="w") as outfile:
-            json.dump(obj=averaged_result, fp=outfile, indent=4)
-        print(f"Averaged data written to {output_file}")
+        with output_file.open("w") as f:
+            # noinspection PyTypeChecker
+            json.dump(averaged_result, f, indent=4)
+        logger.info(f"Averaged data written to {output_file}")
     except Exception as e:
-        print(f"Error writing to file {output_file}: {e}")
+        logger.error(f"Error writing to file {output_file}: {e}")
 
 
-def run_global_json(folders: List[str]):
-    global_subcortical_dict = dict()
-    global_cortical_dict = dict()
-    global_general_dict = dict()
-    json_path = pathlib.Path("./DATA/ST1/JSON")
+def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
+    """
+    Consolidate individual JSON files from each folder and add the averaged data.
+    """
+    global_subcortical = {}
+    global_cortical = {}
+    global_general = {}
 
     for folder in folders:
-        with open(file=json_path / folder / "subcortical.json", mode='r') as file:
-            global_subcortical_dict[folder] = json.load(file)
-        with open(file=json_path / folder / "cortical.json", mode='r') as file:
-            global_cortical_dict[folder] = json.load(file)
-        with open(file=json_path / folder / "general.json", mode='r') as file:
-            global_general_dict[folder] = json.load(file)
+        try:
+            with (json_path / folder / "subcortical.json").open("r") as f:
+                global_subcortical[folder] = json.load(f)
+            with (json_path / folder / "cortical.json").open("r") as f:
+                global_cortical[folder] = json.load(f)
+            with (json_path / folder / "general.json").open("r") as f:
+                global_general[folder] = json.load(f)
+        except Exception as e:
+            logger.error(f"Error reading JSON files from folder {folder}: {e}")
 
-    with open(file=json_path / "AVERAGES" / "subcortical.json", mode='r') as file:
-        global_subcortical_dict["AVERAGES"] = json.load(file)
+    try:
+        with (json_path / "AVERAGES" / "subcortical.json").open("r") as f:
+            global_subcortical["AVERAGES"] = json.load(f)
+        with (json_path / "AVERAGES" / "cortical.json").open("r") as f:
+            global_cortical["AVERAGES"] = json.load(f)
+        with (json_path / "AVERAGES" / "general.json").open("r") as f:
+            global_general["AVERAGES"] = json.load(f)
+    except Exception as e:
+        logger.error(f"Error reading AVERAGES JSON files: {e}")
 
-    with open(file=json_path / "AVERAGES" / "cortical.json", mode='r') as file:
-        global_cortical_dict["AVERAGES"] = json.load(file)
-
-    with open(file=json_path / "AVERAGES" / "general.json", mode='r') as file:
-        global_general_dict["AVERAGES"] = json.load(file)
-
-    with open(file=json_path / "subcortical.json", mode="w") as outfile:
-        json.dump(obj=global_subcortical_dict, fp=outfile, indent=4)
-
-    with open(file=json_path / "cortical.json", mode="w") as outfile:
-        json.dump(obj=global_cortical_dict, fp=outfile, indent=4)
-
-    with open(file=json_path / "general.json", mode="w") as outfile:
-        json.dump(obj=global_general_dict, fp=outfile, indent=4)
+    for fname, data in [
+        ("subcortical.json", global_subcortical),
+        ("cortical.json", global_cortical),
+        ("general.json", global_general)
+    ]:
+        try:
+            with (json_path / fname).open("w") as f:
+                # noinspection PyTypeChecker
+                json.dump(data, f, indent=4)
+            logger.info(f"Wrote global JSON to {json_path / fname}")
+        except Exception as e:
+            logger.error(f"Error writing global JSON file {fname}: {e}")

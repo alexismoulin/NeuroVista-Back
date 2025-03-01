@@ -1,14 +1,23 @@
 import logging
 import os
-import pathlib
+from pathlib import Path
 import shutil
-from os.path import join as opj
+from typing import List, Tuple, Dict
 
 import nibabel as nib
-from nipype.interfaces.base import CommandLine, CommandLineInputSpec, TraitedSpec, File, Directory, traits
+from nipype.interfaces.base import (
+    CommandLine,
+    CommandLineInputSpec,
+    TraitedSpec,
+    File,
+    Directory,
+    traits,
+)
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, Node, MapNode
 
+# Set up module-level logger
+logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -16,90 +25,105 @@ def add_dcm_extension(filename: str) -> str:
     """
     Append '.dcm' to the filename if it doesn't already end with it.
     """
-    return filename if filename.lower().endswith(".dcm") else filename + ".dcm"
+    return filename if filename.lower().endswith(".dcm") else f"{filename}.dcm"
 
 
-def get_folder_names(directory: pathlib.Path) -> list[str]:
+def get_folder_names(directory: Path) -> List[str]:
+    """
+    Return a list of folder names within the given directory.
+    """
     return [p.name for p in directory.iterdir() if p.is_dir()]
 
 
-def create_folders(base_path: pathlib.Path) -> tuple:
-    dicom_directory = base_path / "DICOM"
-    dicom_directory.mkdir(parents=True, exist_ok=True)
-    nifti_directory = base_path / "NIFTI"
-    nifti_directory.mkdir(parents=True, exist_ok=True)
-    freesurfer_path = base_path / "FREESURFER"
-    freesurfer_path.mkdir(parents=True, exist_ok=True)
-    samseg_path = base_path / "SAMSEG"
-    samseg_path.mkdir(parents=True, exist_ok=True)
-    fastsurfer_path = base_path / "FASTSURFER"
-    fastsurfer_path.mkdir(parents=True, exist_ok=True)
-    workflows_path = base_path / "WORKFLOWS"
-    workflows_path.mkdir(parents=True, exist_ok=True)
-    json_folder = base_path / "JSON"
-    json_folder.mkdir(parents=True, exist_ok=True)
-    corestats_folder = base_path / "CORESTATS"
-    corestats_folder.mkdir(parents=True, exist_ok=True)
-    return (dicom_directory, nifti_directory, freesurfer_path, samseg_path, 
-            fastsurfer_path, workflows_path, json_folder, corestats_folder)
+def create_folders(base_path: Path) -> Dict[str, Path]:
+    """
+    Create necessary folders for processing and return a dictionary mapping folder names to their paths.
+    """
+    folders = {
+        "dicom": base_path / "DICOM",
+        "nifti": base_path / "NIFTI",
+        "freesurfer": base_path / "FREESURFER",
+        "samseg": base_path / "SAMSEG",
+        "fastsurfer": base_path / "FASTSURFER",
+        "workflows": base_path / "WORKFLOWS",
+        "json": base_path / "JSON",
+        "corestats": base_path / "CORESTATS",
+    }
+    for folder in folders.values():
+        folder.mkdir(parents=True, exist_ok=True)
+    return folders
 
 
-def get_nifti_dimensions(file_path: pathlib.Path) -> tuple:
-    # Load the NIfTI file
-    nifti_image = nib.load(filename=file_path)
+def get_nifti_dimensions(file_path: Path) -> Tuple[int, ...]:
+    """
+    Return the dimensions of a NIfTI file.
+    """
+    if not file_path.exists():
+        raise FileNotFoundError(f"NIfTI file not found: {file_path}")
+    nifti_image = nib.load(file_path)
+    return nifti_image.shape
 
-    # Get the image shape (dimensions)
-    dimensions = nifti_image.shape
 
-    return dimensions
+def remove_double_extension(file: Path) -> str:
+    """
+    Remove the double extension from a NIfTI file (e.g. '.nii.gz') and return the base name.
+    """
+    name = file.name
+    if name.endswith(".nii.gz"):
+        return name[:-7]
+    return file.stem
 
 
-def reconall(base_dir: str):
-    data_dir = opj(base_dir, 'NIFTI')
-    fs_folder = opj(base_dir, 'FREESURFER')
+def reconall(base_dir: Path) -> None:
+    """
+    Run FreeSurfer's recon-all processing on NIfTI files within the specified base directory.
 
-    nifti_files = [opj(data_dir, f) for f in os.listdir(data_dir) if f.endswith('.nii.gz')]
+    Parameters:
+        base_dir (Path): The base directory containing subdirectories for NIFTI, FREESURFER, etc.
+    """
+    data_dir = base_dir / "NIFTI"
+    fs_folder = base_dir / "FREESURFER"
 
-    if not os.path.exists(data_dir):
-        logging.error(f"Data directory {data_dir} does not exist.")
+    if not data_dir.exists():
+        logger.error(f"Data directory {data_dir} does not exist.")
         return
 
+    nifti_files = sorted(data_dir.glob("*.nii.gz"))
     if not nifti_files:
-        logging.error(f"No .nii.gz files found in {data_dir}.")
+        logger.error(f"No .nii.gz files found in {data_dir}.")
         return
 
-    subject_ids = [os.path.splitext(os.path.splitext(os.path.basename(f))[0])[0] for f in nifti_files]
-    print("NIFTI: ", nifti_files)
-    print("SUBJECTS: ", subject_ids)
+    subject_ids = [remove_double_extension(f) for f in nifti_files]
+    logger.info(f"Found NIFTI files: {nifti_files}")
+    logger.info(f"Subject IDs: {subject_ids}")
 
-    # Initialize lists for subjects to process
-    subjects_to_process = []
-    nifti_files_to_process = []
+    subjects_to_process: List[str] = []
+    nifti_files_to_process: List[str] = []
 
     for subj_id, nifti_file in zip(subject_ids, nifti_files):
-        subj_dir = opj(fs_folder, subj_id)
-        if os.path.exists(subj_dir):
-            # Check for expected FreeSurfer key output files
-            lh_white = opj(subj_dir, "surf", "lh.white")
-            rh_white = opj(subj_dir, "surf", "rh.white")
-            lh_aparc_stats = opj(subj_dir, "stats", "lh.aparc.stats")
-            rh_aparc_stats = opj(subj_dir, "stats", "rh.aparc.stats")
-            aparc_aseg = opj(subj_dir, "mri", "aparc+aseg.mgz")
-            # Check if the key output files exist
-            if all(os.path.exists(f) for f in [lh_white, rh_white, lh_aparc_stats, rh_aparc_stats, aparc_aseg]):
-                logging.info(f"Subject {subj_id} already processed. Skipping.")
+        subj_dir = fs_folder / subj_id
+        if subj_dir.exists():
+            # Define key FreeSurfer output files
+            key_files = [
+                subj_dir / "surf" / "lh.white",
+                subj_dir / "surf" / "rh.white",
+                subj_dir / "stats" / "lh.aparc.stats",
+                subj_dir / "stats" / "rh.aparc.stats",
+                subj_dir / "mri" / "aparc+aseg.mgz"
+            ]
+            if all(f.exists() for f in key_files):
+                logger.info(f"Subject {subj_id} already processed. Skipping.")
                 continue
             else:
-                logging.info(f"Subject {subj_id} directory exists but processing incomplete. Re-processing.")
+                logger.info(f"Subject {subj_id} directory exists but processing incomplete. Re-processing.")
         else:
-            logging.info(f"Subject {subj_id} has not been processed. Processing will begin.")
+            logger.info(f"Subject {subj_id} has not been processed. Processing will begin.")
 
-        # If subject directory doesn't exist or processing is incomplete, add to processing list
         subjects_to_process.append(subj_id)
-        nifti_files_to_process.append(nifti_file)
+        nifti_files_to_process.append(str(nifti_file))
 
     if not subjects_to_process:
-        logging.info("All subjects have been processed. Nothing to do.")
+        logger.info("All subjects have been processed. Nothing to do.")
         return
 
     reconall_node = MapNode(
@@ -107,103 +131,115 @@ def reconall(base_dir: str):
         name='reconall',
         iterfield=['subject_id', 'T1_files']
     )
-
     reconall_node.inputs.subject_id = subjects_to_process
     reconall_node.inputs.directive = 'all'
-    reconall_node.inputs.subjects_dir = fs_folder
+    reconall_node.inputs.subjects_dir = str(fs_folder)
     reconall_node.inputs.T1_files = nifti_files_to_process
     reconall_node.inputs.flags = "-qcache"
 
-    # Create a workflow and add the ReconAll MapNode
-    wf = Workflow(name='reconall_workflow')
-    wf.base_dir = opj(base_dir, "WORKFLOWS", "workingdir_reconflow")
+    wf = Workflow(
+        name='reconall_workflow',
+        base_dir=str(base_dir / "WORKFLOWS" / "workingdir_reconflow")
+    )
     wf.add_nodes([reconall_node])
-
-    # Configure the workflow to continue even if one subject fails
     wf.config['execution'] = {'stop_on_first_crash': False}
 
-    # Run the workflow using the MultiProc plugin to parallelize execution
     try:
         wf.run('MultiProc', plugin_args={'n_procs': os.cpu_count()})
-        logging.info("Recon-all completed for all subjects.")
+        logger.info("Recon-all completed for all subjects.")
     except Exception as e:
-        logging.error(f"Error in FreeSurfer recon-all: {e}")
+        logger.error(f"Error in FreeSurfer recon-all: {e}")
 
-    logging.info(f"Subjects processed: {subjects_to_process}")
-    for f in [lh_white, rh_white, lh_aparc_stats, rh_aparc_stats, aparc_aseg]:
-        print(f)
-        print("\n----------------\n")
+    logger.info(f"Subjects processed: {subjects_to_process}")
 
 
-def process_lesions(freesurfer_path: pathlib.Path, samseg_path: pathlib.Path, series: str):
-    if (samseg_path / series / "samseg.stats").is_file():
-        logging.info(msg=f"{samseg_path / series / 'samseg.stats'} already exists - skipping ")
+def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> None:
+    """
+    Process lesions using SAMSEG if the output does not already exist.
+
+    Parameters:
+        freesurfer_path (Path): Path to the FreeSurfer output directory.
+        samseg_path (Path): Path where SAMSEG outputs are stored.
+        series (str): Series identifier.
+    """
+    output_file = samseg_path / series / "samseg.stats"
+    if output_file.is_file():
+        logger.info(f"{output_file} already exists - skipping")
         return
-    else:
-        # Define the SAMSEG command
-        samseg_cmd = CommandLine(
-            command='run_samseg',
-            args=f"--input {freesurfer_path / series}/mri/brain.mgz --output {samseg_path / series} --lesion"
-        )
 
-        # Execute the command
+    cmd = (
+        f"--input {freesurfer_path / series / 'mri' / 'brain.mgz'} "
+        f"--output {samseg_path / series} --lesion"
+    )
+    samseg_cmd = CommandLine(command="run_samseg", args=cmd)
+    try:
         samseg_cmd.run()
-        logging.info(msg=f"{samseg_path / series} created ")
+        logger.info(f"Created {samseg_path / series}")
+    except Exception as e:
+        logger.error(f"Error running SAMSEG for series {series}: {e}")
 
 
-def segment_subregions(structure: str, subject_id: str, subject_dir: pathlib.Path):
-    # Define output files based on the structure
+def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> None:
+    """
+    Segment subregions for the specified structure if output files are missing.
+
+    Parameters:
+        structure (str): The brain structure to segment (e.g., 'thalamus', 'brainstem', 'hippo-amygdala').
+        subject_id (str): The subject identifier.
+        subject_dir (Path): The directory containing subject data.
+    """
+    subject_path = subject_dir / subject_id
     output_files = {
         "thalamus": [
-            subject_dir / subject_id / "mri" / "ThalamicNuclei.mgz",
-            subject_dir / subject_id / "mri" / "ThalamicNuclei.volumes.txt"
+            subject_path / "mri" / "ThalamicNuclei.mgz",
+            subject_path / "mri" / "ThalamicNuclei.volumes.txt",
         ],
         "brainstem": [
-            subject_dir / subject_id / "mri" / "brainstemSsLabels.mgz",
-            subject_dir / subject_id / "mri" / "brainstemSsLabels.volumes.txt"
+            subject_path / "mri" / "brainstemSsLabels.mgz",
+            subject_path / "mri" / "brainstemSsLabels.volumes.txt",
         ],
         "hippo-amygdala": [
-            subject_dir / subject_id / "mri" / "rh.amygNucVolumes.txt",
-            subject_dir / subject_id / "mri" / "rh.hippoSfVolumes.txt",
-            subject_dir / subject_id / "mri" / "lh.amygNucVolumes.txt",
-            subject_dir / subject_id / "mri" / "lh.hippoSfVolumes.txt",
-            subject_dir / subject_id / "mri" / "lh.hippoAmygLabels.mgz",
-            subject_dir / subject_id / "mri" / "rh.hippoAmygLabels.mgz"
-        ]
+            subject_path / "mri" / "rh.amygNucVolumes.txt",
+            subject_path / "mri" / "rh.hippoSfVolumes.txt",
+            subject_path / "mri" / "lh.amygNucVolumes.txt",
+            subject_path / "mri" / "lh.hippoSfVolumes.txt",
+            subject_path / "mri" / "lh.hippoAmygLabels.mgz",
+            subject_path / "mri" / "rh.hippoAmygLabels.mgz",
+        ],
     }
-
-    # Check for missing output files
-    missing_files = [file for file in output_files[structure] if not file.exists()]
-
-    # Log and skip if all files are present
+    missing_files = [f for f in output_files.get(structure, []) if not f.exists()]
     if not missing_files:
-        logging.info(f"Skipping {structure} segmentation as all output files already exist")
+        logger.info(f"Skipping {structure} segmentation as all output files already exist")
         return
 
-    # Log missing files and run the segmentation command
-    logging.info(f"Missing output files for {structure}: {missing_files}. Running segmentation.")
-    command = CommandLine(command="segment_subregions", args=f"{structure} --cross {subject_id} --sd {subject_dir}")
+    logger.info(f"Missing output files for {structure}: {missing_files}. Running segmentation.")
+    cmd = f"{structure} --cross {subject_id} --sd {subject_dir}"
+    command = CommandLine(command="segment_subregions", args=cmd)
     try:
         command.run()
-        logging.info(f"{structure} segmentation completed")
+        logger.info(f"{structure} segmentation completed")
     except Exception as e:
-        logging.error(f"Error during {structure} segmentation: {e}")
+        logger.error(f"Error during {structure} segmentation: {e}")
 
 
-def segment_hypothalamus(subject_id: str, subject_dir: str):
-    command = CommandLine(
-        command="mri_segment_hypothalamic_subunits",
-        args=f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
-    )
-    logging.info(command.cmdline)
+def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
+    """
+    Run segmentation of the hypothalamus.
+
+    Parameters:
+        subject_id (str): The subject identifier.
+        subject_dir (Path): The directory containing subject data.
+    """
+    cmd = f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
+    command = CommandLine(command="mri_segment_hypothalamic_subunits", args=cmd)
+    logger.info(f"Executing command: {command.cmdline}")
     try:
         command.run()
-        logging.info("Hypothalamus segmentation completed")
+        logger.info("Hypothalamus segmentation completed")
     except Exception as e:
-        logging.error(f"Error during hypothalamus segmentation: {e}")
+        logger.error(f"Error during hypothalamus segmentation: {e}")
 
 
-# Define the input fields for the command
 class RunFastSurferInputSpec(CommandLineInputSpec):
     t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
     sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
@@ -213,79 +249,93 @@ class RunFastSurferInputSpec(CommandLineInputSpec):
     threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
 
 
-# Define a custom interface for run_fastsurfer.sh
 class RunFastSurfer(CommandLine):
-    _cmd = "./run_fastsurfer.sh"  # Command to run FastSurfer
+    _cmd = "./run_fastsurfer.sh"  # Default command to run FastSurfer
     input_spec = RunFastSurferInputSpec
     output_spec = TraitedSpec
 
 
-def run_fastsurfer(fs_dir: pathlib.Path,
-                   t1: pathlib.Path,
-                   sid: str,
-                   sd: pathlib.Path,
-                   wf_dir: pathlib.Path,
-                   parallel: bool,
-                   threads: int):
-    # Check if files already exist
+def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path,
+                    parallel: bool, threads: int) -> None:
+    """
+    Run FastSurfer segmentation workflow if the expected output files do not exist.
+
+    Parameters:
+        fs_dir (Path): Directory containing FastSurfer script.
+        t1 (Path): Path to T1-weighted image.
+        sid (str): Subject identifier.
+        sd (Path): Directory for FastSurfer output.
+        wf_dir (Path): Directory for workflow temporary files.
+        parallel (bool): Flag to enable parallel processing.
+        threads (int): Number of threads to use.
+    """
     output_files = [
         sd / sid / "mri" / "cerebellum.CerebNet.nii.gz",
         sd / sid / "mri" / "hypothalamus.HypVINN.nii.gz",
         sd / sid / "mri" / "hypothalamus_mask.HypVINN.nii.gz",
         sd / sid / "stats" / "cerebellum.CerebNet.stats",
-        sd / sid / "stats" / "hypothalamus.HypVINN.stats"
+        sd / sid / "stats" / "hypothalamus.HypVINN.stats",
     ]
-
-    missing_files = [file for file in output_files if not file.exists()]
-
-    # Log and skip if all files are present
-    if not missing_files:
-        logging.info(f"Skipping Hypothalamus and Cerebellum segmentations as all output files already exist")
+    if all(f.exists() for f in output_files):
+        logger.info("Skipping Hypothalamus and Cerebellum segmentations as all output files already exist")
         return
 
-    # Set up the FastSurfer node with inputs
     fastsurfer_instance = RunFastSurfer()
-    fastsurfer_instance._cmd = f"{fs_dir}/run_fastsurfer.sh"
+    fastsurfer_instance._cmd = str(fs_dir / "run_fastsurfer.sh")
     fastsurfer_node = Node(fastsurfer_instance, name="run_fastsurfer")
-
-    # Specify the inputs
-    fastsurfer_node.inputs.t1 = t1
+    fastsurfer_node.inputs.t1 = str(t1)
     fastsurfer_node.inputs.sid = sid
-    fastsurfer_node.inputs.sd = sd
+    fastsurfer_node.inputs.sd = str(sd)
     fastsurfer_node.inputs.parallel = parallel
     fastsurfer_node.inputs.threads = threads
 
-    # Create a workflow
-    wf = Workflow(name="fastsurfer_workflow", base_dir=wf_dir)
-
-    # Add the node to the workflow
+    wf = Workflow(name="fastsurfer_workflow", base_dir=str(wf_dir))
     wf.add_nodes([fastsurfer_node])
 
-    # Run the workflow
     try:
         wf.run()
-        logging.info("FastSurfer workflow completed")
+        logger.info("FastSurfer workflow completed")
     except Exception as e:
-        logging.error(f"Error during FastSurfer: {e}")
+        logger.error(f"Error during FastSurfer workflow: {e}")
 
 
-def process_corestats(folder: str, freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path, corestats_dir: pathlib.Path):
-    # get all FreeSurfer stats files
-    stats_dir = freesurfer_path / folder / "stats"
-    stats_files = stats_dir.glob(pattern="*.stats")
-    for f in stats_files:
-        shutil.copy(src=f, dst=corestats_dir / folder)
-    # get all FreeSurfer mri txt files
-    mri_dir = freesurfer_path / folder / "mri"
-    mri_text_files = mri_dir.glob(pattern="*.txt")
-    for f in mri_text_files:
-        shutil.copy(src=f, dst=corestats_dir / folder)
-    # get all FastSurfer stats files
-    stats_dir2 = fastsurfer_path / folder / "stats"
-    stats_files2 = stats_dir2.glob(pattern="*.stats")
-    for f in stats_files2:
-        shutil.copy(src=f, dst=corestats_dir / folder)
-    # change file extension from .stats to .txt
-    for f in (corestats_dir / folder).glob(pattern="*.stats"):
-        renamed_file = f.with_suffix(".txt")  # Properly renames file extension
-        os.rename(src=f, dst=renamed_file)
+def process_corestats(fs_path: Path, fastsurfer_path: Path, corestats_folder: Path) -> None:
+    """
+    Process core statistics by copying stats files from FreeSurfer and FastSurfer,
+    then renaming them from '.stats' to '.txt'.
+
+    Parameters:
+        fs_path (Path): Directory containing FreeSurfer outputs.
+        fastsurfer_path (Path): Directory containing FastSurfer outputs.
+        corestats_folder (Path): Destination folder for processed core stats.
+    """
+    if not fs_path.exists():
+        raise FileNotFoundError(f"FreeSurfer directory not found: {fs_path}")
+    if not fastsurfer_path.exists():
+        raise FileNotFoundError(f"FastSurfer directory not found: {fastsurfer_path}")
+
+    fs_stats_dir = fs_path / "stats"
+    fastsurfer_stats_dir = fastsurfer_path / "stats"
+    corestats_folder.mkdir(parents=True, exist_ok=True)
+
+    # Copy stats files from FreeSurfer
+    if fs_stats_dir.exists():
+        for stats_file in fs_stats_dir.glob("*.stats"):
+            shutil.copy2(stats_file, corestats_folder)
+    else:
+        logger.warning(f"No stats directory found in FreeSurfer path: {fs_path}")
+
+    # Copy stats files from FastSurfer
+    if fastsurfer_stats_dir.exists():
+        for stats_file in fastsurfer_stats_dir.glob("*.stats"):
+            shutil.copy2(stats_file, corestats_folder)
+    else:
+        logger.warning(f"No stats directory found in FastSurfer path: {fastsurfer_path}")
+
+    # Rename all .stats files to .txt
+    for stats_file in corestats_folder.glob("*.stats"):
+        txt_file = stats_file.with_suffix(".txt")
+        stats_file.rename(txt_file)
+        logger.info(f"Renamed {stats_file} to {txt_file}")
+
+    logger.info(f"Core statistics processed and saved to {corestats_folder}")

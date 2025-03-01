@@ -4,3 +4,4 @@
 DATA
 crash-*
 __pycache__
+tests
