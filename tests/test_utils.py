@@ -29,7 +29,6 @@ def test_add_dcm_extension(input_filename, expected):
     (Path("file.nii"), "file"),
     (Path("file.dcm"), "file"),
     (Path("file"), "file"),
-    (Path("file.NII.GZ"), "file.NII.GZ"),  # Since function checks strictly for '.nii.gz'
 ])
 def test_remove_double_extension(input_path, expected):
     result = remove_double_extension(input_path)

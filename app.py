@@ -377,7 +377,7 @@ def cortical(patient: str, study: str) -> Response:
     """
     Retrieve cortical JSON data.
     """
-    json_path = Path(f"./DATA/{patient}/{study}/JSON/cortical.json")
+    json_path = BASE_DATA_PATH / patient / study / "JSON" / "cortical.json"
     cortical_json = read_json_file(json_path)
     if cortical_json:
         response = make_response(jsonify(cortical_json))
@@ -394,7 +394,7 @@ def subcortical(patient: str, study: str) -> Response:
     """
     Retrieve subcortical JSON data.
     """
-    json_path = Path(f"./DATA/{patient}/{study}/JSON/subcortical.json")
+    json_path = BASE_DATA_PATH / patient / study / "JSON" / "subcortical.json"
     subcortical_json = read_json_file(json_path)
     if subcortical_json:
         return jsonify(subcortical_json)
@@ -409,7 +409,7 @@ def general(patient: str, study: str) -> Response:
     """
     Retrieve general JSON data.
     """
-    json_path = Path(f"./DATA/{patient}/{study}/JSON/general.json")
+    json_path = BASE_DATA_PATH / patient / study / "JSON" / "general.json"
     general_json = read_json_file(json_path)
     if general_json:
         return jsonify(general_json)
@@ -424,10 +424,10 @@ def get_series(patient: str, study: str) -> Response:
     """
     Retrieve available series along with their NIfTI dimensions.
     """
-    dicoms = Path(f"./DATA/{patient}/{study}/DICOM")
+    dicoms = BASE_DATA_PATH / patient / study / "DICOM"
     series_list: List[str] = get_folder_names(dicoms)
     series_dict: Dict[str, tuple] = {
-        s: get_nifti_dimensions(Path(f"./DATA/{patient}/{study}/NIFTI/{s}.nii.gz"))
+        s: get_nifti_dimensions(BASE_DATA_PATH / patient / study / f"NIFTI/{s}.nii.gz")
         for s in series_list
     }
     return jsonify(series_dict)
