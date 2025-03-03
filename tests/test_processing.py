@@ -43,25 +43,29 @@ def test_save_dicoms(temp_dir, mocker, mock_pydicom_dataset):
     """
     Test that save_dicoms creates the proper directory and calls FileStorage.save with the expected destination.
     """
-    # Patch pydicom.dcmread to return our fake dataset.
-    mocker.patch("pydicom.dcmread", return_value=mock_pydicom_dataset)
-
+    # Patch pydicom.dcmread in the app namespace.
+    mocker.patch("app.pydicom.dcmread", return_value=mock_pydicom_dataset)
+    # Patch add_dcm_extension so it appends '.dcm' if not present.
+    mocker.patch("app.add_dcm_extension", side_effect=lambda filename: filename + ".dcm" if not filename.lower().endswith(".dcm") else filename)
+    # Patch logger and notify_step to prevent side effects during testing.
+    mocker.patch("app.logger")
+    mocker.patch("app.notify_step")
+    
     # Create a fake FileStorage object.
     mock_file = MagicMock(spec=FileStorage)
     mock_file.filename = "test.dcm"
     mock_file.stream = MagicMock()
     mock_file.save = MagicMock()
-
+    
     # Create an ImmutableMultiDict mimicking request.files.
     files = ImmutableMultiDict([("dicoms", mock_file)])
-
+    
     # Call the function.
     save_dicoms(files, temp_dir)
-
+    
     # The expected destination path.
-    expected_path = temp_dir / "Series1" / "test.dcm.dcm"
-    # Note: the add_dcm_extension function always appends '.dcm' if not present.
-
+    expected_path = temp_dir / "Series1" / "test.dcm"
+    
     # Verify that the directory was created.
     assert (temp_dir / "Series1").exists()
     # Verify that the file save method was called with the correct destination.
@@ -72,27 +76,34 @@ def test_convert_to_nifti(temp_dir, mocker):
     """
     Test that convert_to_nifti calls dicom2nifti.dicom_series_to_nifti for each DICOM series folder.
     """
-    # Create a dummy series folder.
-    series_folder = temp_dir / "Series1"
+    # Create a dedicated DICOM directory.
+    dicom_dir = temp_dir / "DICOM"
+    dicom_dir.mkdir()
+    
+    # Create a dummy series folder inside the DICOM directory.
+    series_folder = dicom_dir / "Series1"
     series_folder.mkdir()
 
     # Patch the dicom2nifti function.
     dicom2nifti_mock = mocker.patch("dicom2nifti.dicom_series_to_nifti")
 
-    # Create the output NIFTI directory.
+    # Create a separate output NIFTI directory.
     nifti_dir = temp_dir / "NIFTI"
     nifti_dir.mkdir()
 
     # Call conversion.
-    convert_to_nifti(temp_dir, nifti_dir)
+    convert_to_nifti(dicom_dir, nifti_dir)
 
-    # Assert that conversion was triggered.
+    # Assert that conversion was triggered once.
     dicom2nifti_mock.assert_called_once()
-    args, kwargs = dicom2nifti_mock.call_args
+    _, kwargs = dicom2nifti_mock.call_args
+
     # Check that the original_dicom_directory corresponds to the Series1 folder.
-    assert str(series_folder) in args[0]
-    # And that output file is in the nifti_dir.
-    assert str(nifti_dir) in args[1]
+    assert str(series_folder) in kwargs["original_dicom_directory"]
+    # And that the output file is in the nifti_dir and has the expected filename.
+    expected_output = str(nifti_dir / "Series1.nii.gz")
+    assert kwargs["output_file"] == expected_output
+
 
 
 def test_run_reconall(temp_dir, mocker):
