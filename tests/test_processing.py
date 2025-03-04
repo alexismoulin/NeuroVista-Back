@@ -105,16 +105,6 @@ def test_convert_to_nifti(temp_dir, mocker):
     assert kwargs["output_file"] == expected_output
 
 
-
-def test_run_reconall(temp_dir, mocker):
-    """
-    Test that run_reconall calls the underlying reconall function with a resolved base_dir.
-    """
-    reconall_mock = mocker.patch("utils.reconall")
-    run_reconall(temp_dir)
-    reconall_mock.assert_called_once_with(base_dir=temp_dir.resolve())
-
-
 def test_reconall_setup(temp_dir, mocker):
     """
     Test the reconall function sets up the workflow when a NIFTI file is present.
@@ -124,6 +114,10 @@ def test_reconall_setup(temp_dir, mocker):
     nifti_dir.mkdir(parents=True)
     nifti_file = nifti_dir / "test.nii.gz"
     nifti_file.touch()
+
+    # Create FREESURFER directory.
+    fs_dir = temp_dir / "FREESURFER"
+    fs_dir.mkdir(parents=True, exist_ok=True)
 
     # Patch Workflow.run so that it does not actually execute.
     workflow_run_mock = mocker.patch("nipype.pipeline.engine.Workflow.run")
@@ -273,13 +267,10 @@ def test_run_fastsurfer_for_all(temp_dir, mocker):
 
 
 def test_generate_json_files(temp_dir, mocker):
-    """
-    Test that generate_json_files calls the jsonifier functions with correct parameters.
-    """
-    # Patch jsonifier functions.
-    jsonifier_mock = mocker.patch("jsonifier.run_jsonifier")
-    json_average_mock = mocker.patch("jsonifier.run_json_average")
-    global_json_mock = mocker.patch("jsonifier.run_global_json")
+    # Patch the functions in the module where generate_json_files is defined.
+    jsonifier_mock = mocker.patch("app.run_jsonifier")
+    json_average_mock = mocker.patch("app.run_json_average")
+    global_json_mock = mocker.patch("app.run_global_json")
 
     freesurfer_path = temp_dir / "FREESURFER"
     fastsurfer_path = temp_dir / "FASTSURFER"

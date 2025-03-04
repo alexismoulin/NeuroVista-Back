@@ -265,14 +265,13 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         corestats_folder = folders_dict["corestats"]
 
         save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
-        series_folders: List[str] = get_folder_names(dicom_dir)
+        series_folders = get_folder_names(dicom_dir)
         convert_to_nifti(dicom_directory=dicom_dir, nifti_directory=nifti_dir)
         run_reconall(base_dir=base_path)
         process_lesions_for_all(folders=series_folders, freesurfer_path=fs_path, samseg_path=samseg_path)
         segment_subregions_for_all(folders=series_folders, freesurfer_path=fs_path)
-        segment_hypothalamus_for_all(folders=series_folders, freesurfer_path=fs_path)
-        run_fastsurfer_for_all(folders=series_folders, freesurfer_path=fs_path,
-                               fastsurfer_path=fastsurfer_path, workflows_path=wf_path)
+        # segment_hypothalamus_for_all(folders=series_folders, freesurfer_path=fs_path) - To be added in v0.2
+        run_fastsurfer_for_all(folders=series_folders, freesurfer_path=fs_path, fastsurfer_path=fastsurfer_path, workflows_path=wf_path)
         generate_json_files(
             folders=series_folders,
             freesurfer_path=fs_path,
