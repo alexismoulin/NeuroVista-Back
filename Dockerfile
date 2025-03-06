@@ -26,7 +26,7 @@ RUN pip install torch torchvision yacs tqdm scikit-image h5py SimpleITK
 RUN wget https://github.com/Deep-MI/FastSurfer/archive/refs/tags/v2.4.2.tar.gz
 RUN tar -xvzf v2.4.2.tar.gz
 RUN rm -rf v2.4.2.tar.gz
-RUN mv FastSurfer-2.4.2 FastSurfer
+RUN mv FastSurfer-2.4.2 /root/FastSurfer
 
 # Copy application files and set the working directory
 COPY . /root

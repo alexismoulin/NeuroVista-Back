@@ -1,5 +1,6 @@
 import logging
 import os
+import pydicom
 from pathlib import Path
 import shutil
 from typing import List, Tuple, Dict
@@ -16,9 +17,7 @@ from nipype.interfaces.base import (
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, Node, MapNode
 
-# Set up module-level logger
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
 
 
 def add_dcm_extension(filename: str) -> str:
@@ -77,9 +76,6 @@ def remove_double_extension(file: Path) -> str:
 def reconall(base_dir: Path) -> None:
     """
     Run FreeSurfer's recon-all processing on NIfTI files within the specified base directory.
-
-    Parameters:
-        base_dir (Path): The base directory containing subdirectories for NIFTI, FREESURFER, etc.
     """
     data_dir = base_dir / "NIFTI"
     fs_folder = base_dir / "FREESURFER"
@@ -103,7 +99,6 @@ def reconall(base_dir: Path) -> None:
     for subj_id, nifti_file in zip(subject_ids, nifti_files):
         subj_dir = fs_folder / subj_id
         if subj_dir.exists():
-            # Define key FreeSurfer output files
             key_files = [
                 subj_dir / "surf" / "lh.white",
                 subj_dir / "surf" / "rh.white",
@@ -156,11 +151,6 @@ def reconall(base_dir: Path) -> None:
 def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> None:
     """
     Process lesions using SAMSEG if the output does not already exist.
-
-    Parameters:
-        freesurfer_path (Path): Path to the FreeSurfer output directory.
-        samseg_path (Path): Path where SAMSEG outputs are stored.
-        series (str): Series identifier.
     """
     output_file = samseg_path / series / "samseg.stats"
     if output_file.is_file():
@@ -182,11 +172,6 @@ def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> No
 def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> None:
     """
     Segment subregions for the specified structure if output files are missing.
-
-    Parameters:
-        structure (str): The brain structure to segment (e.g., 'thalamus', 'brainstem', 'hippo-amygdala').
-        subject_id (str): The subject identifier.
-        subject_dir (Path): The directory containing subject data.
     """
     subject_path = subject_dir / subject_id
     output_files = {
@@ -225,10 +210,6 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> No
 def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
     """
     Run segmentation of the hypothalamus.
-
-    Parameters:
-        subject_id (str): The subject identifier.
-        subject_dir (Path): The directory containing subject data.
     """
     cmd = f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
     command = CommandLine(command="mri_segment_hypothalamic_subunits", args=cmd)
@@ -250,7 +231,7 @@ class RunFastSurferInputSpec(CommandLineInputSpec):
 
 
 class RunFastSurfer(CommandLine):
-    _cmd = "./run_fastsurfer.sh"  # Default command to run FastSurfer
+    _cmd = "./run_fastsurfer.sh"
     input_spec = RunFastSurferInputSpec
     output_spec = TraitedSpec
 
@@ -259,15 +240,6 @@ def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path,
                     parallel: bool, threads: int) -> None:
     """
     Run FastSurfer segmentation workflow if the expected output files do not exist.
-
-    Parameters:
-        fs_dir (Path): Directory containing FastSurfer script.
-        t1 (Path): Path to T1-weighted image.
-        sid (str): Subject identifier.
-        sd (Path): Directory for FastSurfer output.
-        wf_dir (Path): Directory for workflow temporary files.
-        parallel (bool): Flag to enable parallel processing.
-        threads (int): Number of threads to use.
     """
     output_files = [
         sd / sid / "mri" / "cerebellum.CerebNet.nii.gz",
@@ -303,11 +275,6 @@ def process_corestats(fs_path: Path, fastsurfer_path: Path, corestats_folder: Pa
     """
     Process core statistics by copying stats files from FreeSurfer and FastSurfer,
     then renaming them from '.stats' to '.txt'.
-
-    Parameters:
-        fs_path (Path): Directory containing FreeSurfer outputs.
-        fastsurfer_path (Path): Directory containing FastSurfer outputs.
-        corestats_folder (Path): Destination folder for processed core stats.
     """
     if not fs_path.exists():
         raise FileNotFoundError(f"FreeSurfer directory not found: {fs_path}")
@@ -318,24 +285,24 @@ def process_corestats(fs_path: Path, fastsurfer_path: Path, corestats_folder: Pa
     fastsurfer_stats_dir = fastsurfer_path / "stats"
     corestats_folder.mkdir(parents=True, exist_ok=True)
 
-    # Copy stats files from FreeSurfer
     if fs_stats_dir.exists():
         for stats_file in fs_stats_dir.glob("*.stats"):
             shutil.copy2(stats_file, corestats_folder)
     else:
         logger.warning(f"No stats directory found in FreeSurfer path: {fs_path}")
 
-    # Copy stats files from FastSurfer
     if fastsurfer_stats_dir.exists():
         for stats_file in fastsurfer_stats_dir.glob("*.stats"):
             shutil.copy2(stats_file, corestats_folder)
     else:
         logger.warning(f"No stats directory found in FastSurfer path: {fastsurfer_path}")
 
-    # Rename all .stats files to .txt
     for stats_file in corestats_folder.glob("*.stats"):
         txt_file = stats_file.with_suffix(".txt")
-        stats_file.rename(txt_file)
-        logger.info(f"Renamed {stats_file} to {txt_file}")
+        try:
+            stats_file.rename(txt_file)
+            logger.info(f"Renamed {stats_file} to {txt_file}")
+        except Exception as e:
+            logger.error(f"Error renaming file {stats_file}: {e}")
 
     logger.info(f"Core statistics processed and saved to {corestats_folder}")

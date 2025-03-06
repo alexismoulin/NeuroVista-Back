@@ -6,8 +6,6 @@ from typing import Any, Dict, List, Optional, Union
 
 import pandas as pd
 
-# Set up basic logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
@@ -21,7 +19,7 @@ def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Optional[float]:
 def read_volume_file(file_path: pathlib.Path) -> List[List[str]]:
     """
     Reads a text file and returns a list of split rows.
-    Empty lines are skipped.
+    Skips empty lines.
     """
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
@@ -33,7 +31,8 @@ def read_volume_file_skip(file_path: pathlib.Path, skip: int = 0) -> List[List[s
     """
     Reads a file and skips the first `skip` lines.
     """
-    return read_volume_file(file_path)[skip:]
+    data = read_volume_file(file_path)
+    return data[skip:]
 
 
 def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
@@ -43,7 +42,7 @@ def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) ->
     left_data = read_volume_file(left_file)
     right_data = read_volume_file(right_file)
     volumes = []
-    for left_row, right_row in zip(left_data, right_data):
+    for idx, (left_row, right_row) in enumerate(zip(left_data, right_data), start=1):
         try:
             structure = left_row[0]
             lhs_volume = round(float(left_row[1]), 2)
@@ -54,7 +53,7 @@ def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) ->
                 "RHS Volume (mm3)": rhs_volume
             })
         except (IndexError, ValueError) as e:
-            logger.warning(f"Skipping row due to error: {e}")
+            logger.warning(f"Row {idx}: Skipping row due to error: {e}")
     return volumes
 
 
@@ -78,14 +77,14 @@ def process_brain_stem(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
     data = read_volume_file(mri / "brainstemSsLabels.volumes.txt")
     volumes = []
-    for row in data:
+    for idx, row in enumerate(data, start=1):
         try:
             volumes.append({
                 "Structure": row[0],
                 "Volume (mm3)": round(float(row[1]), 2)
             })
         except (IndexError, ValueError) as e:
-            logger.warning(f"Error processing brain stem row {row}: {e}")
+            logger.warning(f"Brain stem row {idx} error with row {row}: {e}")
     return volumes
 
 
@@ -94,15 +93,20 @@ def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     Process thalamic nuclei volumes from MRI files.
     """
     data = read_volume_file(mri / "ThalamicNuclei.volumes.txt")
-    lhs_nuclei = [
-        {row[0].replace("Left-", ""): round(float(row[1]), 2)}
-        for row in data if "Left" in row[0]
-    ]
-    rhs_nuclei = [
-        {row[0].replace("Right-", ""): round(float(row[1]), 2)}
-        for row in data if "Right" in row[0]
-    ]
-    structure_names = [row[0].replace("Left-", "") for row in data if "Left" in row[0]]
+    lhs_nuclei = []
+    rhs_nuclei = []
+    structure_names = []
+    for idx, row in enumerate(data, start=1):
+        try:
+            if "Left" in row[0]:
+                name = row[0].replace("Left-", "")
+                lhs_nuclei.append({name: round(float(row[1]), 2)})
+                structure_names.append(name)
+            elif "Right" in row[0]:
+                name = row[0].replace("Right-", "")
+                rhs_nuclei.append({name: round(float(row[1]), 2)})
+        except (IndexError, ValueError) as e:
+            logger.warning(f"Thalamus row {idx} error with row {row}: {e}")
     return [{
         "Structure": name,
         "LHS Volume (mm3)": get_volume(name, lhs_nuclei),
@@ -137,10 +141,11 @@ def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, Union[str, flo
     """
     Process FastSurfer hypothalamus MRI data from a stats file.
     """
-    lines = read_volume_file_skip(path, skip=55)  # Skip header lines
+    lines = read_volume_file_skip(path, skip=55)
     volumes = []
-    for row in lines:
+    for idx, row in enumerate(lines, start=1):
         if len(row) < 5:
+            logger.warning(f"Hypothalamus row {idx} skipped: insufficient columns.")
             continue
         try:
             volume = float(row[3])
@@ -151,7 +156,7 @@ def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, Union[str, flo
                 name = "Right" + name[2:]
             volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
         except ValueError as e:
-            logger.warning(f"Skipping row {row} due to error: {e}")
+            logger.warning(f"Hypothalamus row {idx} error with row {row}: {e}")
     return volumes
 
 
@@ -159,17 +164,18 @@ def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, Union[str, flo
     """
     Process cerebellum volumes from a stats file.
     """
-    lines = read_volume_file_skip(file_path, skip=55)  # Skip header lines
+    lines = read_volume_file_skip(file_path, skip=55)
     volumes = []
-    for row in lines:
+    for idx, row in enumerate(lines, start=1):
         if len(row) < 5:
+            logger.warning(f"Cerebellum row {idx} skipped: insufficient columns.")
             continue
         try:
             volume = float(row[3])
             name = row[4]
             volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
         except ValueError as e:
-            logger.warning(f"Skipping row {row} due to error: {e}")
+            logger.warning(f"Cerebellum row {idx} error with row {row}: {e}")
     return volumes
 
 
@@ -205,18 +211,19 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[
 
 
 def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
-    # Process brain volumes
+    """
+    Process brain, white matter, and cortical parcellation volumes.
+    """
     brainvol = []
-    for row in read_volume_file(stats / "brainvol.stats"):
+    for idx, row in enumerate(read_volume_file(stats / "brainvol.stats"), start=1):
         try:
             brainvol.append({
                 "Structure": row[2].replace(",", ""),
                 "Volume (mm3)": int(float(row[-2][:-1]))
             })
         except (IndexError, ValueError) as e:
-            logger.warning(f"Skipping brainvol row {row} due to error: {e}")
+            logger.warning(f"Brainvol row {idx} error with row {row}: {e}")
 
-    # Process white matter data
     wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=65)
     wm_vol_lhs = [
         {row[4].replace("wm-lh-", ""): float(row[3])}
@@ -233,10 +240,9 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
         "RHS Volume (mm3)": get_volume(name, wm_vol_rhs)
     } for name in names]
 
-    # Process cortical parcellations for left and right hemispheres
     def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
         entries = []
-        for fields in read_volume_file_skip(file, skip=61):
+        for idx, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
             try:
                 entries.append({
                     "Structure": fields[0],
@@ -246,7 +252,7 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
                     "Mean Curvature (mm-1)": float(fields[6])
                 })
             except (IndexError, ValueError) as err:
-                logger.warning(f"Skipping DKT row {fields} due to error: {err}")
+                logger.warning(f"DKT row {idx} error with fields {fields}: {err}")
         return entries
 
     lh_dkt_atlas = parse_dkt(stats / "lh.aparc.DKTatlas.stats")
@@ -282,9 +288,7 @@ def run_jsonifier(
     """
     Generate JSON files for subcortical, cortical, and general volumes.
     """
-    # Ensure output directory exists
     output_folder.mkdir(parents=True, exist_ok=True)
-
     subcortical = get_subcortical(
         freesurfer_path=freesurfer_path / "mri",
         fastsurfer_path=fastsurfer_path / "stats"
@@ -300,7 +304,6 @@ def run_jsonifier(
         out_file = output_folder / fname
         try:
             with out_file.open("w") as f:
-                # noinspection PyTypeChecker
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote {fname} to {out_file}")
         except Exception as e:
@@ -346,9 +349,7 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
                     if isinstance(value, (int, float)):
                         cumulative_data[top_key][structure][key] += value
                     else:
-                        logger.warning(
-                            f"Non-numeric value for key '{key}' in entry {entry} in file {path}"
-                        )
+                        logger.warning(f"Non-numeric value for key '{key}' in entry {entry} in file {path}")
 
     averaged_result = {}
     for top_key, structures in cumulative_data.items():
@@ -369,7 +370,6 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
     output_file = averages_folder / main_type
     try:
         with output_file.open("w") as f:
-            # noinspection PyTypeChecker
             json.dump(averaged_result, f, indent=4)
         logger.info(f"Averaged data written to {output_file}")
     except Exception as e:
@@ -412,7 +412,6 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
     ]:
         try:
             with (json_path / fname).open("w") as f:
-                # noinspection PyTypeChecker
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote global JSON to {json_path / fname}")
         except Exception as e:
