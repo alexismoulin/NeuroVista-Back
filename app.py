@@ -2,16 +2,16 @@ import json
 import logging
 import os
 import time
+import queue
 from pathlib import Path
 from sys import platform
-from queue import Queue
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Event
 from typing import List, Dict
 
 import dicom2nifti
 import pydicom
-from flask import Flask, jsonify, request, Response, make_response
+from flask import Flask, jsonify, request, Response, make_response, stream_with_context
 from flask_cors import CORS
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 from functools import partial
@@ -35,7 +35,7 @@ CORS(app, supports_credentials=True)
 logger = logging.getLogger(__name__)
 
 # Thread-safe queue for Server-Sent Events (SSE)
-STEP_COMPLETION_QUEUE: Queue = Queue()
+STEP_COMPLETION_QUEUE = queue.Queue()
 BASE_DATA_PATH: Path = Path("./DATA")
 processing_event = Event()
 
@@ -108,7 +108,6 @@ def convert_to_nifti(dicom_directory: Path, nifti_directory: Path) -> None:
         except Exception as e:
             logger.exception("Error converting folder %s: %s", folder, e)
     logger.info("NIFTI conversion completed")
-    notify_step("nifti")
 
 
 def run_reconall(base_dir: Path) -> None:
@@ -122,7 +121,7 @@ def run_reconall(base_dir: Path) -> None:
         logger.info("FreeSurfer recon-all completed in %.2f seconds", elapsed)
     except Exception as e:
         logger.exception("Error during FreeSurfer recon-all: %s", e)
-    notify_step("recon")
+        raise
 
 
 def process_lesions_for_series(series: str, freesurfer_path: Path, samseg_path: Path) -> None:
@@ -142,7 +141,6 @@ def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_pa
     with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
         executor.map(partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path), folders)
     logger.info("SAMSEG processing completed")
-    notify_step("lesions")
 
 
 def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> None:
@@ -156,7 +154,6 @@ def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> Non
             except Exception as e:
                 logger.exception("Error segmenting %s for series %s: %s", structure, folder, e)
     logger.info("Subcortical segmentation completed")
-    notify_step("subs1")
 
 
 def segment_hypothalamus_for_all(folders: List[str], freesurfer_path: Path) -> None:
@@ -205,7 +202,6 @@ def run_fastsurfer_for_all(folders: List[str],
             folders,
         )
     logger.info("Extra subcortical segmentation completed")
-    notify_step("subs2")
 
 
 def generate_json_files(folders: List[str],
@@ -238,7 +234,6 @@ def generate_json_files(folders: List[str],
     except Exception as e:
         logger.exception("Error generating average/global JSON files: %s", e)
     logger.info("JSON files generation completed")
-    notify_step("json")
 
 
 def process_corestats_for_series(series: str, freesurfer_path: Path, fastsurfer_path: Path, corestats_folder: Path) -> None:
@@ -294,6 +289,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         # DICOM upload
         try:
             save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
+            notify_step("dicom")
         except Exception as e:
             logger.exception("Error during DICOM upload: %s", e)
             notify_failure("dicom")
@@ -304,6 +300,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         # NIFTI conversion
         try:
             convert_to_nifti(dicom_directory=dicom_dir, nifti_directory=nifti_dir)
+            notify_step("nifti")
         except Exception as e:
             logger.exception("Error during NIFTI conversion: %s", e)
             notify_failure("nifti")
@@ -312,6 +309,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         # Brain reconstruction (recon-all)
         try:
             run_reconall(base_dir=base_path)
+            notify_step("recon")
         except Exception as e:
             logger.exception("Error during brain reconstruction: %s", e)
             notify_failure("recon")
@@ -320,6 +318,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         # Lesions processing
         try:
             process_lesions_for_all(folders=series_folders, freesurfer_path=fs_path, samseg_path=samseg_path)
+            notify_step("lesions")
         except Exception as e:
             logger.exception("Error during lesions processing: %s", e)
             notify_failure("lesions")
@@ -328,6 +327,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         # Subcortical segmentation
         try:
             segment_subregions_for_all(folders=series_folders, freesurfer_path=fs_path)
+            notify_step("subs1")
         except Exception as e:
             logger.exception("Error during subcortical segmentation: %s", e)
             notify_failure("subs1")
@@ -335,7 +335,13 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
 
         # Extra segmentation (FastSurfer)
         try:
-            run_fastsurfer_for_all(folders=series_folders, freesurfer_path=fs_path, fastsurfer_path=fastsurfer_path, workflows_path=wf_path)
+            run_fastsurfer_for_all(
+                folders=series_folders,
+                freesurfer_path=fs_path,
+                fastsurfer_path=fastsurfer_path,
+                workflows_path=wf_path,
+            )
+            notify_step("subs2")
         except Exception as e:
             logger.exception("Error during extra segmentation: %s", e)
             notify_failure("subs2")
@@ -350,6 +356,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
                 samseg_path=samseg_path,
                 json_folder=json_folder,
             )
+            notify_step("json")
         except Exception as e:
             logger.exception("Error during JSON file generation: %s", e)
             notify_failure("json")
@@ -363,6 +370,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
                 fastsurfer_path=fastsurfer_path,
                 corestats_folder=corestats_folder,
             )
+            notify_step("corestats")
         except Exception as e:
             logger.exception("Error during core statistics processing: %s", e)
             notify_failure("corestats")
@@ -395,14 +403,24 @@ def stream() -> Response:
     """
     Stream processing step completions to the frontend in real time using Server-Sent Events (SSE).
     """
+
+    @stream_with_context
     def event_stream():
         while True:
             try:
+                # Wait for a step completion with a timeout
                 step_completed = STEP_COMPLETION_QUEUE.get(timeout=1)
                 yield f"data: {step_completed}\n\n"
-            except:
-                continue
-    return Response(event_stream(), mimetype="text/event-stream")
+            except queue.Empty:
+                # Send a heartbeat to keep the connection alive
+                yield "data: heartbeat\n\n"
+            except Exception as e:
+                logger.error("Unexpected error in event stream: %s", e)
+                break  # Optionally break out of the loop on unexpected errors
+
+    # Optionally include a retry directive (in milliseconds)
+    headers = {"Cache-Control": "no-cache"}
+    return Response(event_stream(), headers=headers, mimetype="text/event-stream")
 
 
 @app.post("/run_script")

@@ -144,6 +144,7 @@ def reconall(base_dir: Path) -> None:
         logger.info("Recon-all completed for all subjects.")
     except Exception as e:
         logger.error(f"Error in FreeSurfer recon-all: {e}")
+        raise
 
     logger.info(f"Subjects processed: {subjects_to_process}")
 
