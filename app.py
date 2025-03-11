@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import queue
+from pydicom.uid import MediaStorageDirectoryStorage
 from pathlib import Path
 from sys import platform
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -27,7 +28,7 @@ from utils import (
     segment_subregions,
     segment_hypothalamus,
     run_fastsurfer,
-    process_corestats,
+    process_corestats
 )
 
 app = Flask(__name__)
@@ -36,7 +37,7 @@ logger = logging.getLogger(__name__)
 
 # Thread-safe queue for Server-Sent Events (SSE)
 STEP_COMPLETION_QUEUE = queue.Queue()
-BASE_DATA_PATH: Path = Path("./DATA")
+BASE_DATA_PATH = Path("./DATA")
 processing_event = Event()
 
 
@@ -78,7 +79,7 @@ def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_direc
 
             ds = pydicom.dcmread(dicom_file)
             # Also skip based on SOPClassUID if available
-            if str(getattr(ds, "SOPClassUID", "")) == str(pydicom.uid.MediaStorageDirectoryStorage):
+            if str(getattr(ds, "SOPClassUID", "")) == str(MediaStorageDirectoryStorage):
                 logger.info("Skipping DICOMDIR file based on SOPClassUID: %s", dicom_file.filename)
                 continue
 
@@ -132,6 +133,7 @@ def process_lesions_for_series(series: str, freesurfer_path: Path, samseg_path: 
         process_lesions(freesurfer_path, samseg_path, series)
     except Exception as e:
         logger.exception("Error processing lesions for series %s: %s", series, e)
+        raise
 
 
 def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_path: Path) -> None:
@@ -179,11 +181,11 @@ def run_fastsurfer_for_series(series: str, freesurfer_path: Path, fastsurfer_pat
             sid=series,
             sd=fastsurfer_path,
             wf_dir=workflows_path,
-            parallel=True,
             threads=max(1, os.cpu_count()),
         )
     except Exception as e:
         logger.exception("Error in FastSurfer processing for series %s: %s", series, e)
+        raise
 
 
 def run_fastsurfer_for_all(folders: List[str],
@@ -196,12 +198,18 @@ def run_fastsurfer_for_all(folders: List[str],
     if platform == "darwin":
         os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
-    with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
-        executor.map(
-            partial(run_fastsurfer_for_series, freesurfer_path=freesurfer_path, fastsurfer_path=fastsurfer_path, workflows_path=workflows_path),
-            folders,
-        )
-    logger.info("Extra subcortical segmentation completed")
+    try:
+        with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
+            # Force iteration over the map iterator to trigger any exceptions
+            list(executor.map(
+                partial(run_fastsurfer_for_series, freesurfer_path=freesurfer_path, fastsurfer_path=fastsurfer_path,
+                        workflows_path=workflows_path),
+                folders,
+            ))
+        logger.info("Extra subcortical segmentation completed")
+    except Exception as e:
+        logger.exception("Error with FastSurfer: %s", e)
+        raise
 
 
 def generate_json_files(folders: List[str],
@@ -224,6 +232,7 @@ def generate_json_files(folders: List[str],
             )
         except Exception as e:
             logger.exception("Error generating JSON for series %s: %s", folder, e)
+            raise
     averages_dir = json_folder / "AVERAGES"
     averages_dir.mkdir(parents=True, exist_ok=True)
     try:
@@ -233,33 +242,33 @@ def generate_json_files(folders: List[str],
         run_global_json(json_path=json_folder, folders=folders)
     except Exception as e:
         logger.exception("Error generating average/global JSON files: %s", e)
+        raise
     logger.info("JSON files generation completed")
 
 
-def process_corestats_for_series(series: str, freesurfer_path: Path, fastsurfer_path: Path, corestats_folder: Path) -> None:
+def process_corestats_for_series(series: str, freesurfer_path: Path, corestats_folder: Path) -> None:
     """
     Process core statistics for a single series.
     """
     try:
         fs_series_path = freesurfer_path / series
-        fastsurfer_series_path = fastsurfer_path / series
         corestats_series_folder = corestats_folder / series
-        process_corestats(fs_series_path, fastsurfer_series_path, corestats_series_folder)
+        process_corestats(fs_series_path, corestats_series_folder)
         logger.info("Successfully processed corestats for series: %s", series)
     except Exception as e:
         logger.exception("Error processing corestats for series %s: %s", series, e)
+        raise
 
 
 def process_corestats_for_all(folders: List[str],
                               freesurfer_path: Path,
-                              fastsurfer_path: Path,
                               corestats_folder: Path) -> None:
     """
     Process core statistics for all series in parallel.
     """
     with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
         futures = [
-            executor.submit(process_corestats_for_series, series, freesurfer_path, fastsurfer_path, corestats_folder)
+            executor.submit(process_corestats_for_series, series, freesurfer_path, corestats_folder)
             for series in folders
         ]
         for future in as_completed(futures):
@@ -267,6 +276,7 @@ def process_corestats_for_all(folders: List[str],
                 future.result()
             except Exception as e:
                 logger.exception("Exception in corestats processing: %s", e)
+                raise
     logger.info("Core statistics processing completed for all series.")
 
 
@@ -324,7 +334,8 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
             notify_failure("lesions")
             return
 
-        # Subcortical segmentation
+
+        # Subcortical segmentation (Thalamus, Brain Stem, Amygdala)
         try:
             segment_subregions_for_all(folders=series_folders, freesurfer_path=fs_path)
             notify_step("subs1")
@@ -333,19 +344,28 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
             notify_failure("subs1")
             return
 
-        # Extra segmentation (FastSurfer)
+        # Hypothalamus segmentation
         try:
-            run_fastsurfer_for_all(
-                folders=series_folders,
-                freesurfer_path=fs_path,
-                fastsurfer_path=fastsurfer_path,
-                workflows_path=wf_path,
-            )
+            segment_hypothalamus_for_all(folders=series_folders, freesurfer_path=fs_path)
             notify_step("subs2")
         except Exception as e:
-            logger.exception("Error during extra segmentation: %s", e)
+            logger.exception(msg=f"Error during hypothalamus segmentation: {e}")
             notify_failure("subs2")
             return
+
+        # Extra segmentation (FastSurfer)
+        # try:
+        #     run_fastsurfer_for_all(
+        #         folders=series_folders,
+        #         freesurfer_path=fs_path,
+        #         fastsurfer_path=fastsurfer_path,
+        #         workflows_path=wf_path,
+        #     )
+        #     notify_step("subs2")
+        # except Exception as e:
+        #     logger.exception("Error during extra segmentation: %s", e)
+        #     notify_failure("subs2")
+        #     return
 
         # JSON file generation
         try:
@@ -364,12 +384,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
 
         # Core statistics processing
         try:
-            process_corestats_for_all(
-                folders=series_folders,
-                freesurfer_path=fs_path,
-                fastsurfer_path=fastsurfer_path,
-                corestats_folder=corestats_folder,
-            )
+            process_corestats_for_all(folders=series_folders, freesurfer_path=fs_path, corestats_folder=corestats_folder)
             notify_step("corestats")
         except Exception as e:
             logger.exception("Error during core statistics processing: %s", e)

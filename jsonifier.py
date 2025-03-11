@@ -3,8 +3,9 @@ import logging
 import pathlib
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
-
 import pandas as pd
+
+from utils import USE_FASTSURFER
 
 logger = logging.getLogger(__name__)
 
@@ -184,12 +185,11 @@ def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path
     Extract subcortical volumes from various MRI data files.
     """
     return {
-        "hippocampus": process_hippocampus(freesurfer_path / "mri"),
-        "thalamus": process_thalamus(freesurfer_path / "mri"),
-        "amygdala": process_amygdala(freesurfer_path / "mri"),
-        "brain_stem": process_brain_stem(freesurfer_path / "mri"),
-        "hypothalamus": process_hypothalamus_v2(fastsurfer_path / "stats" / "hypothalamus.HypVINN.stats"),
-        "cerebellum": process_cerebellum(fastsurfer_path / "stats" / "cerebellum.CerebNet.stats")
+        "hippocampus": process_hippocampus(freesurfer_path),
+        "thalamus": process_thalamus(freesurfer_path),
+        "amygdala": process_amygdala(freesurfer_path),
+        "brain_stem": process_brain_stem(freesurfer_path),
+        "hypothalamus": process_hypothalamus_v1(freesurfer_path)
     }
 
 
@@ -199,7 +199,7 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[
     """
     hypointensities = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
-        for row in read_volume_file_skip(fs_stats / "aseg.stats", skip=79)
+        for row in read_volume_file_skip(fs_stats / "aseg.stats", skip=80)
         if "hypointensities" in row[4]
     ]
     lesions = [
@@ -224,7 +224,7 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
         except (IndexError, ValueError) as e:
             logger.warning(f"Brainvol row {idx} error with row {row}: {e}")
 
-    wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=65)
+    wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=66)
     wm_vol_lhs = [
         {row[4].replace("wm-lh-", ""): float(row[3])}
         for row in wm_data if "wm-lh" in row[4]
@@ -242,7 +242,7 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
 
     def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
         entries = []
-        for idx, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
+        for id_row, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
             try:
                 entries.append({
                     "Structure": fields[0],
@@ -252,7 +252,7 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
                     "Mean Curvature (mm-1)": float(fields[6])
                 })
             except (IndexError, ValueError) as err:
-                logger.warning(f"DKT row {idx} error with fields {fields}: {err}")
+                logger.warning(f"DKT row {id_row} error with fields {fields}: {err}")
         return entries
 
     lh_dkt_atlas = parse_dkt(stats / "lh.aparc.DKTatlas.stats")
@@ -272,7 +272,7 @@ def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, Any
     """
     aseg = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
-        for row in read_volume_file_skip(stats / "aseg.stats", skip=79)
+        for row in read_volume_file_skip(stats / "aseg.stats", skip=80)
         if "hypointensities" not in row[4]
     ]
     lesions = get_lesions(fs_stats=stats, samseg_path=samseg_path)

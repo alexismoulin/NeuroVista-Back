@@ -1,6 +1,5 @@
 import logging
 import os
-import pydicom
 from pathlib import Path
 import shutil
 from typing import List, Tuple, Dict
@@ -18,6 +17,7 @@ from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, Node, MapNode
 
 logger = logging.getLogger(__name__)
+USE_FASTSURFER = False
 
 
 def add_dcm_extension(filename: str) -> str:
@@ -168,6 +168,7 @@ def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> No
         logger.info(f"Created {samseg_path / series}")
     except Exception as e:
         logger.error(f"Error running SAMSEG for series {series}: {e}")
+        raise
 
 
 def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> None:
@@ -206,12 +207,18 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> No
         logger.info(f"{structure} segmentation completed")
     except Exception as e:
         logger.error(f"Error during {structure} segmentation: {e}")
+        raise
 
 
 def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
     """
     Run segmentation of the hypothalamus.
     """
+    output_file = subject_dir / subject_id / "mri" / "hypothalamic_subunits_volumes.v1.csv"
+    if output_file.is_file():
+        logger.info(f"{output_file} already exists - skipping")
+        return
+
     cmd = f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
     command = CommandLine(command="mri_segment_hypothalamic_subunits", args=cmd)
     logger.info(f"Executing command: {command.cmdline}")
@@ -220,6 +227,7 @@ def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
         logger.info("Hypothalamus segmentation completed")
     except Exception as e:
         logger.error(f"Error during hypothalamus segmentation: {e}")
+        raise
 
 
 class RunFastSurferInputSpec(CommandLineInputSpec):
@@ -237,8 +245,7 @@ class RunFastSurfer(CommandLine):
     output_spec = TraitedSpec
 
 
-def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path,
-                    parallel: bool, threads: int) -> None:
+def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path, threads: int) -> None:
     """
     Run FastSurfer segmentation workflow if the expected output files do not exist.
     """
@@ -256,10 +263,9 @@ def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path,
     fastsurfer_instance = RunFastSurfer()
     fastsurfer_instance._cmd = str(fs_dir / "run_fastsurfer.sh")
     fastsurfer_node = Node(fastsurfer_instance, name="run_fastsurfer")
-    fastsurfer_node.inputs.t1 = str(t1)
+    fastsurfer_node.inputs.t1 = str(t1.resolve())
     fastsurfer_node.inputs.sid = sid
-    fastsurfer_node.inputs.sd = str(sd)
-    fastsurfer_node.inputs.parallel = parallel
+    fastsurfer_node.inputs.sd = str(sd.resolve())
     fastsurfer_node.inputs.threads = threads
 
     wf = Workflow(name="fastsurfer_workflow", base_dir=str(wf_dir))
@@ -270,34 +276,29 @@ def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path,
         logger.info("FastSurfer workflow completed")
     except Exception as e:
         logger.error(f"Error during FastSurfer workflow: {e}")
+        raise
 
 
-def process_corestats(fs_path: Path, fastsurfer_path: Path, corestats_folder: Path) -> None:
+def process_corestats(fs_path: Path, corestats_folder: Path) -> None:
     """
-    Process core statistics by copying stats files from FreeSurfer and FastSurfer,
+    Process core statistics by copying stats files from FreeSurfer,
     then renaming them from '.stats' to '.txt'.
     """
     if not fs_path.exists():
         raise FileNotFoundError(f"FreeSurfer directory not found: {fs_path}")
-    if not fastsurfer_path.exists():
-        raise FileNotFoundError(f"FastSurfer directory not found: {fastsurfer_path}")
 
-    fs_stats_dir = fs_path / "stats"
-    fastsurfer_stats_dir = fastsurfer_path / "stats"
+    stats_dir = fs_path / "stats"
+    mri_dir = fs_path / "mri"
     corestats_folder.mkdir(parents=True, exist_ok=True)
 
-    if fs_stats_dir.exists():
-        for stats_file in fs_stats_dir.glob("*.stats"):
+    # Copy .stats files from the stats subfolder
+    if stats_dir.exists():
+        for stats_file in stats_dir.glob("*.stats"):
             shutil.copy2(stats_file, corestats_folder)
     else:
         logger.warning(f"No stats directory found in FreeSurfer path: {fs_path}")
 
-    if fastsurfer_stats_dir.exists():
-        for stats_file in fastsurfer_stats_dir.glob("*.stats"):
-            shutil.copy2(stats_file, corestats_folder)
-    else:
-        logger.warning(f"No stats directory found in FastSurfer path: {fastsurfer_path}")
-
+    # Rename stats files to txt files
     for stats_file in corestats_folder.glob("*.stats"):
         txt_file = stats_file.with_suffix(".txt")
         try:
@@ -305,5 +306,11 @@ def process_corestats(fs_path: Path, fastsurfer_path: Path, corestats_folder: Pa
             logger.info(f"Renamed {stats_file} to {txt_file}")
         except Exception as e:
             logger.error(f"Error renaming file {stats_file}: {e}")
+            raise
+
+    # Copy .txt files from the mri subfolder
+    if mri_dir.exists():
+        for mri_file in mri_dir.glob("*.txt"):
+            shutil.copy2(mri_file, corestats_folder)
 
     logger.info(f"Core statistics processed and saved to {corestats_folder}")
