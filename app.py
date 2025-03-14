@@ -23,6 +23,7 @@ from utils import (
     get_folder_names,
     create_folders,
     get_nifti_dimensions,
+    list_folder_subfolders,
     reconall,
     process_lesions,
     segment_subregions,
@@ -465,6 +466,23 @@ def run_script() -> Response:
     response = make_response(jsonify({"message": "Processing started"}))
     response.status_code = 202
     return response
+
+@app.get("/studies")
+def studies() -> Response:
+    """
+    Retrieve Patient / Study couples.
+    """
+    couples = list_folder_subfolders(directory_path=BASE_DATA_PATH)
+    if len(couples) > 0:
+        response = make_response(jsonify(couples))
+        response.status_code = 200
+        logger.info(f"COUPLES: {couples}")
+        return response
+    else:
+        response = make_response(jsonify({"error": "No Data"}))
+        response.status_code = 404
+        logger.info(f"COUPLES: NIET !!")
+        return response
 
 
 @app.get("/cortical/<patient>/<study>")

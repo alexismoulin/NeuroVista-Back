@@ -73,6 +73,19 @@ def remove_double_extension(file: Path) -> str:
     return file.stem
 
 
+def list_folder_subfolders(directory_path) -> List[Tuple]:
+    """Returns a list of tuples containing each folder and its immediate subfolders in a directory."""
+    folder_subfolder_pairs = []
+
+    for folder in sorted(directory_path.iterdir()):
+        if folder.is_dir():
+            subfolders = [subfolder.name for subfolder in sorted(folder.iterdir()) if subfolder.is_dir()]
+            for subfolder in subfolders:
+                folder_subfolder_pairs.append((folder.name, subfolder))
+
+    return folder_subfolder_pairs
+
+
 def reconall(base_dir: Path) -> None:
     """
     Run FreeSurfer's recon-all processing on NIfTI files within the specified base directory.
