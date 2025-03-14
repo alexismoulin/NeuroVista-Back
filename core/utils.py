@@ -1,23 +1,16 @@
 import logging
 import os
+import re
 from pathlib import Path
 import shutil
 from typing import List, Tuple, Dict
 
 import nibabel as nib
-from nipype.interfaces.base import (
-    CommandLine,
-    CommandLineInputSpec,
-    TraitedSpec,
-    File,
-    Directory,
-    traits,
-)
+from nipype.interfaces.base import CommandLine
 from nipype.interfaces.freesurfer import ReconAll
-from nipype.pipeline.engine import Workflow, Node, MapNode
+from nipype.pipeline.engine import Workflow, MapNode
 
 logger = logging.getLogger(__name__)
-USE_FASTSURFER = False
 
 
 def add_dcm_extension(filename: str) -> str:
@@ -32,6 +25,14 @@ def get_folder_names(directory: Path) -> List[str]:
     Return a list of folder names within the given directory.
     """
     return [p.name for p in directory.iterdir() if p.is_dir()]
+
+
+def sanitize_name(name: str) -> str:
+    """
+    Sanitize input names to prevent path traversal and remove unsafe characters.
+    Only alphanumeric characters, underscores, and dashes are allowed.
+    """
+    return re.sub(r'[^A-Za-z0-9_-]', '', name)
 
 
 def create_folders(base_path: Path) -> Dict[str, Path]:
@@ -240,55 +241,6 @@ def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
         logger.info("Hypothalamus segmentation completed")
     except Exception as e:
         logger.error(f"Error during hypothalamus segmentation: {e}")
-        raise
-
-
-class RunFastSurferInputSpec(CommandLineInputSpec):
-    t1 = File(argstr="--t1 %s", exists=True, mandatory=True, desc="Path to T1-weighted NIfTI image")
-    sid = traits.Str(argstr="--sid %s", mandatory=True, desc="Subject ID")
-    sd = Directory(argstr="--sd %s", mandatory=True, desc="Directory for FastSurfer output")
-    no_asegdkt = traits.Bool(argstr="--no_asegdkt", usedefault=True, desc="Omit ASEG and DKT segmentations")
-    parallel = traits.Bool(argstr="--parallel", usedefault=True, desc="Use parallel processing")
-    threads = traits.Int(argstr="--threads %d", usedefault=True, default_value=4, desc="Number of threads")
-
-
-class RunFastSurfer(CommandLine):
-    _cmd = "./run_fastsurfer.sh"
-    input_spec = RunFastSurferInputSpec
-    output_spec = TraitedSpec
-
-
-def run_fastsurfer(fs_dir: Path, t1: Path, sid: str, sd: Path, wf_dir: Path, threads: int) -> None:
-    """
-    Run FastSurfer segmentation workflow if the expected output files do not exist.
-    """
-    output_files = [
-        sd / sid / "mri" / "cerebellum.CerebNet.nii.gz",
-        sd / sid / "mri" / "hypothalamus.HypVINN.nii.gz",
-        sd / sid / "mri" / "hypothalamus_mask.HypVINN.nii.gz",
-        sd / sid / "stats" / "cerebellum.CerebNet.stats",
-        sd / sid / "stats" / "hypothalamus.HypVINN.stats",
-    ]
-    if all(f.exists() for f in output_files):
-        logger.info("Skipping Hypothalamus and Cerebellum segmentations as all output files already exist")
-        return
-
-    fastsurfer_instance = RunFastSurfer()
-    fastsurfer_instance._cmd = str(fs_dir / "run_fastsurfer.sh")
-    fastsurfer_node = Node(fastsurfer_instance, name="run_fastsurfer")
-    fastsurfer_node.inputs.t1 = str(t1.resolve())
-    fastsurfer_node.inputs.sid = sid
-    fastsurfer_node.inputs.sd = str(sd.resolve())
-    fastsurfer_node.inputs.threads = threads
-
-    wf = Workflow(name="fastsurfer_workflow", base_dir=str(wf_dir))
-    wf.add_nodes([fastsurfer_node])
-
-    try:
-        wf.run()
-        logger.info("FastSurfer workflow completed")
-    except Exception as e:
-        logger.error(f"Error during FastSurfer workflow: {e}")
         raise
 
 

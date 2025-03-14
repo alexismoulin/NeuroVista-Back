@@ -3,7 +3,7 @@ from pathlib import Path
 import nibabel as nib
 import numpy as np
 from numpy.typing import ArrayLike
-from utils import (
+from core.utils import (
     add_dcm_extension,
     get_folder_names,
     create_folders,

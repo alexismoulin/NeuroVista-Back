@@ -5,7 +5,6 @@ from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
 
-from utils import USE_FASTSURFER
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 import pytest
-from jsonifier import get_volume, read_volume_file, process_paired_volumes
+from core.jsonifier import get_volume, read_volume_file, process_paired_volumes
 
 
 @pytest.fixture

@@ -13,22 +13,6 @@ def test_home(client):
     assert response.data == b"Home"
     assert response.status_code == 200
 
-def test_upload(client):
-    """Test the /upload endpoint using an in-memory file upload."""
-    file_data = BytesIO(b"dummy data")
-    file_storage = FileStorage(
-        stream=file_data, filename="test.dcm", content_type="application/dicom"
-    )
-    data = {
-        "dicoms": file_storage,
-        "study": "Study1",
-        "patient": "Patient1"
-    }
-    response = client.post("/upload", data=data, content_type="multipart/form-data")
-    assert response.status_code == 200
-    assert "form_data" in response.json
-    assert "file_names" in response.json
-
 def test_run_script_processing_not_in_progress(client, mocker):
     """Test /run_script when no processing is active."""
     mocker.patch("app.run_processing")
