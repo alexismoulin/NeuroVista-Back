@@ -217,8 +217,6 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         nifti_dir = folders_dict["nifti"]
         fs_path = folders_dict["freesurfer"]
         samseg_path = folders_dict["samseg"]
-        fastsurfer_path = folders_dict["fastsurfer"]
-        wf_path = folders_dict["workflows"]
         json_folder = folders_dict["json"]
         corestats_folder = folders_dict["corestats"]
 

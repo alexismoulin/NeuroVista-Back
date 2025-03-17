@@ -44,7 +44,6 @@ def create_folders(base_path: Path) -> Dict[str, Path]:
         "nifti": base_path / "NIFTI",
         "freesurfer": base_path / "FREESURFER",
         "samseg": base_path / "SAMSEG",
-        "fastsurfer": base_path / "FASTSURFER",
         "workflows": base_path / "WORKFLOWS",
         "json": base_path / "JSON",
         "corestats": base_path / "CORESTATS",

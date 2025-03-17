@@ -179,7 +179,7 @@ def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, Union[str, flo
     return volumes
 
 
-def get_subcortical(freesurfer_path: pathlib.Path, fastsurfer_path: pathlib.Path) -> Dict[str, Any]:
+def get_subcortical(freesurfer_path: pathlib.Path) -> Dict[str, Any]:
     """
     Extract subcortical volumes from various MRI data files.
     """
@@ -280,7 +280,6 @@ def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, Any
 
 def run_jsonifier(
     freesurfer_path: pathlib.Path,
-    fastsurfer_path: pathlib.Path,
     samseg_path: pathlib.Path,
     output_folder: pathlib.Path
 ) -> None:
@@ -288,10 +287,7 @@ def run_jsonifier(
     Generate JSON files for subcortical, cortical, and general volumes.
     """
     output_folder.mkdir(parents=True, exist_ok=True)
-    subcortical = get_subcortical(
-        freesurfer_path=freesurfer_path / "mri",
-        fastsurfer_path=fastsurfer_path / "stats"
-    )
+    subcortical = get_subcortical(freesurfer_path=freesurfer_path / "mri")
     cortical = get_cortical(stats=freesurfer_path / "stats")
     general = get_general(stats=freesurfer_path / "stats", samseg_path=samseg_path)
 
