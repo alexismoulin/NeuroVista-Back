@@ -1,30 +1,40 @@
+# Use Ubuntu 22.04 as the base image
 FROM ubuntu:22.04
 
-# Basic installs and updates
+# Use an ARG for FreeSurfer version (can be overridden at build time)
+ARG FS_VERSION=8.0.0
+
+# Set environment variables for FreeSurfer early if needed
+ENV FS_LICENSE=/root/license.txt \
+    FREESURFER_HOME=/usr/local/freesurfer/${FS_VERSION} \
+    PATH=/usr/local/freesurfer/${FS_VERSION}/bin:$PATH
+
+# Set working directory early
+WORKDIR /root
+
+# Combine apt-get commands into a single RUN for efficiency
 RUN apt-get update && \
     apt-get install -y wget python3-pip && \
     apt-get upgrade -y && \
-    apt-get clean
+    rm -rf /var/lib/apt/lists/*
 
-# Install and configure FreeSurfer 7.4.1
-RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/7.4.1/freesurfer_ubuntu22-7.4.1_amd64.deb
-RUN apt-get install -y ./freesurfer_ubuntu22-7.4.1_amd64.deb
-RUN rm -f ./freesurfer_ubuntu22-7.4.1_amd64.deb
+# Download, install, and remove FreeSurfer package in one layer
+RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VERSION}/freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    apt-get update && apt-get install -y ./freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    rm -f freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    rm -rf /var/lib/apt/lists/*
 
-# Set environment variables for FreeSurfer
-ENV FS_LICENSE=/root/license.txt
-ENV FREESURFER_HOME=/usr/local/freesurfer/7.4.1
-ENV PATH=$FREESURFER_HOME/bin:$PATH
+# Copy only the requirements file first for better caching
+COPY requirements.txt /root/
 
 # Install Python libraries
-RUN pip install -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy application files and set the working directory
+# Copy the rest of the application files
 COPY . /root
-WORKDIR /root
 
-# Expose port for Flask
+# Expose the port used by the Flask app
 EXPOSE 5001
 
-# Start Flask server
+# Start the application by sourcing FreeSurfer setup and running Flask
 CMD ["bash", "-c", "source $FREESURFER_HOME/SetUpFreeSurfer.sh && python3.10 app.py"]
