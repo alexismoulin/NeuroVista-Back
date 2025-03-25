@@ -45,7 +45,7 @@ def test_get_folder_names(tmp_path):
 
 def test_create_folders(tmp_path):
     folders = create_folders(tmp_path)
-    expected_keys = {"dicom", "nifti", "freesurfer", "samseg", "fastsurfer", "workflows", "json", "corestats"}
+    expected_keys = {"dicom", "nifti", "freesurfer", "samseg", "workflows", "json", "corestats"}
     assert set(folders.keys()) == expected_keys, f"Expected folder keys {expected_keys}, got {folders.keys()}"
     for folder_path in folders.values():
         assert folder_path.exists() and folder_path.is_dir(), f"Folder {folder_path} does not exist or is not a directory"

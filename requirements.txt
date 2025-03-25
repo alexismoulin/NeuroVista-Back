@@ -6,12 +6,4 @@ Flask
 Flask-Cors
 nipype
 pandas
-# Specific FastSurfer
-torch
-torchvision
-yacs
-tqdm
-scikit-image
-h5py
-SimpleITK
-matplotlib
+pytest

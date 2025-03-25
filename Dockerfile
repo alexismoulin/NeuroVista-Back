@@ -19,14 +19,6 @@ ENV PATH=$FREESURFER_HOME/bin:$PATH
 # Install Python libraries
 RUN pip install -r requirements.txt
 
-# Install FastSurfer 2.4.2 and dependencies
-RUN apt-get install -y git ca-certificates file
-
-RUN wget https://github.com/Deep-MI/FastSurfer/archive/refs/tags/v2.4.2.tar.gz
-RUN tar -xvzf v2.4.2.tar.gz
-RUN rm -rf v2.4.2.tar.gz
-RUN mv FastSurfer-2.4.2 /root/FastSurfer
-
 # Copy application files and set the working directory
 COPY . /root
 WORKDIR /root

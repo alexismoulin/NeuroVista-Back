@@ -209,7 +209,7 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[
     return hypointensities + lesions
 
 
-def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
+def get_brainvol(stats: pathlib.Path) -> List[Dict[str, str | int]]:
     """
     Process brain, white matter, and cortical parcellation volumes.
     """
@@ -222,6 +222,10 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
             })
         except (IndexError, ValueError) as e:
             logger.warning(f"Brainvol row {idx} error with row {row}: {e}")
+    return brainvol
+
+
+def get_white_matter(stats: pathlib.Path) -> List[Dict[str, str | float | None]]:
 
     wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=66)
     wm_vol_lhs = [
@@ -239,29 +243,32 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, Any]:
         "RHS Volume (mm3)": get_volume(name, wm_vol_rhs)
     } for name in names]
 
-    def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-        entries = []
-        for id_row, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
-            try:
-                entries.append({
-                    "Structure": fields[0],
-                    "Surface Area (mm2)": int(fields[2]),
-                    "Gray Matter Vol (mm3)": int(fields[3]),
-                    "Thickness Avg (mm)": float(fields[4]),
-                    "Mean Curvature (mm-1)": float(fields[6])
-                })
-            except (IndexError, ValueError) as err:
-                logger.warning(f"DKT row {id_row} error with fields {fields}: {err}")
-        return entries
+    return wm_vols
 
-    lh_dkt_atlas = parse_dkt(stats / "lh.aparc.DKTatlas.stats")
-    rh_dkt_atlas = parse_dkt(stats / "rh.aparc.DKTatlas.stats")
+
+def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    entries = []
+    for id_row, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
+        try:
+            entries.append({
+                "Structure": fields[0],
+                "Surface Area (mm2)": int(fields[2]),
+                "Gray Matter Vol (mm3)": int(fields[3]),
+                "Thickness Avg (mm)": float(fields[4]),
+                "Mean Curvature (mm-1)": float(fields[6])
+            })
+        except (IndexError, ValueError) as err:
+            logger.warning(f"DKT row {id_row} error with fields {fields}: {err}")
+    return entries
+
+
+def get_cortical(stats: pathlib.Path) -> Dict[str, List]:
 
     return {
-        "brain": brainvol,
-        "whitematter": wm_vols,
-        "lh_dkatlas": lh_dkt_atlas,
-        "rh_dkatlas": rh_dkt_atlas,
+        "brain": get_brainvol(stats=stats),
+        "whitematter": get_white_matter(stats=stats),
+        "lh_dkatlas": parse_dkt(stats / "lh.aparc.DKTatlas.stats"),
+        "rh_dkatlas": parse_dkt(stats / "rh.aparc.DKTatlas.stats")
     }
 
 

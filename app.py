@@ -5,7 +5,6 @@ import queue
 from core.utils import sanitize_name, get_nifti_dimensions, list_folder_subfolders, get_folder_names
 from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, read_json_file
 
-
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 logger = logging.getLogger(__name__)

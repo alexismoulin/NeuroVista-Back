@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import MagicMock
 from werkzeug.datastructures import FileStorage, ImmutableMultiDict
+from pathlib import Path
 
 from core.processing import convert_to_nifti, generate_json_files, process_lesions_for_all, save_dicoms
 from core.utils import process_corestats, process_lesions, reconall, segment_hypothalamus, segment_subregions
@@ -9,7 +10,7 @@ from core.utils import process_corestats, process_lesions, reconall, segment_hyp
 # --- Fixtures ---
 
 @pytest.fixture
-def temp_dir(tmp_path):
+def temp_dir(tmp_path: Path) -> Path:
     """
     Returns a temporary directory as a pathlib.Path object.
     """
@@ -17,7 +18,7 @@ def temp_dir(tmp_path):
 
 
 @pytest.fixture
-def mock_pydicom_dataset():
+def mock_pydicom_dataset() -> MagicMock:
     ds = MagicMock()
     ds.SeriesDescription = "Series1"
     return ds
@@ -25,17 +26,17 @@ def mock_pydicom_dataset():
 
 # --- Tests ---
 
-def test_save_dicoms(temp_dir, mocker, mock_pydicom_dataset):
+def test_save_dicoms(temp_dir: Path, mocker, mock_pydicom_dataset: MagicMock):
     """
     Test that save_dicoms creates the proper directory and calls FileStorage.save with the expected destination.
     """
     # Patch pydicom.dcmread in the app namespace.
     mocker.patch("pydicom.dcmread", return_value=mock_pydicom_dataset)
     # Patch add_dcm_extension so it appends '.dcm' if not present.
-    mocker.patch("app.add_dcm_extension", side_effect=lambda filename: filename + ".dcm" if not filename.lower().endswith(".dcm") else filename)
+    mocker.patch("core.utils.add_dcm_extension", side_effect=lambda filename: filename + ".dcm" if not filename.lower().endswith(".dcm") else filename)
     # Patch logger and notify_step to prevent side effects during testing.
     mocker.patch("app.logger")
-    mocker.patch("app.notify_step")
+    mocker.patch("core.processing.notify_step")
     
     # Create a fake FileStorage object.
     mock_file = MagicMock(spec=FileStorage)
@@ -58,7 +59,7 @@ def test_save_dicoms(temp_dir, mocker, mock_pydicom_dataset):
     mock_file.save.assert_called_once_with(dst=str(expected_path))
 
 
-def test_convert_to_nifti(temp_dir, mocker):
+def test_convert_to_nifti(temp_dir: Path, mocker):
     """
     Test that convert_to_nifti calls dicom2nifti.dicom_series_to_nifti for each DICOM series folder.
     """
@@ -91,7 +92,7 @@ def test_convert_to_nifti(temp_dir, mocker):
     assert kwargs["output_file"] == expected_output
 
 
-def test_reconall_setup(temp_dir, mocker):
+def test_reconall_setup(temp_dir: Path, mocker):
     """
     Test the reconall function sets up the workflow when a NIFTI file is present.
     """
@@ -115,7 +116,7 @@ def test_reconall_setup(temp_dir, mocker):
     workflow_run_mock.assert_called()
 
 
-def test_process_lesions(temp_dir, mocker):
+def test_process_lesions(temp_dir: Path, mocker):
     """
     Test that process_lesions calls CommandLine.run when the output does not exist,
     and skips calling it when the output already exists.
@@ -146,12 +147,12 @@ def test_process_lesions(temp_dir, mocker):
     cmd_run_mock.assert_not_called()
 
 
-def test_process_lesions_for_all(temp_dir, mocker):
+def test_process_lesions_for_all(temp_dir: Path, mocker):
     """
     Test that process_lesions_for_all calls process_lesions for each series.
     """
     # Patch the process_lesions function in the app module.
-    process_lesions_mock = mocker.patch("app.process_lesions")
+    process_lesions_mock = mocker.patch("core.processing.process_lesions")
     freesurfer_path = temp_dir / "FREESURFER"
     samseg_path = temp_dir / "SAMSEG"
     folders = ["series1"]
@@ -161,7 +162,7 @@ def test_process_lesions_for_all(temp_dir, mocker):
     process_lesions_mock.assert_called_once_with(freesurfer_path, samseg_path, "series1")
 
 
-def test_segment_subregions(temp_dir, mocker):
+def test_segment_subregions(temp_dir: Path, mocker):
     """
     Test that segment_subregions calls CommandLine.run if output files are missing,
     and skips when all expected output files exist.
@@ -190,7 +191,7 @@ def test_segment_subregions(temp_dir, mocker):
     cmd_run_mock.assert_not_called()
 
 
-def test_segment_hypothalamus(temp_dir, mocker):
+def test_segment_hypothalamus(temp_dir: Path, mocker):
     """
     Test that segment_hypothalamus calls CommandLine.run.
     """
@@ -201,11 +202,11 @@ def test_segment_hypothalamus(temp_dir, mocker):
     cmd_run_mock.assert_called_once()
 
 
-def test_generate_json_files(temp_dir, mocker):
+def test_generate_json_files(temp_dir: Path, mocker):
     # Patch the functions in the module where generate_json_files is defined.
-    jsonifier_mock = mocker.patch("app.run_jsonifier")
-    json_average_mock = mocker.patch("app.run_json_average")
-    global_json_mock = mocker.patch("app.run_global_json")
+    jsonifier_mock = mocker.patch("core.processing.run_jsonifier")
+    json_average_mock = mocker.patch("core.processing.run_json_average")
+    global_json_mock = mocker.patch("core.processing.run_global_json")
 
     freesurfer_path = temp_dir / "FREESURFER"
     samseg_path = temp_dir / "SAMSEG"
@@ -224,7 +225,7 @@ def test_generate_json_files(temp_dir, mocker):
     global_json_mock.assert_called_once()
 
 
-def test_process_corestats(temp_dir):
+def test_process_corestats(temp_dir: Path):
     """
     Test that process_corestats copies and renames stats files from FreeSurfer.
     """
