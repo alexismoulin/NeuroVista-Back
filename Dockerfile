@@ -4,11 +4,6 @@ FROM ubuntu:22.04
 # Use an ARG for FreeSurfer version (can be overridden at build time)
 ARG FS_VERSION=8.0.0
 
-# Set environment variables for FreeSurfer early if needed
-ENV FS_LICENSE=/root/license.txt \
-    FREESURFER_HOME=/usr/local/freesurfer/${FS_VERSION} \
-    PATH=/usr/local/freesurfer/${FS_VERSION}/bin:$PATH
-
 # Set working directory early
 WORKDIR /root
 
@@ -24,8 +19,9 @@ RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VERSION}/fr
     rm -f freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy only the requirements file first for better caching
+# Copy only the requirements and licence files first for better caching
 COPY requirements.txt /root/
+COPY license.txt /usr/local/freesurfer/${FS_VERSION}/
 
 # Install Python libraries
 RUN pip install --no-cache-dir -r requirements.txt

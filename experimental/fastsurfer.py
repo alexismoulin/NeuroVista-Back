@@ -121,7 +121,6 @@ def test_run_fastsurfer(temp_dir, mocker):
         sid="series1",
         sd=temp_dir / "FASTSURFER",
         wf_dir=temp_dir / "WORKFLOWS",
-        parallel=True,
         threads=4,
     )
     workflow_run_mock.assert_called()
@@ -153,3 +152,46 @@ def test_run_fastsurfer_for_all(temp_dir, mocker):
         threads=Any(),  # Not enforcing exact thread count.
     )
     # Note: For flexible argument checking, one could use custom matchers (like pytest-clarity's Any) or inspect call args.
+
+
+# def process_hypothalamus_v2(fastsurfer_path: Path) -> List[Dict[str, Union[str, float]]]:
+#     """
+#     Process FastSurfer hypothalamus MRI data from a stats file.
+#     """
+#
+#     lines = read_volume_file_skip(fastsurfer_path, skip=55)
+#     volumes = []
+#     for idx, row in enumerate(lines, start=1):
+#         if len(row) < 5:
+#             logger.warning(f"Hypothalamus row {idx} skipped: insufficient columns.")
+#             continue
+#         try:
+#             volume = float(row[3])
+#             name = row[4]
+#             if name.startswith("L-"):
+#                 name = "Left" + name[2:]
+#             elif name.startswith("R-"):
+#                 name = "Right" + name[2:]
+#             volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
+#         except ValueError as e:
+#             logger.warning(f"Hypothalamus row {idx} error with row {row}: {e}")
+#     return volumes
+
+
+# def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+#     """
+#     Process cerebellum volumes from a stats file.
+#     """
+#     lines = read_volume_file_skip(file_path, skip=55)
+#     volumes = []
+#     for idx, row in enumerate(lines, start=1):
+#         if len(row) < 5:
+#             logger.warning(f"Cerebellum row {idx} skipped: insufficient columns.")
+#             continue
+#         try:
+#             volume = float(row[3])
+#             name = row[4]
+#             volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
+#         except ValueError as e:
+#             logger.warning(f"Cerebellum row {idx} error with row {row}: {e}")
+#     return volumes

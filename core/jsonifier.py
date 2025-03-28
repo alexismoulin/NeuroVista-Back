@@ -5,21 +5,42 @@ from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
 
-
 logger = logging.getLogger(__name__)
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Optional[float]:
     """
-    Retrieve the volume for a given nucleus name from a list of dictionaries.
+    Retrieve the volume associated with a specific nucleus name from a list of dictionaries.
+
+    The function iterates over the list of dictionaries (each representing a nucleus and its volume)
+    and returns the volume corresponding to the provided name if found.
+
+    Args:
+        name (str): The nucleus name to look for.
+        nuclei (List[Dict[str, float]]): A list of dictionaries where keys are nucleus names and
+            values are their respective volumes.
+
+    Returns:
+        Optional[float]: The volume of the specified nucleus if present, otherwise None.
     """
     return next((entry[name] for entry in nuclei if name in entry), None)
 
 
 def read_volume_file(file_path: pathlib.Path) -> List[List[str]]:
     """
-    Reads a text file and returns a list of split rows.
-    Skips empty lines.
+    Read a text file containing volume data and return a list of tokenized rows.
+
+    This function opens the file at the given path, reads its contents, and splits each non-empty
+    line into a list of strings (tokens). Lines that are empty or only contain whitespace are skipped.
+
+    Args:
+        file_path (pathlib.Path): The path to the volume file.
+
+    Returns:
+        List[List[str]]: A list where each element is a list of tokens from a non-empty line.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
     """
     if not file_path.exists():
         raise FileNotFoundError(f"File not found: {file_path}")
@@ -29,7 +50,17 @@ def read_volume_file(file_path: pathlib.Path) -> List[List[str]]:
 
 def read_volume_file_skip(file_path: pathlib.Path, skip: int = 0) -> List[List[str]]:
     """
-    Reads a file and skips the first `skip` lines.
+    Read a text file containing volume data and skip a specified number of header lines.
+
+    The function reads the file, tokenizes each non-empty line, and returns the data after skipping
+    the first `skip` lines.
+
+    Args:
+        file_path (pathlib.Path): The path to the volume file.
+        skip (int, optional): The number of initial lines to skip. Defaults to 0.
+
+    Returns:
+        List[List[str]]: A list of tokenized rows from the file after skipping the header.
     """
     data = read_volume_file(file_path)
     return data[skip:]
@@ -37,7 +68,19 @@ def read_volume_file_skip(file_path: pathlib.Path, skip: int = 0) -> List[List[s
 
 def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Processes two files containing paired volume information.
+    Process two volume files containing paired data (e.g., left and right hemisphere volumes).
+
+    The function reads two files (one for each side), extracts the structure name and corresponding
+    volume values, and rounds the volume values to two decimal places. If a row cannot be processed
+    due to missing or invalid data, it logs a warning and skips that row.
+
+    Args:
+        left_file (pathlib.Path): Path to the file with left hemisphere volume data.
+        right_file (pathlib.Path): Path to the file with right hemisphere volume data.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries, each containing the structure name
+        and its left and right volumes.
     """
     left_data = read_volume_file(left_file)
     right_data = read_volume_file(right_file)
@@ -59,21 +102,50 @@ def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) ->
 
 def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Process hippocampus volumes from MRI files.
+    Process hippocampus volume data from MRI files.
+
+    This function reads volume data from specific files corresponding to left and right hippocampus
+    volumes and processes them using paired volume processing.
+
+    Args:
+        mri (pathlib.Path): The directory containing MRI data files.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries with hippocampus volume data for
+        both hemispheres.
     """
     return process_paired_volumes(mri / "lh.hippoSfVolumes.txt", mri / "rh.hippoSfVolumes.txt")
 
 
 def process_amygdala(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Process amygdala volumes from MRI files.
+    Process amygdala volume data from MRI files.
+
+    Reads left and right amygdala volume files and returns a paired volume result.
+
+    Args:
+        mri (pathlib.Path): The directory containing MRI data files.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries with amygdala volume data for
+        both hemispheres.
     """
     return process_paired_volumes(mri / "lh.amygNucVolumes.txt", mri / "rh.amygNucVolumes.txt")
 
 
 def process_brain_stem(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Process brain stem volumes from MRI files.
+    Process brain stem volume data from an MRI file.
+
+    The function reads a file containing brain stem volumes and converts the volume values
+    to a rounded float (two decimal places). If a row is malformed or contains invalid data,
+    a warning is logged.
+
+    Args:
+        mri (pathlib.Path): The directory containing MRI data files.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries with brain stem volume data.
     """
     data = read_volume_file(mri / "brainstemSsLabels.volumes.txt")
     volumes = []
@@ -90,7 +162,17 @@ def process_brain_stem(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
 
 def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Process thalamic nuclei volumes from MRI files.
+    Process thalamic nuclei volumes from an MRI file.
+
+    Reads the thalamic nuclei volume file, separates left and right data, and then pairs
+    them based on the structure name. Volume values are rounded to two decimal places.
+
+    Args:
+        mri (pathlib.Path): The directory containing MRI data files.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries where each dictionary
+        contains a structure name with its corresponding left and right volumes.
     """
     data = read_volume_file(mri / "ThalamicNuclei.volumes.txt")
     lhs_nuclei = []
@@ -114,9 +196,19 @@ def process_thalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     } for name in structure_names]
 
 
-def process_hypothalamus_v1(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+def process_hypothalamus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Process FreeSurfer hypothalamus volumes from a CSV file.
+    Process FreeSurfer-derived hypothalamus volumes from a CSV file.
+
+    The CSV file is expected to have one record where keys correspond to left/right subunit names.
+    The function renames keys for consistency, separates left and right volumes, and then pairs them.
+
+    Args:
+        mri (pathlib.Path): The directory containing the MRI CSV file.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries where each dictionary contains
+        a structure name and its left and right volumes.
     """
     df = pd.read_csv(mri / "hypothalamic_subunits_volumes.v1.csv")
     records = df.to_dict(orient="records")[0]
@@ -137,64 +229,43 @@ def process_hypothalamus_v1(mri: pathlib.Path) -> List[Dict[str, Union[str, floa
     } for name in names]
 
 
-def process_hypothalamus_v2(path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """
-    Process FastSurfer hypothalamus MRI data from a stats file.
-    """
-    lines = read_volume_file_skip(path, skip=55)
-    volumes = []
-    for idx, row in enumerate(lines, start=1):
-        if len(row) < 5:
-            logger.warning(f"Hypothalamus row {idx} skipped: insufficient columns.")
-            continue
-        try:
-            volume = float(row[3])
-            name = row[4]
-            if name.startswith("L-"):
-                name = "Left" + name[2:]
-            elif name.startswith("R-"):
-                name = "Right" + name[2:]
-            volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
-        except ValueError as e:
-            logger.warning(f"Hypothalamus row {idx} error with row {row}: {e}")
-    return volumes
-
-
-def process_cerebellum(file_path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
-    """
-    Process cerebellum volumes from a stats file.
-    """
-    lines = read_volume_file_skip(file_path, skip=55)
-    volumes = []
-    for idx, row in enumerate(lines, start=1):
-        if len(row) < 5:
-            logger.warning(f"Cerebellum row {idx} skipped: insufficient columns.")
-            continue
-        try:
-            volume = float(row[3])
-            name = row[4]
-            volumes.append({"Structure": name, "Volume (mm3)": round(volume, 2)})
-        except ValueError as e:
-            logger.warning(f"Cerebellum row {idx} error with row {row}: {e}")
-    return volumes
-
-
 def get_subcortical(freesurfer_path: pathlib.Path) -> Dict[str, Any]:
     """
-    Extract subcortical volumes from various MRI data files.
+    Extract subcortical volume data from multiple MRI-derived files.
+
+    Processes and consolidates volume data for several subcortical structures (hippocampus,
+    thalamus, amygdala, brain stem, and hypothalamus) using their respective processing functions.
+
+    Args:
+        freesurfer_path (pathlib.Path): The root directory of FreeSurfer MRI data (typically containing a "mri" subfolder).
+
+    Returns:
+        Dict[str, Any]: A dictionary with keys corresponding to subcortical structure types and values
+        as lists of volume dictionaries.
     """
     return {
-        "hippocampus": process_hippocampus(freesurfer_path),
-        "thalamus": process_thalamus(freesurfer_path),
-        "amygdala": process_amygdala(freesurfer_path),
-        "brain_stem": process_brain_stem(freesurfer_path),
-        "hypothalamus": process_hypothalamus_v1(freesurfer_path)
+        "hippocampus": process_hippocampus(mri=freesurfer_path),
+        "thalamus": process_thalamus(mri=freesurfer_path),
+        "amygdala": process_amygdala(mri=freesurfer_path),
+        "brain_stem": process_brain_stem(mri=freesurfer_path),
+        "hypothalamus": process_hypothalamus(mri=freesurfer_path)
     }
 
 
 def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
     """
-    Extract lesions and hypointensities from MRI stats files.
+    Extract lesion and hypointensity volume data from MRI statistics files.
+
+    Reads two files: one containing hypointensities from FreeSurfer statistics and one containing
+    lesion data from Samseg statistics. It filters rows based on keywords in the structure name.
+
+    Args:
+        fs_stats (pathlib.Path): The path to the FreeSurfer stats directory.
+        samseg_path (pathlib.Path): The path to the Samseg stats directory.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A combined list of dictionaries containing both hypointensity
+        and lesion data.
     """
     hypointensities = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
@@ -211,7 +282,17 @@ def get_lesions(fs_stats: pathlib.Path, samseg_path: pathlib.Path) -> List[Dict[
 
 def get_brainvol(stats: pathlib.Path) -> List[Dict[str, str | int]]:
     """
-    Process brain, white matter, and cortical parcellation volumes.
+    Process overall brain volume data from a stats file.
+
+    Reads the brain volume file, extracts the structure name and volume, converts the volume to an
+    integer (after converting from float), and removes any commas from the structure name. Malformed
+    rows are logged and skipped.
+
+    Args:
+        stats (pathlib.Path): The path to the statistics directory containing "brainvol.stats".
+
+    Returns:
+        List[Dict[str, Union[str, int]]]: A list of dictionaries, each containing a structure name and its volume.
     """
     brainvol = []
     for idx, row in enumerate(read_volume_file(stats / "brainvol.stats"), start=1):
@@ -226,7 +307,19 @@ def get_brainvol(stats: pathlib.Path) -> List[Dict[str, str | int]]:
 
 
 def get_white_matter(stats: pathlib.Path) -> List[Dict[str, str | float | None]]:
+    """
+    Extract white matter volume data from a stats file.
 
+    Reads the white matter statistics file (skipping header lines), filters for left and right
+    hemisphere data, and then pairs the volumes based on the structure name.
+
+    Args:
+        stats (pathlib.Path): The path to the statistics directory containing "wmparc.stats".
+
+    Returns:
+        List[Dict[str, Union[str, float, None]]]: A list of dictionaries where each dictionary
+        includes a structure name and its left and right white matter volumes.
+    """
     wm_data = read_volume_file_skip(stats / "wmparc.stats", skip=66)
     wm_vol_lhs = [
         {row[4].replace("wm-lh-", ""): float(row[3])}
@@ -247,6 +340,19 @@ def get_white_matter(stats: pathlib.Path) -> List[Dict[str, str | float | None]]
 
 
 def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
+    """
+    Parse DKT atlas statistics from a file.
+
+    Reads a DKT atlas stats file (skipping header lines) and extracts key metrics for each brain structure,
+    such as surface area, gray matter volume, average thickness, and mean curvature.
+    Malformed rows are logged and skipped.
+
+    Args:
+        file (pathlib.Path): The path to the DKT atlas stats file.
+
+    Returns:
+        List[Dict[str, Union[str, float]]]: A list of dictionaries with the extracted metrics for each structure.
+    """
     entries = []
     for id_row, fields in enumerate(read_volume_file_skip(file, skip=61), start=1):
         try:
@@ -263,7 +369,19 @@ def parse_dkt(file: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
 
 
 def get_cortical(stats: pathlib.Path) -> Dict[str, List]:
+    """
+    Consolidate cortical volume and surface statistics from multiple files.
 
+    Processes brain volumes, white matter, and DKT atlas data (for both left and right hemispheres)
+    from the provided statistics directory.
+
+    Args:
+        stats (pathlib.Path): The path to the statistics directory containing the required files.
+
+    Returns:
+        Dict[str, List]: A dictionary with keys 'brain', 'whitematter', 'lh_dkatlas', and 'rh_dkatlas'
+        corresponding to their respective data lists.
+    """
     return {
         "brain": get_brainvol(stats=stats),
         "whitematter": get_white_matter(stats=stats),
@@ -274,7 +392,17 @@ def get_cortical(stats: pathlib.Path) -> Dict[str, List]:
 
 def get_general(stats: pathlib.Path, samseg_path: pathlib.Path) -> Dict[str, Any]:
     """
-    Extract general subcortical volumes (ASEG) and lesion information.
+    Extract general subcortical volume and lesion information.
+
+    Processes ASEG volume data from FreeSurfer (excluding hypointensities) and combines it with
+    lesion data extracted from both FreeSurfer and Samseg files.
+
+    Args:
+        stats (pathlib.Path): The path to the FreeSurfer statistics directory.
+        samseg_path (pathlib.Path): The path to the Samseg statistics directory.
+
+    Returns:
+        Dict[str, Any]: A dictionary with keys 'aseg' (for subcortical volumes) and 'lesions' (for lesion data).
     """
     aseg = [
         {"Structure": row[4], "Volume (mm3)": float(row[3])}
@@ -291,7 +419,19 @@ def run_jsonifier(
     output_folder: pathlib.Path
 ) -> None:
     """
-    Generate JSON files for subcortical, cortical, and general volumes.
+    Generate JSON files for subcortical, cortical, and general volume data.
+
+    Processes MRI data using various helper functions, then writes the results as JSON files
+    (subcortical.json, cortical.json, general.json) to the specified output folder. Creates the output
+    folder if it does not already exist.
+
+    Args:
+        freesurfer_path (pathlib.Path): The root directory for FreeSurfer MRI data.
+        samseg_path (pathlib.Path): The directory containing Samseg statistics.
+        output_folder (pathlib.Path): The directory where the JSON files will be written.
+
+    Returns:
+        None
     """
     output_folder.mkdir(parents=True, exist_ok=True)
     subcortical = get_subcortical(freesurfer_path=freesurfer_path / "mri")
@@ -306,6 +446,7 @@ def run_jsonifier(
         out_file = output_folder / fname
         try:
             with out_file.open("w") as f:
+                # noinspection PyTypeChecker
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote {fname} to {out_file}")
         except Exception as e:
@@ -314,8 +455,19 @@ def run_jsonifier(
 
 def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str) -> None:
     """
-    Averages the numerical values in JSON files across multiple folders.
-    The result is written to an "AVERAGES" subfolder.
+    Average numerical volume values across JSON files from multiple folders.
+
+    For each JSON file located under the provided folder names, this function accumulates numerical
+    volume data and computes an average per structure. The averaged results are written to an "AVERAGES"
+    subfolder under the given json_path.
+
+    Args:
+        json_path (pathlib.Path): The base directory containing the JSON files.
+        folders (List[str]): A list of folder names that each contain a JSON file of type `main_type`.
+        main_type (str): The filename (within each folder) to process (e.g., "subcortical.json").
+
+    Returns:
+        None
     """
     cumulative_data: Dict[str, Dict[str, defaultdict]] = {}
     counts: Dict[str, Dict[str, int]] = {}
@@ -372,6 +524,7 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
     output_file = averages_folder / main_type
     try:
         with output_file.open("w") as f:
+            # noinspection PyTypeChecker
             json.dump(averaged_result, f, indent=4)
         logger.info(f"Averaged data written to {output_file}")
     except Exception as e:
@@ -380,7 +533,18 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
 
 def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
     """
-    Consolidate individual JSON files from each folder and add the averaged data.
+    Consolidate individual JSON files from multiple folders and include averaged data.
+
+    The function reads subcortical, cortical, and general JSON files from each specified folder.
+    It then adds the corresponding averaged data (from the AVERAGES subfolder) and writes the global
+    JSON files to the base json_path.
+
+    Args:
+        json_path (pathlib.Path): The base directory containing individual JSON files and the AVERAGES folder.
+        folders (List[str]): A list of folder names to process.
+
+    Returns:
+        None
     """
     global_subcortical = {}
     global_cortical = {}
@@ -414,6 +578,7 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
     ]:
         try:
             with (json_path / fname).open("w") as f:
+                # noinspection PyTypeChecker
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote global JSON to {json_path / fname}")
         except Exception as e:
