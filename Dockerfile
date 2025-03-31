@@ -20,8 +20,9 @@ RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VERSION}/fr
     rm -rf /var/lib/apt/lists/*
 
 # Copy only the requirements and licence files first for better caching
+ENV FREESURFER_HOME=/usr/local/freesurfer/${FS_VERSION}
 COPY requirements.txt /root/
-COPY license.txt /usr/local/freesurfer/${FS_VERSION}/
+COPY license.txt $FREESURFER_HOME
 
 # Install Python libraries
 RUN pip install --no-cache-dir -r requirements.txt
