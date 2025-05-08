@@ -5,6 +5,6 @@ Backend running on:
 - Python 3.10
 
 Main SW:
-- FreeSurfer 8.0.0
+- FreeSurfer 7.4.1
 
 docker build -t neurovista --platform linux/amd64 .
