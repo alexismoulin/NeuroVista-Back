@@ -1,0 +1,11 @@
+# Baseline
+pydicom
+nibabel
+dicom2nifti
+Flask
+Flask-Cors
+nipype
+pandas
+pytest
+werkzeug
+numpy
