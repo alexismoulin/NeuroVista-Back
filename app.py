@@ -75,7 +75,7 @@ def studies() -> Response:
         response.status_code = 404
         return response
 
-@app.get("/cortical/<patient>/<study>")
+@app.get("/cortical/<string:patient>/<string:study>")
 def cortical(patient: str, study: str) -> Response:
     json_path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / "cortical.json"
     cortical_json = read_json_file(json_path)
@@ -88,7 +88,7 @@ def cortical(patient: str, study: str) -> Response:
         response.status_code = 404
         return response
 
-@app.get("/subcortical/<patient>/<study>")
+@app.get("/subcortical/<string:patient>/<string:study>")
 def subcortical(patient: str, study: str) -> Response:
     json_path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / "subcortical.json"
     subcortical_json = read_json_file(json_path)
@@ -99,7 +99,7 @@ def subcortical(patient: str, study: str) -> Response:
         response.status_code = 404
         return response
 
-@app.get("/general/<patient>/<study>")
+@app.get("/general/<string:patient>/<string:study>")
 def general(patient: str, study: str) -> Response:
     json_path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / "general.json"
     general_json = read_json_file(json_path)
@@ -110,7 +110,7 @@ def general(patient: str, study: str) -> Response:
         response.status_code = 404
         return response
 
-@app.get("/series/<patient>/<study>")
+@app.get("/series/<string:patient>/<string:study>")
 def get_series(patient: str, study: str) -> Response:
     dicoms = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "DICOM"
     series_list = get_folder_names(dicoms)
