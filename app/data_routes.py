@@ -3,6 +3,7 @@ from flask import Blueprint, jsonify, current_app, Response
 from core.utils import sanitize_name, get_nifti_dimensions, list_folder_subfolders, get_folder_names
 from core.processing import read_json_file
 from typing import Tuple
+import json
 
 data_bp = Blueprint(name="data", import_name=__name__)
 
@@ -12,8 +13,9 @@ def load_json(patient: str, study: str, label: str) -> Tuple[Response, int]:
     Load a JSON file for the specified patient, study, and label, then return it as a Flask response.
 
     Constructs the path to the JSON file under the base data directory, using sanitized patient and study names,
-    then attempts to read it. If the file exists and contains valid JSON, returns it with a 200 status code.
-    Otherwise, returns a JSON error message with a 404 status code.
+    then checks if the file exists before attempting to read it. If the file is found and contains valid JSON,
+    returns it with a 200 status code. If the file does not exist or reading/parsing fails, returns a 404 without
+    logging an error.
 
     Args:
         patient (str): The name of the patient (will be sanitized).
@@ -24,7 +26,7 @@ def load_json(patient: str, study: str, label: str) -> Tuple[Response, int]:
         Tuple[Response, int]:
             - A Flask `Response` created by `jsonify(data)` and an integer HTTP status code.
             - If the JSON was found and loaded successfully, status code is 200.
-            - If the JSON file does not exist or is empty, returns `jsonify(error="No Data")` with 404.
+            - If the JSON file does not exist or cannot be read, returns `jsonify(error="No Data")` with 404.
     """
     # Construct the relative subpath: <sanitized_patient>/<sanitized_study>
     subpath = Path(sanitize_name(patient)) / sanitize_name(study)
@@ -33,13 +35,19 @@ def load_json(patient: str, study: str, label: str) -> Tuple[Response, int]:
     json_folder = current_app.config["BASE_DATA_PATH"] / subpath / "JSON"
     json_path = json_folder / f"{label}.json"
 
-    # Attempt to read the JSON data
-    data = read_json_file(json_path)
+    # If the file does not exist, return 404 without logging an error
+    if not json_path.exists():
+        return jsonify(error="No Data"), 404
+
+    # Attempt to read the JSON data; catch specific exceptions and return 404 on failure
+    try:
+        data = read_json_file(json_path)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return jsonify(error="No Data"), 404
+
     if data:
-        # Return the JSON payload with HTTP 200
         return jsonify(data), 200
 
-    # If no data found, return an error payload with HTTP 404
     return jsonify(error="No Data"), 404
 
 
@@ -74,7 +82,7 @@ def general(patient: str, study: str) -> Tuple[Response, int]:
 
 @data_bp.route("/series/<string:patient>/<string:study>", methods=["GET"])
 def get_series(patient: str, study: str) -> Tuple[Response, int]:
-    base = current_app.config["BASE_DATA_PATH"] / sanitize_name(name=patient) / sanitize_name(name=study)
+    base = current_app.config["BASE_DATA_PATH"] / sanitize_name(patient) / sanitize_name(study)
     dicom_dir = base / "DICOM"
     series_list = get_folder_names(directory=dicom_dir)
     result = {}
