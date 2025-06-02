@@ -57,7 +57,8 @@ def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_direc
                 logger.info("Skipping DICOMDIR file based on filename: %s", dicom_file.filename)
                 continue
 
-            ds = pydicom.dcmread(dicom_file)
+            dicom_file.stream.seek(0)
+            ds = pydicom.dcmread(dicom_file.stream)
             if str(getattr(ds, "SOPClassUID", "")) == str(pydicom.uid.MediaStorageDirectoryStorage):
                 logger.info("Skipping DICOMDIR file based on SOPClassUID: %s", dicom_file.filename)
                 continue
@@ -206,27 +207,35 @@ def process_corestats_for_all(folders: List[str],
                 raise
     logger.info("Core statistics processing completed for all series.")
 
-def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> None:
+
+def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Dict[str, Path]:
+    """
+    1) Create all the subfolders under base_path (dicom, nifti, freesurfer, json, etc.).
+    2) Save uploaded DICOMs into base_path/<patient>/<study>/DICOM/<SeriesDescription>/*
+
+    Returns a dict of all the folder paths
+    """
+    # Create the entire hierarchy on disk
+    folders_dict = create_folders(base_path)
+    dicom_dir = folders_dict["dicom"]
+
+    # Save the uploaded DICOMs to disk (may raise if something goes wrong)
+    save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
+
+    return folders_dict
+
+def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
     """
     Run the complete processing pipeline.
     If a step fails, notify the failure and stop further processing.
     """
     try:
-        folders_dict = create_folders(base_path)
         dicom_dir = folders_dict["dicom"]
         nifti_dir = folders_dict["nifti"]
         fs_path = folders_dict["freesurfer"]
         samseg_path = folders_dict["samseg"]
         json_folder = folders_dict["json"]
         corestats_folder = folders_dict["corestats"]
-
-        try:
-            save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
-            notify_step("dicom")
-        except Exception as e:
-            logger.exception("Error during DICOM upload: %s", e)
-            notify_failure("dicom")
-            return
 
         series_folders = get_folder_names(dicom_dir)
 

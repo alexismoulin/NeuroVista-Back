@@ -86,6 +86,8 @@ def get_series(patient: str, study: str) -> Tuple[Response, int]:
     dicom_dir = base / "DICOM"
     series_list = get_folder_names(directory=dicom_dir)
     result = {}
+    if not series_list:
+        return jsonify("Error DICOM"), 404
     for series in series_list:
         nifti_path = base / "NIFTI" / f"{series}.nii.gz"
         result[series] = get_nifti_dimensions(file_path=nifti_path)

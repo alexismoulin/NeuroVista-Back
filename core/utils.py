@@ -42,6 +42,8 @@ def get_folder_names(directory: Path) -> List[str]:
     Returns:
         List[str]: A list of folder names.
     """
+    if not directory.exists():
+        return []
     return [p.name for p in directory.iterdir() if p.is_dir()]
 
 
