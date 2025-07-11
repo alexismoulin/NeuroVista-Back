@@ -6,7 +6,7 @@ import queue
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Event
-from typing import List, Dict
+from typing import List, Dict, Optional
 from functools import partial
 
 import dicom2nifti
@@ -208,7 +208,7 @@ def process_corestats_for_all(folders: List[str],
     logger.info("Core statistics processing completed for all series.")
 
 
-def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Dict[str, Path]:
+def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Optional[Dict[str, Path]]:
     """
     1) Create all the subfolders under base_path (dicom, nifti, freesurfer, json, etc.).
     2) Save uploaded DICOMs into base_path/<patient>/<study>/DICOM/<SeriesDescription>/*
@@ -220,9 +220,15 @@ def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, F
     dicom_dir = folders_dict["dicom"]
 
     # Save the uploaded DICOMs to disk (may raise if something goes wrong)
-    save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
+    try:
+        save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
+        notify_step(step="dicom")
+        return folders_dict
+    except Exception as e:
+        logger.exception("Error during DICOM saving: %s", e)
+        notify_failure("dicom")
+        return None
 
-    return folders_dict
 
 def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
     """

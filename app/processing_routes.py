@@ -86,7 +86,6 @@ def run_script() -> Tuple[Response, int]:
     processing_event.set()
 
     # === STEP 2: kick off the rest of the pipeline (NIfTI → recon‐all → JSON, etc.) in the background ===
-    processing_event.set()
 
     worker = Thread(target=run_processing, args=(base_path, folders_dict))
     worker.daemon = True
