@@ -12,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 
 def serve_json(patient: str, study: str, filename: str, err_msg: str) -> Tuple[Response, int]:
+    """
+        Helper to serve a JSON file from disk or return an error.
+    """
     path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / filename
     data = read_json_file(path)
     if data:
