@@ -45,6 +45,30 @@ def get_folder_names(directory: Path) -> List[str]:
     return [p.name for p in directory.iterdir() if p.is_dir()]
 
 
+def list_folder_subfolders(directory_path: Path) -> List[Tuple[str, str]]:
+    """
+    List each folder within the directory along with its immediate subfolders.
+
+    For every folder found in the provided directory, the function returns tuples where the first
+    element is the folder name and the second element is the name of one of its subfolders.
+
+    Args:
+        directory_path (Path): The directory to search within.
+
+    Returns:
+        List[Tuple[str, str]]: A list of tuples in the format (folder_name, subfolder_name).
+    """
+    folder_subfolder_pairs = []
+
+    for folder in sorted(directory_path.iterdir()):
+        if folder.is_dir():
+            subfolders = [subfolder.name for subfolder in sorted(folder.iterdir()) if subfolder.is_dir()]
+            for subfolder in subfolders:
+                folder_subfolder_pairs.append((folder.name, subfolder))
+
+    return folder_subfolder_pairs
+
+
 def sanitize_name(name: str) -> str:
     """
     Sanitize an input string to prevent path traversal and remove unsafe characters.
@@ -126,30 +150,6 @@ def remove_double_extension(file: Path) -> str:
     if name.endswith(".nii.gz"):
         return name[:-7]
     return file.stem
-
-
-def list_folder_subfolders(directory_path: Path) -> List[Tuple]:
-    """
-    List each folder within the directory along with its immediate subfolders.
-
-    For every folder found in the provided directory, the function returns tuples where the first
-    element is the folder name and the second element is the name of one of its subfolders.
-
-    Args:
-        directory_path (Path): The directory to search within.
-
-    Returns:
-        List[Tuple[str, str]]: A list of tuples in the format (folder_name, subfolder_name).
-    """
-    folder_subfolder_pairs = []
-
-    for folder in sorted(directory_path.iterdir()):
-        if folder.is_dir():
-            subfolders = [subfolder.name for subfolder in sorted(folder.iterdir()) if subfolder.is_dir()]
-            for subfolder in subfolders:
-                folder_subfolder_pairs.append((folder.name, subfolder))
-
-    return folder_subfolder_pairs
 
 
 def reconall(base_dir: Path) -> None:

@@ -104,7 +104,7 @@ def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) ->
 def record_nifti_dimensions(study_path: pathlib.Path) -> None:
     series_list = get_folder_names(directory=study_path / "DICOM")
     series_dict = {
-        s: get_nifti_dimensions(file_path=study_path / f"NIFTI/{s}.nii.gz")
+        s: get_nifti_dimensions(file_path=study_path / "NIFTI" / f"{s}.nii.gz")
         for s in series_list
     }
     try:

@@ -1,5 +1,8 @@
 import pytest
-from core.jsonifier import get_volume, read_volume_file, process_paired_volumes
+import json
+import numpy as np
+import nibabel as nib
+from core.jsonifier import get_volume, read_volume_file, process_paired_volumes, record_nifti_dimensions
 
 
 @pytest.fixture
@@ -65,3 +68,32 @@ def test_process_paired_volumes_invalid_data(tmp_path, caplog):
     # Expect no valid rows to be processed.
     assert volumes == []
     assert "Skipping row due to error" in caplog.text
+
+
+def test_record_nifti_dimensions(tmp_path):
+    study = tmp_path / 'study'
+    dicom = study / 'DICOM'
+    nifti = study / 'NIFTI'
+    json_dir = study / 'JSON'
+    # Create directories
+    dicom.mkdir(parents=True)
+    nifti.mkdir(parents=True)
+    json_dir.mkdir(parents=True)
+    # Create two series directories in DICOM
+    (dicom / 's1').mkdir()
+    (dicom / 's2').mkdir()
+    # Create minimal NIfTI files with known dimensions
+    data_shape = (4, 5, 6)
+    arr: np.ndarray = np.zeros(data_shape)
+    affine: np.ndarray = np.eye(4)
+    img1 = nib.Nifti1Image(arr, affine)  # type: ignore
+    img2 = nib.Nifti1Image(arr, affine)  # type: ignore
+    nib.save(img1, nifti / 's1.nii.gz')
+    nib.save(img2, nifti / 's2.nii.gz')
+    # Run the function
+    record_nifti_dimensions(study)
+    out_file = json_dir / 'niftiDimensions.json'
+    assert out_file.exists()
+    data = json.loads(out_file.read_text())
+    # Each series should map to the correct shape
+    assert data == {'s1': list(data_shape), 's2': list(data_shape)}
