@@ -1,0 +1,13 @@
+# Hypothalamic Subunit Volumetric Stats
+ 1   1  0   16.925  Left-Anterior-Inferior
+ 2   2  0   29.123  Left-Anterior-Superior
+ 3   3  0  120.254  Left-Posterior
+ 4   4  0  181.067  Left-Tubular-Inferior
+ 5   5  0  151.863  Left-Tubular-Superior
+ 6   6  0   13.109  Right-Anterior-Inferior
+ 7   7  0   31.542  Right-Anterior-Ssuperior
+ 8   8  0  134.742  Right-Posterior
+ 9   9  0  174.826  Right-Tubular-Inferior
+10  10  0  133.391  Right-Tubular-Superior
+11  11  0  499.232  Whole-Left
+12  12  0  487.610  Whole-Right

@@ -1,0 +1,1490 @@
+{
+    "MPR_CORO_T1": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 368.9
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 16792.4
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 65619.7
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 8251.5
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3187.2
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4632.5
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 2098.9
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 942.9
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 2026.9
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 22660.2
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5048.2
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 1883.9
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 957.6
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 677.7
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 4475.0
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 19.3
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 613.8
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 9879.5
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 440.6
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 15169.1
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 64866.9
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 7606.4
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3408.2
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4742.7
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1973.9
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 5418.8
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1896.6
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 714.9
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4505.6
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 68.2
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 688.9
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 232.9
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 871.0
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 632.0
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 453.2
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 529.4
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 906.0
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 1800.7
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 10890.035666
+            }
+        ]
+    },
+    "3D_Ax_T1_MP-RAGE": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 406.0
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 15621.2
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 66535.1
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 8109.8
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3381.4
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4895.5
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 2042.9
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 980.6
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 2122.9
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 23598.7
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5015.2
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 1865.4
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 1015.6
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 586.9
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 4569.1
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 22.1
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 527.8
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 10127.5
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 448.2
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 14211.7
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 65967.8
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 7865.2
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3638.4
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4904.6
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 2036.0
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 5501.6
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1902.6
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 619.5
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4574.3
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 80.1
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 571.4
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 217.5
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 879.5
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 604.4
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 432.7
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 497.0
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 877.1
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 895.3
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 287.531517
+            }
+        ]
+    },
+    "MPR_AX_T1_GADO": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 8.4
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 10162.4
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 31449.8
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 10264.2
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3362.6
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4097.8
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 1558.5
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 893.2
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 498.6
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 13925.6
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5522.7
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 584.3
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 782.8
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 332.9
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 3699.9
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 350.3
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 8423.0
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 140.2
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 9700.5
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 26244.9
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 9858.7
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3086.3
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4876.7
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1795.5
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 4912.2
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1476.9
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 478.7
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4523.7
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 296.2
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 59.3
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 1828.6
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 1655.6
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 1584.5
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 1657.3
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 1727.6
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 55082.8
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 2527.955931
+            }
+        ]
+    },
+    "MPR_SAG_T1_GADO": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 55.7
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 10387.6
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 25295.3
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 10651.6
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3254.0
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4151.7
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 1691.4
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 966.2
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 370.9
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 14668.8
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5995.4
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 760.4
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 815.4
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 464.8
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 3866.3
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 308.0
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 8544.9
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 60.7
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 10176.7
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 25526.8
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 9952.7
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 2939.6
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 5032.5
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1917.4
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 4828.3
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1231.7
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 627.4
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4421.5
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 241.0
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 77.9
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 2094.8
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 1552.1
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 1319.5
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 1461.8
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 1777.3
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 133996.1
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 3721.043925
+            }
+        ]
+    },
+    "MPR_AX_T1": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 344.4
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 16272.1
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 64843.7
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 8185.6
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3116.3
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4409.2
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 2025.0
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 939.6
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 1954.5
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 23469.0
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5114.6
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 1961.9
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 962.3
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 588.4
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 4663.0
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 7.3
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 596.5
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 9651.6
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 359.5
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 14914.5
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 65026.1
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 7669.7
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3264.1
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4322.9
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1874.7
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 5504.3
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1783.5
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 604.7
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4524.1
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 65.9
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 629.2
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 218.6
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 867.2
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 747.6
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 508.5
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 579.2
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 916.4
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 2812.0
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 17407.560873
+            }
+        ]
+    },
+    "MPR_CORO_T1_GADO": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 10.0
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 12575.5
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 30971.9
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 10301.1
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3335.4
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4655.5
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 1750.8
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 901.4
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 1151.5
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 17919.6
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5519.7
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 806.2
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 671.4
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 425.6
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 3936.3
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 317.9
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 8705.3
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 116.3
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 12624.1
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 34080.6
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 10022.9
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3151.8
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 5035.5
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 2036.4
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 4580.6
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1238.8
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 572.5
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4763.9
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 226.3
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 2.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 47.9
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 1760.0
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 1567.9
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 1427.9
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 1515.7
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 1476.4
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 99513.9
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 2188.900095
+            }
+        ]
+    },
+    "MPR_SAG_T1": {
+        "aseg": [
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 336.6
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 15939.4
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 66206.3
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 8356.9
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3216.1
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4247.3
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 2069.3
+            },
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 1110.2
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 2005.9
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 23138.8
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5160.0
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 1830.0
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 1132.2
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 635.8
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 4280.9
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 13.4
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 372.2
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 9747.8
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 377.2
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 15161.0
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 65090.7
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 7971.3
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3266.0
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4689.7
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1986.0
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 5365.1
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1853.6
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 687.2
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4543.1
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 29.0
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 494.2
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 225.7
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 886.6
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 609.6
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 449.5
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 500.4
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 900.7
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 2439.8
+            },
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 1865.513504
+            }
+        ]
+    },
+    "AVERAGES": {
+        "aseg": [
+            {
+                "Structure": "3rd-Ventricle",
+                "Volume (mm3)": 962.01
+            },
+            {
+                "Structure": "4th-Ventricle",
+                "Volume (mm3)": 1447.31
+            },
+            {
+                "Structure": "5th-Ventricle",
+                "Volume (mm3)": 0.29
+            },
+            {
+                "Structure": "Brain-Stem",
+                "Volume (mm3)": 19911.53
+            },
+            {
+                "Structure": "CC_Anterior",
+                "Volume (mm3)": 1225.93
+            },
+            {
+                "Structure": "CC_Central",
+                "Volume (mm3)": 882.26
+            },
+            {
+                "Structure": "CC_Mid_Anterior",
+                "Volume (mm3)": 962.97
+            },
+            {
+                "Structure": "CC_Mid_Posterior",
+                "Volume (mm3)": 1052.74
+            },
+            {
+                "Structure": "CC_Posterior",
+                "Volume (mm3)": 1312.53
+            },
+            {
+                "Structure": "CSF",
+                "Volume (mm3)": 905.33
+            },
+            {
+                "Structure": "Left-Accumbens-area",
+                "Volume (mm3)": 530.3
+            },
+            {
+                "Structure": "Left-Amygdala",
+                "Volume (mm3)": 1384.59
+            },
+            {
+                "Structure": "Left-Caudate",
+                "Volume (mm3)": 3264.71
+            },
+            {
+                "Structure": "Left-Cerebellum-Cortex",
+                "Volume (mm3)": 50131.69
+            },
+            {
+                "Structure": "Left-Cerebellum-White-Matter",
+                "Volume (mm3)": 13964.37
+            },
+            {
+                "Structure": "Left-Hippocampus",
+                "Volume (mm3)": 5339.4
+            },
+            {
+                "Structure": "Left-Inf-Lat-Vent",
+                "Volume (mm3)": 218.57
+            },
+            {
+                "Structure": "Left-Pallidum",
+                "Volume (mm3)": 1890.97
+            },
+            {
+                "Structure": "Left-Putamen",
+                "Volume (mm3)": 4441.36
+            },
+            {
+                "Structure": "Left-Thalamus",
+                "Volume (mm3)": 9160.1
+            },
+            {
+                "Structure": "Left-VentralDC",
+                "Volume (mm3)": 4212.93
+            },
+            {
+                "Structure": "Left-choroid-plexus",
+                "Volume (mm3)": 440.93
+            },
+            {
+                "Structure": "Left-vessel",
+                "Volume (mm3)": 8.87
+            },
+            {
+                "Structure": "Optic-Chiasm",
+                "Volume (mm3)": 154.26
+            },
+            {
+                "Structure": "Right-Accumbens-area",
+                "Volume (mm3)": 614.99
+            },
+            {
+                "Structure": "Right-Amygdala",
+                "Volume (mm3)": 1626.24
+            },
+            {
+                "Structure": "Right-Caudate",
+                "Volume (mm3)": 3250.63
+            },
+            {
+                "Structure": "Right-Cerebellum-Cortex",
+                "Volume (mm3)": 49543.4
+            },
+            {
+                "Structure": "Right-Cerebellum-White-Matter",
+                "Volume (mm3)": 13136.8
+            },
+            {
+                "Structure": "Right-Hippocampus",
+                "Volume (mm3)": 5158.7
+            },
+            {
+                "Structure": "Right-Inf-Lat-Vent",
+                "Volume (mm3)": 277.53
+            },
+            {
+                "Structure": "Right-Lateral-Ventricle",
+                "Volume (mm3)": 9297.09
+            },
+            {
+                "Structure": "Right-Pallidum",
+                "Volume (mm3)": 1945.7
+            },
+            {
+                "Structure": "Right-Putamen",
+                "Volume (mm3)": 4800.66
+            },
+            {
+                "Structure": "Right-Thalamus",
+                "Volume (mm3)": 8706.7
+            },
+            {
+                "Structure": "Right-VentralDC",
+                "Volume (mm3)": 4550.89
+            },
+            {
+                "Structure": "Right-choroid-plexus",
+                "Volume (mm3)": 449.6
+            },
+            {
+                "Structure": "Right-vessel",
+                "Volume (mm3)": 34.74
+            }
+        ],
+        "lesions": [
+            {
+                "Structure": "Left-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Left-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Lesions",
+                "Volume (mm3)": 5555.51
+            },
+            {
+                "Structure": "Right-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "Right-non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            },
+            {
+                "Structure": "WM-hypointensities",
+                "Volume (mm3)": 42362.94
+            },
+            {
+                "Structure": "non-WM-hypointensities",
+                "Volume (mm3)": 0.0
+            }
+        ]
+    }
+}

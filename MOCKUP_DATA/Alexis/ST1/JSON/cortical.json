@@ -1,0 +1,5367 @@
+{
+    "MPR_CORO_T1": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1227696
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1201735
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1066728
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1040767
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 62552
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 232580
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 236220
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 468801
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 661622
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 252083
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 257939
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 510022
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1677387
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1040767
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1201735
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 22357
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 3099.0,
+                "RHS Volume (mm3)": 2838.5
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 7218.4,
+                "RHS Volume (mm3)": 5724.0
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 3513.5,
+                "RHS Volume (mm3)": 3649.2
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1211.4,
+                "RHS Volume (mm3)": 1082.8
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 7477.6,
+                "RHS Volume (mm3)": 6392.0
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 10404.6,
+                "RHS Volume (mm3)": 13174.6
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 7249.1,
+                "RHS Volume (mm3)": 7288.7
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 4109.4,
+                "RHS Volume (mm3)": 3735.9
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 10881.8,
+                "RHS Volume (mm3)": 12488.6
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 7174.1,
+                "RHS Volume (mm3)": 7664.9
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 6419.2,
+                "RHS Volume (mm3)": 7458.2
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 4834.6,
+                "RHS Volume (mm3)": 4523.8
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 5094.5,
+                "RHS Volume (mm3)": 7707.9
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 1954.0,
+                "RHS Volume (mm3)": 1798.6
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 3948.8,
+                "RHS Volume (mm3)": 5222.9
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3795.9,
+                "RHS Volume (mm3)": 3110.2
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1201.8,
+                "RHS Volume (mm3)": 1515.2
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2928.0,
+                "RHS Volume (mm3)": 3824.6
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 4437.3,
+                "RHS Volume (mm3)": 4925.5
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 7709.9,
+                "RHS Volume (mm3)": 8200.3
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 3934.2,
+                "RHS Volume (mm3)": 4048.1
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 13631.0,
+                "RHS Volume (mm3)": 12941.4
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 12244.5,
+                "RHS Volume (mm3)": 12801.2
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 2489.9,
+                "RHS Volume (mm3)": 2035.4
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 14862.1,
+                "RHS Volume (mm3)": 15985.3
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 17148.3,
+                "RHS Volume (mm3)": 18696.6
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 11768.9,
+                "RHS Volume (mm3)": 12232.0
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 9553.1,
+                "RHS Volume (mm3)": 5774.2
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 10711.0,
+                "RHS Volume (mm3)": 9246.8
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 367.6,
+                "RHS Volume (mm3)": 415.7
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 699.5,
+                "RHS Volume (mm3)": 926.2
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 1063.7,
+                "RHS Volume (mm3)": 598.4
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 9247.8,
+                "RHS Volume (mm3)": 9034.8
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 1084,
+                "Gray Matter Vol (mm3)": 2635,
+                "Thickness Avg (mm)": 2.416,
+                "Mean Curvature (mm-1)": 0.116
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2441,
+                "Gray Matter Vol (mm3)": 6765,
+                "Thickness Avg (mm)": 2.587,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2183,
+                "Gray Matter Vol (mm3)": 4131,
+                "Thickness Avg (mm)": 1.877,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 549,
+                "Gray Matter Vol (mm3)": 2381,
+                "Thickness Avg (mm)": 3.117,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2919,
+                "Gray Matter Vol (mm3)": 8388,
+                "Thickness Avg (mm)": 2.608,
+                "Mean Curvature (mm-1)": 0.116
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 4401,
+                "Gray Matter Vol (mm3)": 11752,
+                "Thickness Avg (mm)": 2.396,
+                "Mean Curvature (mm-1)": 0.126
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3202,
+                "Gray Matter Vol (mm3)": 11554,
+                "Thickness Avg (mm)": 2.941,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 987,
+                "Gray Matter Vol (mm3)": 2782,
+                "Thickness Avg (mm)": 2.732,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 4811,
+                "Gray Matter Vol (mm3)": 11530,
+                "Thickness Avg (mm)": 2.235,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2763,
+                "Gray Matter Vol (mm3)": 7919,
+                "Thickness Avg (mm)": 2.62,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3573,
+                "Gray Matter Vol (mm3)": 8054,
+                "Thickness Avg (mm)": 2.082,
+                "Mean Curvature (mm-1)": 0.138
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1692,
+                "Gray Matter Vol (mm3)": 4786,
+                "Thickness Avg (mm)": 2.495,
+                "Mean Curvature (mm-1)": 0.116
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 3463,
+                "Gray Matter Vol (mm3)": 11908,
+                "Thickness Avg (mm)": 2.836,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 751,
+                "Gray Matter Vol (mm3)": 2611,
+                "Thickness Avg (mm)": 2.921,
+                "Mean Curvature (mm-1)": 0.088
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1392,
+                "Gray Matter Vol (mm3)": 3696,
+                "Thickness Avg (mm)": 2.496,
+                "Mean Curvature (mm-1)": 0.093
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1415,
+                "Gray Matter Vol (mm3)": 4622,
+                "Thickness Avg (mm)": 2.812,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 697,
+                "Gray Matter Vol (mm3)": 2146,
+                "Thickness Avg (mm)": 2.637,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1378,
+                "Gray Matter Vol (mm3)": 3507,
+                "Thickness Avg (mm)": 2.445,
+                "Mean Curvature (mm-1)": 0.104
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1460,
+                "Gray Matter Vol (mm3)": 2317,
+                "Thickness Avg (mm)": 1.834,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4383,
+                "Gray Matter Vol (mm3)": 10186,
+                "Thickness Avg (mm)": 2.163,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1098,
+                "Gray Matter Vol (mm3)": 2795,
+                "Thickness Avg (mm)": 2.51,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4510,
+                "Gray Matter Vol (mm3)": 12453,
+                "Thickness Avg (mm)": 2.586,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4177,
+                "Gray Matter Vol (mm3)": 10686,
+                "Thickness Avg (mm)": 2.444,
+                "Mean Curvature (mm-1)": 0.122
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1233,
+                "Gray Matter Vol (mm3)": 3566,
+                "Thickness Avg (mm)": 2.719,
+                "Mean Curvature (mm-1)": 0.122
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4330,
+                "Gray Matter Vol (mm3)": 12506,
+                "Thickness Avg (mm)": 2.533,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7148,
+                "Gray Matter Vol (mm3)": 22606,
+                "Thickness Avg (mm)": 2.832,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4038,
+                "Gray Matter Vol (mm3)": 9192,
+                "Thickness Avg (mm)": 2.073,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 5048,
+                "Gray Matter Vol (mm3)": 17579,
+                "Thickness Avg (mm)": 2.909,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3711,
+                "Gray Matter Vol (mm3)": 11134,
+                "Thickness Avg (mm)": 2.736,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 424,
+                "Gray Matter Vol (mm3)": 1063,
+                "Thickness Avg (mm)": 2.6,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1695,
+                "Gray Matter Vol (mm3)": 5466,
+                "Thickness Avg (mm)": 3.109,
+                "Mean Curvature (mm-1)": 0.088
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 785,
+                "Gray Matter Vol (mm3)": 2106,
+                "Thickness Avg (mm)": 2.268,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2042,
+                "Gray Matter Vol (mm3)": 5518,
+                "Thickness Avg (mm)": 2.478,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2228,
+                "Gray Matter Vol (mm3)": 4385,
+                "Thickness Avg (mm)": 1.934,
+                "Mean Curvature (mm-1)": 0.145
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 494,
+                "Gray Matter Vol (mm3)": 2303,
+                "Thickness Avg (mm)": 2.956,
+                "Mean Curvature (mm-1)": 0.097
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2570,
+                "Gray Matter Vol (mm3)": 7459,
+                "Thickness Avg (mm)": 2.619,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 5480,
+                "Gray Matter Vol (mm3)": 15899,
+                "Thickness Avg (mm)": 2.498,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3666,
+                "Gray Matter Vol (mm3)": 13460,
+                "Thickness Avg (mm)": 2.987,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 912,
+                "Gray Matter Vol (mm3)": 2370,
+                "Thickness Avg (mm)": 2.415,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5327,
+                "Gray Matter Vol (mm3)": 13147,
+                "Thickness Avg (mm)": 2.281,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2970,
+                "Gray Matter Vol (mm3)": 7710,
+                "Thickness Avg (mm)": 2.4,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3739,
+                "Gray Matter Vol (mm3)": 8507,
+                "Thickness Avg (mm)": 2.13,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1704,
+                "Gray Matter Vol (mm3)": 4633,
+                "Thickness Avg (mm)": 2.474,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4178,
+                "Gray Matter Vol (mm3)": 14166,
+                "Thickness Avg (mm)": 2.944,
+                "Mean Curvature (mm-1)": 0.113
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 677,
+                "Gray Matter Vol (mm3)": 2059,
+                "Thickness Avg (mm)": 2.642,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1515,
+                "Gray Matter Vol (mm3)": 3909,
+                "Thickness Avg (mm)": 2.456,
+                "Mean Curvature (mm-1)": 0.095
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1472,
+                "Gray Matter Vol (mm3)": 4424,
+                "Thickness Avg (mm)": 2.609,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 696,
+                "Gray Matter Vol (mm3)": 2201,
+                "Thickness Avg (mm)": 2.697,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1604,
+                "Gray Matter Vol (mm3)": 4514,
+                "Thickness Avg (mm)": 2.553,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1868,
+                "Gray Matter Vol (mm3)": 2790,
+                "Thickness Avg (mm)": 1.663,
+                "Mean Curvature (mm-1)": 0.135
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4430,
+                "Gray Matter Vol (mm3)": 10195,
+                "Thickness Avg (mm)": 2.105,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1203,
+                "Gray Matter Vol (mm3)": 3085,
+                "Thickness Avg (mm)": 2.414,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 3941,
+                "Gray Matter Vol (mm3)": 10037,
+                "Thickness Avg (mm)": 2.438,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4512,
+                "Gray Matter Vol (mm3)": 11606,
+                "Thickness Avg (mm)": 2.381,
+                "Mean Curvature (mm-1)": 0.122
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 729,
+                "Gray Matter Vol (mm3)": 2219,
+                "Thickness Avg (mm)": 2.718,
+                "Mean Curvature (mm-1)": 0.106
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4589,
+                "Gray Matter Vol (mm3)": 13175,
+                "Thickness Avg (mm)": 2.481,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 8613,
+                "Gray Matter Vol (mm3)": 26324,
+                "Thickness Avg (mm)": 2.748,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4124,
+                "Gray Matter Vol (mm3)": 9090,
+                "Thickness Avg (mm)": 2.015,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4057,
+                "Gray Matter Vol (mm3)": 14978,
+                "Thickness Avg (mm)": 3.007,
+                "Mean Curvature (mm-1)": 0.106
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2946,
+                "Gray Matter Vol (mm3)": 7818,
+                "Thickness Avg (mm)": 2.425,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 298,
+                "Gray Matter Vol (mm3)": 693,
+                "Thickness Avg (mm)": 2.211,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1723,
+                "Gray Matter Vol (mm3)": 5702,
+                "Thickness Avg (mm)": 3.264,
+                "Mean Curvature (mm-1)": 0.088
+            }
+        ]
+    },
+    "3D_Ax_T1_MP-RAGE": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1254100
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1227194
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1093312
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1066406
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 63133
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 255159
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 254884
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 510044
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 705638
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 245897
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 248293
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 494190
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1671161
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1066406
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1227194
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 22997
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 3235.6,
+                "RHS Volume (mm3)": 2822.8
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 7075.6,
+                "RHS Volume (mm3)": 5553.0
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 3309.8,
+                "RHS Volume (mm3)": 3370.8
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1105.7,
+                "RHS Volume (mm3)": 1153.0
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 7188.2,
+                "RHS Volume (mm3)": 6374.3
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 10307.7,
+                "RHS Volume (mm3)": 12659.9
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 7399.4,
+                "RHS Volume (mm3)": 6993.0
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 4266.8,
+                "RHS Volume (mm3)": 3777.8
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 11224.0,
+                "RHS Volume (mm3)": 12190.5
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 7350.5,
+                "RHS Volume (mm3)": 6929.6
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 6482.6,
+                "RHS Volume (mm3)": 7114.3
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 4879.6,
+                "RHS Volume (mm3)": 4529.4
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 5331.5,
+                "RHS Volume (mm3)": 7787.6
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 1799.2,
+                "RHS Volume (mm3)": 1710.1
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 4143.6,
+                "RHS Volume (mm3)": 4910.2
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3803.8,
+                "RHS Volume (mm3)": 3098.3
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1196.3,
+                "RHS Volume (mm3)": 1510.7
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 3033.3,
+                "RHS Volume (mm3)": 3807.3
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 4210.8,
+                "RHS Volume (mm3)": 4745.2
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 7201.4,
+                "RHS Volume (mm3)": 7968.6
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 3916.6,
+                "RHS Volume (mm3)": 4063.8
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 12978.1,
+                "RHS Volume (mm3)": 12126.7
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 12033.3,
+                "RHS Volume (mm3)": 12377.6
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 2599.6,
+                "RHS Volume (mm3)": 2123.5
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 14653.6,
+                "RHS Volume (mm3)": 16380.2
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 17414.7,
+                "RHS Volume (mm3)": 18857.0
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 11547.8,
+                "RHS Volume (mm3)": 11810.5
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 9094.1,
+                "RHS Volume (mm3)": 5684.0
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 10655.4,
+                "RHS Volume (mm3)": 8687.4
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 393.5,
+                "RHS Volume (mm3)": 513.5
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 941.3,
+                "RHS Volume (mm3)": 1047.7
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 923.9,
+                "RHS Volume (mm3)": 548.8
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 9724.9,
+                "RHS Volume (mm3)": 10254.0
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 1108,
+                "Gray Matter Vol (mm3)": 3034,
+                "Thickness Avg (mm)": 2.544,
+                "Mean Curvature (mm-1)": 0.114
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2499,
+                "Gray Matter Vol (mm3)": 7344,
+                "Thickness Avg (mm)": 2.673,
+                "Mean Curvature (mm-1)": 0.107
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2276,
+                "Gray Matter Vol (mm3)": 4824,
+                "Thickness Avg (mm)": 2.023,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 470,
+                "Gray Matter Vol (mm3)": 2187,
+                "Thickness Avg (mm)": 3.23,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 3088,
+                "Gray Matter Vol (mm3)": 9180,
+                "Thickness Avg (mm)": 2.702,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 4723,
+                "Gray Matter Vol (mm3)": 13453,
+                "Thickness Avg (mm)": 2.552,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3538,
+                "Gray Matter Vol (mm3)": 12655,
+                "Thickness Avg (mm)": 2.939,
+                "Mean Curvature (mm-1)": 0.134
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 1176,
+                "Gray Matter Vol (mm3)": 2952,
+                "Thickness Avg (mm)": 2.356,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5319,
+                "Gray Matter Vol (mm3)": 13442,
+                "Thickness Avg (mm)": 2.276,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 3039,
+                "Gray Matter Vol (mm3)": 8864,
+                "Thickness Avg (mm)": 2.572,
+                "Mean Curvature (mm-1)": 0.138
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3861,
+                "Gray Matter Vol (mm3)": 8907,
+                "Thickness Avg (mm)": 2.096,
+                "Mean Curvature (mm-1)": 0.142
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1797,
+                "Gray Matter Vol (mm3)": 5079,
+                "Thickness Avg (mm)": 2.535,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 3819,
+                "Gray Matter Vol (mm3)": 12726,
+                "Thickness Avg (mm)": 2.773,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 695,
+                "Gray Matter Vol (mm3)": 2534,
+                "Thickness Avg (mm)": 2.941,
+                "Mean Curvature (mm-1)": 0.098
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1476,
+                "Gray Matter Vol (mm3)": 4275,
+                "Thickness Avg (mm)": 2.625,
+                "Mean Curvature (mm-1)": 0.099
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1567,
+                "Gray Matter Vol (mm3)": 5092,
+                "Thickness Avg (mm)": 2.786,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 710,
+                "Gray Matter Vol (mm3)": 2383,
+                "Thickness Avg (mm)": 2.813,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1437,
+                "Gray Matter Vol (mm3)": 3789,
+                "Thickness Avg (mm)": 2.552,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1454,
+                "Gray Matter Vol (mm3)": 2341,
+                "Thickness Avg (mm)": 1.876,
+                "Mean Curvature (mm-1)": 0.134
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4439,
+                "Gray Matter Vol (mm3)": 11252,
+                "Thickness Avg (mm)": 2.284,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1178,
+                "Gray Matter Vol (mm3)": 3177,
+                "Thickness Avg (mm)": 2.566,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4543,
+                "Gray Matter Vol (mm3)": 13749,
+                "Thickness Avg (mm)": 2.75,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4340,
+                "Gray Matter Vol (mm3)": 11855,
+                "Thickness Avg (mm)": 2.589,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1293,
+                "Gray Matter Vol (mm3)": 3685,
+                "Thickness Avg (mm)": 2.671,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4628,
+                "Gray Matter Vol (mm3)": 13730,
+                "Thickness Avg (mm)": 2.605,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7499,
+                "Gray Matter Vol (mm3)": 24241,
+                "Thickness Avg (mm)": 2.874,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4192,
+                "Gray Matter Vol (mm3)": 10965,
+                "Thickness Avg (mm)": 2.312,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 5336,
+                "Gray Matter Vol (mm3)": 18501,
+                "Thickness Avg (mm)": 2.963,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3982,
+                "Gray Matter Vol (mm3)": 11562,
+                "Thickness Avg (mm)": 2.721,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 423,
+                "Gray Matter Vol (mm3)": 1115,
+                "Thickness Avg (mm)": 2.598,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1822,
+                "Gray Matter Vol (mm3)": 5835,
+                "Thickness Avg (mm)": 3.155,
+                "Mean Curvature (mm-1)": 0.098
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 831,
+                "Gray Matter Vol (mm3)": 2157,
+                "Thickness Avg (mm)": 2.126,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2100,
+                "Gray Matter Vol (mm3)": 6342,
+                "Thickness Avg (mm)": 2.684,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2300,
+                "Gray Matter Vol (mm3)": 4775,
+                "Thickness Avg (mm)": 1.977,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 550,
+                "Gray Matter Vol (mm3)": 2228,
+                "Thickness Avg (mm)": 2.672,
+                "Mean Curvature (mm-1)": 0.138
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2639,
+                "Gray Matter Vol (mm3)": 7390,
+                "Thickness Avg (mm)": 2.534,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 5723,
+                "Gray Matter Vol (mm3)": 17032,
+                "Thickness Avg (mm)": 2.605,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3908,
+                "Gray Matter Vol (mm3)": 14001,
+                "Thickness Avg (mm)": 2.878,
+                "Mean Curvature (mm-1)": 0.134
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 974,
+                "Gray Matter Vol (mm3)": 2488,
+                "Thickness Avg (mm)": 2.221,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5623,
+                "Gray Matter Vol (mm3)": 15304,
+                "Thickness Avg (mm)": 2.4,
+                "Mean Curvature (mm-1)": 0.135
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 3170,
+                "Gray Matter Vol (mm3)": 8359,
+                "Thickness Avg (mm)": 2.447,
+                "Mean Curvature (mm-1)": 0.142
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3849,
+                "Gray Matter Vol (mm3)": 9044,
+                "Thickness Avg (mm)": 2.137,
+                "Mean Curvature (mm-1)": 0.139
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1771,
+                "Gray Matter Vol (mm3)": 4776,
+                "Thickness Avg (mm)": 2.432,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4396,
+                "Gray Matter Vol (mm3)": 14675,
+                "Thickness Avg (mm)": 2.942,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 665,
+                "Gray Matter Vol (mm3)": 2220,
+                "Thickness Avg (mm)": 2.719,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1560,
+                "Gray Matter Vol (mm3)": 4239,
+                "Thickness Avg (mm)": 2.486,
+                "Mean Curvature (mm-1)": 0.096
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1543,
+                "Gray Matter Vol (mm3)": 4816,
+                "Thickness Avg (mm)": 2.74,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 747,
+                "Gray Matter Vol (mm3)": 2381,
+                "Thickness Avg (mm)": 2.723,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1706,
+                "Gray Matter Vol (mm3)": 4744,
+                "Thickness Avg (mm)": 2.559,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1947,
+                "Gray Matter Vol (mm3)": 2970,
+                "Thickness Avg (mm)": 1.692,
+                "Mean Curvature (mm-1)": 0.134
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4571,
+                "Gray Matter Vol (mm3)": 10711,
+                "Thickness Avg (mm)": 2.111,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1270,
+                "Gray Matter Vol (mm3)": 3213,
+                "Thickness Avg (mm)": 2.33,
+                "Mean Curvature (mm-1)": 0.135
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4060,
+                "Gray Matter Vol (mm3)": 11565,
+                "Thickness Avg (mm)": 2.668,
+                "Mean Curvature (mm-1)": 0.107
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4693,
+                "Gray Matter Vol (mm3)": 12510,
+                "Thickness Avg (mm)": 2.445,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 789,
+                "Gray Matter Vol (mm3)": 2331,
+                "Thickness Avg (mm)": 2.52,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4966,
+                "Gray Matter Vol (mm3)": 14065,
+                "Thickness Avg (mm)": 2.478,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 9076,
+                "Gray Matter Vol (mm3)": 28396,
+                "Thickness Avg (mm)": 2.796,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4285,
+                "Gray Matter Vol (mm3)": 10954,
+                "Thickness Avg (mm)": 2.289,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4335,
+                "Gray Matter Vol (mm3)": 15499,
+                "Thickness Avg (mm)": 2.999,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3092,
+                "Gray Matter Vol (mm3)": 8765,
+                "Thickness Avg (mm)": 2.601,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 308,
+                "Gray Matter Vol (mm3)": 851,
+                "Thickness Avg (mm)": 2.596,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1842,
+                "Gray Matter Vol (mm3)": 5778,
+                "Thickness Avg (mm)": 3.051,
+                "Mean Curvature (mm-1)": 0.097
+            }
+        ]
+    },
+    "MPR_AX_T1_GADO": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1454653
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1434020
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1376626
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1355993
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 61332
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 234967
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 241029
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 475996
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 595549
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 421148
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 407655
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 828803
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1865656
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1355993
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1434020
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 18500
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 2039.6,
+                "RHS Volume (mm3)": 2101.8
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 6279.9,
+                "RHS Volume (mm3)": 6296.2
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 7107.3,
+                "RHS Volume (mm3)": 5145.1
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1607.4,
+                "RHS Volume (mm3)": 632.0
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 9332.1,
+                "RHS Volume (mm3)": 6903.8
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 9903.3,
+                "RHS Volume (mm3)": 12756.4
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 6103.7,
+                "RHS Volume (mm3)": 2909.6
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 527.5,
+                "RHS Volume (mm3)": null
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 14022.7,
+                "RHS Volume (mm3)": 16941.4
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 6451.7,
+                "RHS Volume (mm3)": 5804.1
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 7883.1,
+                "RHS Volume (mm3)": 5318.6
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 2612.0,
+                "RHS Volume (mm3)": 3434.4
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 4737.7,
+                "RHS Volume (mm3)": 4803.0
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 6506.2,
+                "RHS Volume (mm3)": 1718.1
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 3424.0,
+                "RHS Volume (mm3)": 5783.8
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3039.3,
+                "RHS Volume (mm3)": 2998.9
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1122.8,
+                "RHS Volume (mm3)": 2371.0
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2665.7,
+                "RHS Volume (mm3)": 2344.2
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 6756.6,
+                "RHS Volume (mm3)": 5174.7
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 7793.5,
+                "RHS Volume (mm3)": 11509.9
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 2502.8,
+                "RHS Volume (mm3)": 3647.3
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 8036.3,
+                "RHS Volume (mm3)": 13672.7
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 16444.6,
+                "RHS Volume (mm3)": 15409.9
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 3531.6,
+                "RHS Volume (mm3)": 3133.9
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 15813.3,
+                "RHS Volume (mm3)": 12640.1
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 12491.8,
+                "RHS Volume (mm3)": 11039.9
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 12525.6,
+                "RHS Volume (mm3)": 13606.7
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 8330.3,
+                "RHS Volume (mm3)": 6256.0
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 8295.3,
+                "RHS Volume (mm3)": 7299.7
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 151.8,
+                "RHS Volume (mm3)": 124.1
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 1889.2,
+                "RHS Volume (mm3)": 1121.8
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 573.8,
+                "RHS Volume (mm3)": 618.6
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 12902.2,
+                "RHS Volume (mm3)": 16615.8
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 941,
+                "Gray Matter Vol (mm3)": 2208,
+                "Thickness Avg (mm)": 2.583,
+                "Mean Curvature (mm-1)": 0.296
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2078,
+                "Gray Matter Vol (mm3)": 5263,
+                "Thickness Avg (mm)": 2.997,
+                "Mean Curvature (mm-1)": 0.246
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2894,
+                "Gray Matter Vol (mm3)": 5349,
+                "Thickness Avg (mm)": 1.695,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 810,
+                "Gray Matter Vol (mm3)": 1951,
+                "Thickness Avg (mm)": 2.205,
+                "Mean Curvature (mm-1)": 0.183
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2543,
+                "Gray Matter Vol (mm3)": 8442,
+                "Thickness Avg (mm)": 3.452,
+                "Mean Curvature (mm-1)": 0.217
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 2779,
+                "Gray Matter Vol (mm3)": 10252,
+                "Thickness Avg (mm)": 3.717,
+                "Mean Curvature (mm-1)": 0.154
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 2150,
+                "Gray Matter Vol (mm3)": 7465,
+                "Thickness Avg (mm)": 3.11,
+                "Mean Curvature (mm-1)": 0.147
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 156,
+                "Gray Matter Vol (mm3)": 305,
+                "Thickness Avg (mm)": 2.464,
+                "Mean Curvature (mm-1)": 0.303
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5328,
+                "Gray Matter Vol (mm3)": 18398,
+                "Thickness Avg (mm)": 3.216,
+                "Mean Curvature (mm-1)": 0.17
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 3261,
+                "Gray Matter Vol (mm3)": 12846,
+                "Thickness Avg (mm)": 3.722,
+                "Mean Curvature (mm-1)": 0.204
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 2270,
+                "Gray Matter Vol (mm3)": 9128,
+                "Thickness Avg (mm)": 3.556,
+                "Mean Curvature (mm-1)": 0.174
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1933,
+                "Gray Matter Vol (mm3)": 6735,
+                "Thickness Avg (mm)": 3.14,
+                "Mean Curvature (mm-1)": 0.205
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 1999,
+                "Gray Matter Vol (mm3)": 8765,
+                "Thickness Avg (mm)": 4.096,
+                "Mean Curvature (mm-1)": 0.145
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 3063,
+                "Gray Matter Vol (mm3)": 5662,
+                "Thickness Avg (mm)": 1.696,
+                "Mean Curvature (mm-1)": 0.158
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1608,
+                "Gray Matter Vol (mm3)": 5389,
+                "Thickness Avg (mm)": 3.207,
+                "Mean Curvature (mm-1)": 0.195
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 971,
+                "Gray Matter Vol (mm3)": 2846,
+                "Thickness Avg (mm)": 3.506,
+                "Mean Curvature (mm-1)": 0.309
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 388,
+                "Gray Matter Vol (mm3)": 1528,
+                "Thickness Avg (mm)": 3.628,
+                "Mean Curvature (mm-1)": 0.157
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 925,
+                "Gray Matter Vol (mm3)": 3650,
+                "Thickness Avg (mm)": 3.985,
+                "Mean Curvature (mm-1)": 0.209
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1519,
+                "Gray Matter Vol (mm3)": 4794,
+                "Thickness Avg (mm)": 3.022,
+                "Mean Curvature (mm-1)": 0.167
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4109,
+                "Gray Matter Vol (mm3)": 11936,
+                "Thickness Avg (mm)": 2.841,
+                "Mean Curvature (mm-1)": 0.203
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 885,
+                "Gray Matter Vol (mm3)": 2595,
+                "Thickness Avg (mm)": 2.891,
+                "Mean Curvature (mm-1)": 0.194
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 3215,
+                "Gray Matter Vol (mm3)": 11008,
+                "Thickness Avg (mm)": 3.544,
+                "Mean Curvature (mm-1)": 0.181
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 5005,
+                "Gray Matter Vol (mm3)": 11681,
+                "Thickness Avg (mm)": 2.382,
+                "Mean Curvature (mm-1)": 0.237
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1963,
+                "Gray Matter Vol (mm3)": 5053,
+                "Thickness Avg (mm)": 2.682,
+                "Mean Curvature (mm-1)": 0.251
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4231,
+                "Gray Matter Vol (mm3)": 15462,
+                "Thickness Avg (mm)": 3.726,
+                "Mean Curvature (mm-1)": 0.221
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7149,
+                "Gray Matter Vol (mm3)": 24731,
+                "Thickness Avg (mm)": 3.359,
+                "Mean Curvature (mm-1)": 0.236
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4570,
+                "Gray Matter Vol (mm3)": 12546,
+                "Thickness Avg (mm)": 2.617,
+                "Mean Curvature (mm-1)": 0.221
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3271,
+                "Gray Matter Vol (mm3)": 9633,
+                "Thickness Avg (mm)": 2.929,
+                "Mean Curvature (mm-1)": 0.205
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2137,
+                "Gray Matter Vol (mm3)": 8202,
+                "Thickness Avg (mm)": 3.863,
+                "Mean Curvature (mm-1)": 0.191
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 192,
+                "Gray Matter Vol (mm3)": 672,
+                "Thickness Avg (mm)": 3.491,
+                "Mean Curvature (mm-1)": 0.208
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1278,
+                "Gray Matter Vol (mm3)": 4304,
+                "Thickness Avg (mm)": 3.315,
+                "Mean Curvature (mm-1)": 0.169
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 655,
+                "Gray Matter Vol (mm3)": 1389,
+                "Thickness Avg (mm)": 2.01,
+                "Mean Curvature (mm-1)": 0.168
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2513,
+                "Gray Matter Vol (mm3)": 7567,
+                "Thickness Avg (mm)": 3.114,
+                "Mean Curvature (mm-1)": 0.2
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2033,
+                "Gray Matter Vol (mm3)": 6389,
+                "Thickness Avg (mm)": 3.01,
+                "Mean Curvature (mm-1)": 0.205
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 3137,
+                "Gray Matter Vol (mm3)": 8840,
+                "Thickness Avg (mm)": 2.637,
+                "Mean Curvature (mm-1)": 0.201
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 1617,
+                "Gray Matter Vol (mm3)": 5514,
+                "Thickness Avg (mm)": 3.4,
+                "Mean Curvature (mm-1)": 0.206
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 3441,
+                "Gray Matter Vol (mm3)": 12333,
+                "Thickness Avg (mm)": 3.691,
+                "Mean Curvature (mm-1)": 0.174
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 1263,
+                "Gray Matter Vol (mm3)": 4983,
+                "Thickness Avg (mm)": 3.478,
+                "Mean Curvature (mm-1)": 0.161
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5718,
+                "Gray Matter Vol (mm3)": 21700,
+                "Thickness Avg (mm)": 3.434,
+                "Mean Curvature (mm-1)": 0.152
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 3508,
+                "Gray Matter Vol (mm3)": 13337,
+                "Thickness Avg (mm)": 3.7,
+                "Mean Curvature (mm-1)": 0.211
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 1740,
+                "Gray Matter Vol (mm3)": 7935,
+                "Thickness Avg (mm)": 3.569,
+                "Mean Curvature (mm-1)": 0.18
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1768,
+                "Gray Matter Vol (mm3)": 5653,
+                "Thickness Avg (mm)": 2.775,
+                "Mean Curvature (mm-1)": 0.198
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 1761,
+                "Gray Matter Vol (mm3)": 7086,
+                "Thickness Avg (mm)": 3.976,
+                "Mean Curvature (mm-1)": 0.187
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 637,
+                "Gray Matter Vol (mm3)": 1960,
+                "Thickness Avg (mm)": 2.92,
+                "Mean Curvature (mm-1)": 0.201
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 2243,
+                "Gray Matter Vol (mm3)": 4701,
+                "Thickness Avg (mm)": 1.928,
+                "Mean Curvature (mm-1)": 0.173
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 787,
+                "Gray Matter Vol (mm3)": 3282,
+                "Thickness Avg (mm)": 4.086,
+                "Mean Curvature (mm-1)": 0.178
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 682,
+                "Gray Matter Vol (mm3)": 2643,
+                "Thickness Avg (mm)": 4.054,
+                "Mean Curvature (mm-1)": 0.296
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 787,
+                "Gray Matter Vol (mm3)": 3331,
+                "Thickness Avg (mm)": 4.058,
+                "Mean Curvature (mm-1)": 0.212
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1278,
+                "Gray Matter Vol (mm3)": 4776,
+                "Thickness Avg (mm)": 3.623,
+                "Mean Curvature (mm-1)": 0.155
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 5253,
+                "Gray Matter Vol (mm3)": 15397,
+                "Thickness Avg (mm)": 2.928,
+                "Mean Curvature (mm-1)": 0.202
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 913,
+                "Gray Matter Vol (mm3)": 2047,
+                "Thickness Avg (mm)": 2.588,
+                "Mean Curvature (mm-1)": 0.275
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 5131,
+                "Gray Matter Vol (mm3)": 14652,
+                "Thickness Avg (mm)": 3.041,
+                "Mean Curvature (mm-1)": 0.193
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4156,
+                "Gray Matter Vol (mm3)": 10216,
+                "Thickness Avg (mm)": 2.421,
+                "Mean Curvature (mm-1)": 0.179
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1415,
+                "Gray Matter Vol (mm3)": 3594,
+                "Thickness Avg (mm)": 2.644,
+                "Mean Curvature (mm-1)": 0.274
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4110,
+                "Gray Matter Vol (mm3)": 12476,
+                "Thickness Avg (mm)": 3.328,
+                "Mean Curvature (mm-1)": 0.238
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 8410,
+                "Gray Matter Vol (mm3)": 24295,
+                "Thickness Avg (mm)": 2.724,
+                "Mean Curvature (mm-1)": 0.18
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4409,
+                "Gray Matter Vol (mm3)": 12441,
+                "Thickness Avg (mm)": 2.828,
+                "Mean Curvature (mm-1)": 0.229
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3450,
+                "Gray Matter Vol (mm3)": 13105,
+                "Thickness Avg (mm)": 3.653,
+                "Mean Curvature (mm-1)": 0.162
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 1884,
+                "Gray Matter Vol (mm3)": 6578,
+                "Thickness Avg (mm)": 3.565,
+                "Mean Curvature (mm-1)": 0.167
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 160,
+                "Gray Matter Vol (mm3)": 511,
+                "Thickness Avg (mm)": 3.198,
+                "Mean Curvature (mm-1)": 0.17
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1761,
+                "Gray Matter Vol (mm3)": 5802,
+                "Thickness Avg (mm)": 3.173,
+                "Mean Curvature (mm-1)": 0.179
+            }
+        ]
+    },
+    "MPR_SAG_T1_GADO": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1472426
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1452059
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1400162
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1379795
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 62675
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 43636
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 48023
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 91660
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 206484
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 620343
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 612152
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 1232495
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1784928
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1379795
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1452059
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 18326
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 5781.2,
+                "RHS Volume (mm3)": 5068.5
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 3604.6,
+                "RHS Volume (mm3)": 5175.9
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1647.4,
+                "RHS Volume (mm3)": 1452.5
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 7963.6,
+                "RHS Volume (mm3)": 4603.2
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 8567.9,
+                "RHS Volume (mm3)": 9926.3
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 9292.2,
+                "RHS Volume (mm3)": 6401.2
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 490.8,
+                "RHS Volume (mm3)": null
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 13813.6,
+                "RHS Volume (mm3)": 12566.2
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 6214.6,
+                "RHS Volume (mm3)": 5592.0
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 7505.5,
+                "RHS Volume (mm3)": 4104.1
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 3131.6,
+                "RHS Volume (mm3)": 3311.3
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 5535.4,
+                "RHS Volume (mm3)": 6651.1
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 3965.2,
+                "RHS Volume (mm3)": 1392.8
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 4923.7,
+                "RHS Volume (mm3)": 5455.8
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3220.2,
+                "RHS Volume (mm3)": 2438.8
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1924.5,
+                "RHS Volume (mm3)": 2181.7
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2863.2,
+                "RHS Volume (mm3)": 3221.3
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 5370.6,
+                "RHS Volume (mm3)": 4086.6
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 10007.2,
+                "RHS Volume (mm3)": 12154.0
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 840.1,
+                "RHS Volume (mm3)": 1265.9
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 14822.7,
+                "RHS Volume (mm3)": 14949.4
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 13986.3,
+                "RHS Volume (mm3)": 14711.1
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 1344.6,
+                "RHS Volume (mm3)": 1277.9
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 18212.8,
+                "RHS Volume (mm3)": 18437.9
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 24392.3,
+                "RHS Volume (mm3)": 24324.4
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 14010.4,
+                "RHS Volume (mm3)": 14190.3
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 9105.6,
+                "RHS Volume (mm3)": 10452.9
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 8875.4,
+                "RHS Volume (mm3)": 10024.4
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 664.5,
+                "RHS Volume (mm3)": 930.7
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 1331.2,
+                "RHS Volume (mm3)": 1256.7
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 1187.3,
+                "RHS Volume (mm3)": 1140.3
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 10348.8,
+                "RHS Volume (mm3)": 10130.3
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 234,
+                "Gray Matter Vol (mm3)": 233,
+                "Thickness Avg (mm)": 1.057,
+                "Mean Curvature (mm-1)": 0.039
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 1293,
+                "Gray Matter Vol (mm3)": 1021,
+                "Thickness Avg (mm)": 0.793,
+                "Mean Curvature (mm-1)": 0.053
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 1286,
+                "Gray Matter Vol (mm3)": 1013,
+                "Thickness Avg (mm)": 0.761,
+                "Mean Curvature (mm-1)": 0.058
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 413,
+                "Gray Matter Vol (mm3)": 261,
+                "Thickness Avg (mm)": 0.655,
+                "Mean Curvature (mm-1)": 0.047
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 1646,
+                "Gray Matter Vol (mm3)": 2403,
+                "Thickness Avg (mm)": 1.297,
+                "Mean Curvature (mm-1)": 0.04
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 1849,
+                "Gray Matter Vol (mm3)": 1276,
+                "Thickness Avg (mm)": 0.711,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 1963,
+                "Gray Matter Vol (mm3)": 1954,
+                "Thickness Avg (mm)": 0.917,
+                "Mean Curvature (mm-1)": 0.05
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 97,
+                "Gray Matter Vol (mm3)": 71,
+                "Thickness Avg (mm)": 0.804,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 3140,
+                "Gray Matter Vol (mm3)": 2164,
+                "Thickness Avg (mm)": 0.689,
+                "Mean Curvature (mm-1)": 0.044
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 1460,
+                "Gray Matter Vol (mm3)": 776,
+                "Thickness Avg (mm)": 0.543,
+                "Mean Curvature (mm-1)": 0.039
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 1582,
+                "Gray Matter Vol (mm3)": 1766,
+                "Thickness Avg (mm)": 1.036,
+                "Mean Curvature (mm-1)": 0.03
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 930,
+                "Gray Matter Vol (mm3)": 956,
+                "Thickness Avg (mm)": 0.979,
+                "Mean Curvature (mm-1)": 0.044
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 1874,
+                "Gray Matter Vol (mm3)": 1679,
+                "Thickness Avg (mm)": 0.885,
+                "Mean Curvature (mm-1)": 0.047
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 1508,
+                "Gray Matter Vol (mm3)": 1252,
+                "Thickness Avg (mm)": 0.794,
+                "Mean Curvature (mm-1)": 0.064
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1410,
+                "Gray Matter Vol (mm3)": 1634,
+                "Thickness Avg (mm)": 1.031,
+                "Mean Curvature (mm-1)": 0.052
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 589,
+                "Gray Matter Vol (mm3)": 498,
+                "Thickness Avg (mm)": 0.844,
+                "Mean Curvature (mm-1)": 0.045
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 331,
+                "Gray Matter Vol (mm3)": 310,
+                "Thickness Avg (mm)": 0.893,
+                "Mean Curvature (mm-1)": 0.05
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 795,
+                "Gray Matter Vol (mm3)": 710,
+                "Thickness Avg (mm)": 0.894,
+                "Mean Curvature (mm-1)": 0.039
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1048,
+                "Gray Matter Vol (mm3)": 1089,
+                "Thickness Avg (mm)": 0.955,
+                "Mean Curvature (mm-1)": 0.06
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 2589,
+                "Gray Matter Vol (mm3)": 2483,
+                "Thickness Avg (mm)": 0.898,
+                "Mean Curvature (mm-1)": 0.054
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 201,
+                "Gray Matter Vol (mm3)": 160,
+                "Thickness Avg (mm)": 0.849,
+                "Mean Curvature (mm-1)": 0.026
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 2825,
+                "Gray Matter Vol (mm3)": 2387,
+                "Thickness Avg (mm)": 0.813,
+                "Mean Curvature (mm-1)": 0.055
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 2961,
+                "Gray Matter Vol (mm3)": 2632,
+                "Thickness Avg (mm)": 0.85,
+                "Mean Curvature (mm-1)": 0.047
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 849,
+                "Gray Matter Vol (mm3)": 702,
+                "Thickness Avg (mm)": 0.858,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 2634,
+                "Gray Matter Vol (mm3)": 2040,
+                "Thickness Avg (mm)": 0.772,
+                "Mean Curvature (mm-1)": 0.037
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 6301,
+                "Gray Matter Vol (mm3)": 6598,
+                "Thickness Avg (mm)": 0.957,
+                "Mean Curvature (mm-1)": 0.052
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 2378,
+                "Gray Matter Vol (mm3)": 1823,
+                "Thickness Avg (mm)": 0.747,
+                "Mean Curvature (mm-1)": 0.062
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 2796,
+                "Gray Matter Vol (mm3)": 1944,
+                "Thickness Avg (mm)": 0.69,
+                "Mean Curvature (mm-1)": 0.037
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 1556,
+                "Gray Matter Vol (mm3)": 1065,
+                "Thickness Avg (mm)": 0.697,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 231,
+                "Gray Matter Vol (mm3)": 185,
+                "Thickness Avg (mm)": 0.795,
+                "Mean Curvature (mm-1)": 0.03
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 958,
+                "Gray Matter Vol (mm3)": 747,
+                "Thickness Avg (mm)": 0.797,
+                "Mean Curvature (mm-1)": 0.047
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 110,
+                "Gray Matter Vol (mm3)": 79,
+                "Thickness Avg (mm)": 0.78,
+                "Mean Curvature (mm-1)": 0.018
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 1141,
+                "Gray Matter Vol (mm3)": 1042,
+                "Thickness Avg (mm)": 0.886,
+                "Mean Curvature (mm-1)": 0.052
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 1321,
+                "Gray Matter Vol (mm3)": 1279,
+                "Thickness Avg (mm)": 0.923,
+                "Mean Curvature (mm-1)": 0.055
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 441,
+                "Gray Matter Vol (mm3)": 409,
+                "Thickness Avg (mm)": 0.907,
+                "Mean Curvature (mm-1)": 0.049
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 983,
+                "Gray Matter Vol (mm3)": 1465,
+                "Thickness Avg (mm)": 1.345,
+                "Mean Curvature (mm-1)": 0.029
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 2017,
+                "Gray Matter Vol (mm3)": 1551,
+                "Thickness Avg (mm)": 0.793,
+                "Mean Curvature (mm-1)": 0.032
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 1502,
+                "Gray Matter Vol (mm3)": 1460,
+                "Thickness Avg (mm)": 0.907,
+                "Mean Curvature (mm-1)": 0.051
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 2915,
+                "Gray Matter Vol (mm3)": 2324,
+                "Thickness Avg (mm)": 0.783,
+                "Mean Curvature (mm-1)": 0.04
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 1630,
+                "Gray Matter Vol (mm3)": 1039,
+                "Thickness Avg (mm)": 0.651,
+                "Mean Curvature (mm-1)": 0.038
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 975,
+                "Gray Matter Vol (mm3)": 1665,
+                "Thickness Avg (mm)": 1.484,
+                "Mean Curvature (mm-1)": 0.037
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 867,
+                "Gray Matter Vol (mm3)": 1070,
+                "Thickness Avg (mm)": 1.107,
+                "Mean Curvature (mm-1)": 0.046
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 1748,
+                "Gray Matter Vol (mm3)": 1843,
+                "Thickness Avg (mm)": 1.014,
+                "Mean Curvature (mm-1)": 0.054
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 846,
+                "Gray Matter Vol (mm3)": 646,
+                "Thickness Avg (mm)": 0.776,
+                "Mean Curvature (mm-1)": 0.056
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1537,
+                "Gray Matter Vol (mm3)": 1797,
+                "Thickness Avg (mm)": 1.075,
+                "Mean Curvature (mm-1)": 0.053
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 600,
+                "Gray Matter Vol (mm3)": 541,
+                "Thickness Avg (mm)": 0.914,
+                "Mean Curvature (mm-1)": 0.049
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 372,
+                "Gray Matter Vol (mm3)": 255,
+                "Thickness Avg (mm)": 0.67,
+                "Mean Curvature (mm-1)": 0.04
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 681,
+                "Gray Matter Vol (mm3)": 692,
+                "Thickness Avg (mm)": 1.004,
+                "Mean Curvature (mm-1)": 0.044
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 848,
+                "Gray Matter Vol (mm3)": 807,
+                "Thickness Avg (mm)": 0.937,
+                "Mean Curvature (mm-1)": 0.026
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 3365,
+                "Gray Matter Vol (mm3)": 3675,
+                "Thickness Avg (mm)": 1.001,
+                "Mean Curvature (mm-1)": 0.053
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 281,
+                "Gray Matter Vol (mm3)": 224,
+                "Thickness Avg (mm)": 0.865,
+                "Mean Curvature (mm-1)": 0.02
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 2492,
+                "Gray Matter Vol (mm3)": 2365,
+                "Thickness Avg (mm)": 0.902,
+                "Mean Curvature (mm-1)": 0.056
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 3176,
+                "Gray Matter Vol (mm3)": 3110,
+                "Thickness Avg (mm)": 0.951,
+                "Mean Curvature (mm-1)": 0.041
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 483,
+                "Gray Matter Vol (mm3)": 354,
+                "Thickness Avg (mm)": 0.772,
+                "Mean Curvature (mm-1)": 0.015
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 2778,
+                "Gray Matter Vol (mm3)": 2684,
+                "Thickness Avg (mm)": 0.938,
+                "Mean Curvature (mm-1)": 0.043
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7337,
+                "Gray Matter Vol (mm3)": 8449,
+                "Thickness Avg (mm)": 1.052,
+                "Mean Curvature (mm-1)": 0.048
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 2544,
+                "Gray Matter Vol (mm3)": 2173,
+                "Thickness Avg (mm)": 0.823,
+                "Mean Curvature (mm-1)": 0.049
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3112,
+                "Gray Matter Vol (mm3)": 2617,
+                "Thickness Avg (mm)": 0.844,
+                "Mean Curvature (mm-1)": 0.038
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2009,
+                "Gray Matter Vol (mm3)": 1781,
+                "Thickness Avg (mm)": 0.881,
+                "Mean Curvature (mm-1)": 0.029
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 213,
+                "Gray Matter Vol (mm3)": 131,
+                "Thickness Avg (mm)": 0.615,
+                "Mean Curvature (mm-1)": 0.025
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 926,
+                "Gray Matter Vol (mm3)": 680,
+                "Thickness Avg (mm)": 0.739,
+                "Mean Curvature (mm-1)": 0.044
+            }
+        ]
+    },
+    "MPR_AX_T1": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1215412
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1190057
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1056264
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1030909
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 61630
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 228137
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 235411
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 463549
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 654887
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 249007
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 257311
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 506318
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1664225
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1030909
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1190057
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 21797
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 2825.6,
+                "RHS Volume (mm3)": 2873.2
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 6792.6,
+                "RHS Volume (mm3)": 5466.6
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 3246.5,
+                "RHS Volume (mm3)": 3513.2
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1087.4,
+                "RHS Volume (mm3)": 1190.1
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 7965.5,
+                "RHS Volume (mm3)": 6778.1
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 10020.8,
+                "RHS Volume (mm3)": 12758.8
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 7711.1,
+                "RHS Volume (mm3)": 7271.9
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 4184.4,
+                "RHS Volume (mm3)": 3746.8
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 12324.9,
+                "RHS Volume (mm3)": 11862.3
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 6825.3,
+                "RHS Volume (mm3)": 7692.4
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 6223.3,
+                "RHS Volume (mm3)": 7459.1
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 4795.3,
+                "RHS Volume (mm3)": 4687.9
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 6965.8,
+                "RHS Volume (mm3)": 8130.3
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 1945.5,
+                "RHS Volume (mm3)": 1908.8
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 3901.2,
+                "RHS Volume (mm3)": 4732.3
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 4037.6,
+                "RHS Volume (mm3)": 3311.3
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1214.9,
+                "RHS Volume (mm3)": 1390.3
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2934.9,
+                "RHS Volume (mm3)": 3585.7
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 4293.8,
+                "RHS Volume (mm3)": 4666.4
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 7149.8,
+                "RHS Volume (mm3)": 7689.6
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 3640.4,
+                "RHS Volume (mm3)": 3906.3
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 13402.9,
+                "RHS Volume (mm3)": 12662.8
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 12054.0,
+                "RHS Volume (mm3)": 12398.2
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 2490.4,
+                "RHS Volume (mm3)": 1845.1
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 14238.9,
+                "RHS Volume (mm3)": 16163.2
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 17317.4,
+                "RHS Volume (mm3)": 18936.7
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 11850.7,
+                "RHS Volume (mm3)": 12243.2
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 7253.1,
+                "RHS Volume (mm3)": 6353.9
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 8636.6,
+                "RHS Volume (mm3)": 9072.5
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 390.6,
+                "RHS Volume (mm3)": 481.8
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 933.0,
+                "RHS Volume (mm3)": 1044.8
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 966.5,
+                "RHS Volume (mm3)": 588.7
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 9710.4,
+                "RHS Volume (mm3)": 9440.5
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 907,
+                "Gray Matter Vol (mm3)": 2673,
+                "Thickness Avg (mm)": 2.612,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2423,
+                "Gray Matter Vol (mm3)": 6473,
+                "Thickness Avg (mm)": 2.439,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2103,
+                "Gray Matter Vol (mm3)": 4027,
+                "Thickness Avg (mm)": 1.86,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 485,
+                "Gray Matter Vol (mm3)": 1917,
+                "Thickness Avg (mm)": 2.816,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2964,
+                "Gray Matter Vol (mm3)": 8447,
+                "Thickness Avg (mm)": 2.491,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 4372,
+                "Gray Matter Vol (mm3)": 11784,
+                "Thickness Avg (mm)": 2.349,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3467,
+                "Gray Matter Vol (mm3)": 12923,
+                "Thickness Avg (mm)": 2.953,
+                "Mean Curvature (mm-1)": 0.126
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 959,
+                "Gray Matter Vol (mm3)": 2723,
+                "Thickness Avg (mm)": 2.671,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5316,
+                "Gray Matter Vol (mm3)": 12851,
+                "Thickness Avg (mm)": 2.19,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2666,
+                "Gray Matter Vol (mm3)": 7381,
+                "Thickness Avg (mm)": 2.524,
+                "Mean Curvature (mm-1)": 0.139
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3313,
+                "Gray Matter Vol (mm3)": 8595,
+                "Thickness Avg (mm)": 2.258,
+                "Mean Curvature (mm-1)": 0.137
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1608,
+                "Gray Matter Vol (mm3)": 4868,
+                "Thickness Avg (mm)": 2.658,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4140,
+                "Gray Matter Vol (mm3)": 14034,
+                "Thickness Avg (mm)": 2.728,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 782,
+                "Gray Matter Vol (mm3)": 2572,
+                "Thickness Avg (mm)": 2.762,
+                "Mean Curvature (mm-1)": 0.102
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1390,
+                "Gray Matter Vol (mm3)": 3635,
+                "Thickness Avg (mm)": 2.385,
+                "Mean Curvature (mm-1)": 0.089
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1504,
+                "Gray Matter Vol (mm3)": 4286,
+                "Thickness Avg (mm)": 2.45,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 645,
+                "Gray Matter Vol (mm3)": 2114,
+                "Thickness Avg (mm)": 2.662,
+                "Mean Curvature (mm-1)": 0.138
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1392,
+                "Gray Matter Vol (mm3)": 3388,
+                "Thickness Avg (mm)": 2.329,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1453,
+                "Gray Matter Vol (mm3)": 2318,
+                "Thickness Avg (mm)": 1.847,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4256,
+                "Gray Matter Vol (mm3)": 10083,
+                "Thickness Avg (mm)": 2.138,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 972,
+                "Gray Matter Vol (mm3)": 2290,
+                "Thickness Avg (mm)": 2.341,
+                "Mean Curvature (mm-1)": 0.114
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4475,
+                "Gray Matter Vol (mm3)": 12327,
+                "Thickness Avg (mm)": 2.522,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4168,
+                "Gray Matter Vol (mm3)": 10599,
+                "Thickness Avg (mm)": 2.417,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1190,
+                "Gray Matter Vol (mm3)": 3593,
+                "Thickness Avg (mm)": 2.777,
+                "Mean Curvature (mm-1)": 0.124
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4196,
+                "Gray Matter Vol (mm3)": 12273,
+                "Thickness Avg (mm)": 2.491,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7147,
+                "Gray Matter Vol (mm3)": 22111,
+                "Thickness Avg (mm)": 2.717,
+                "Mean Curvature (mm-1)": 0.114
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4175,
+                "Gray Matter Vol (mm3)": 9578,
+                "Thickness Avg (mm)": 2.069,
+                "Mean Curvature (mm-1)": 0.107
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4144,
+                "Gray Matter Vol (mm3)": 13481,
+                "Thickness Avg (mm)": 2.747,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3005,
+                "Gray Matter Vol (mm3)": 8295,
+                "Thickness Avg (mm)": 2.486,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 416,
+                "Gray Matter Vol (mm3)": 1033,
+                "Thickness Avg (mm)": 2.55,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1746,
+                "Gray Matter Vol (mm3)": 5235,
+                "Thickness Avg (mm)": 2.908,
+                "Mean Curvature (mm-1)": 0.094
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 738,
+                "Gray Matter Vol (mm3)": 1979,
+                "Thickness Avg (mm)": 2.433,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 1992,
+                "Gray Matter Vol (mm3)": 5296,
+                "Thickness Avg (mm)": 2.431,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2100,
+                "Gray Matter Vol (mm3)": 4426,
+                "Thickness Avg (mm)": 1.948,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 531,
+                "Gray Matter Vol (mm3)": 2067,
+                "Thickness Avg (mm)": 2.624,
+                "Mean Curvature (mm-1)": 0.122
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2414,
+                "Gray Matter Vol (mm3)": 7619,
+                "Thickness Avg (mm)": 2.635,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 5421,
+                "Gray Matter Vol (mm3)": 15751,
+                "Thickness Avg (mm)": 2.519,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3635,
+                "Gray Matter Vol (mm3)": 13048,
+                "Thickness Avg (mm)": 2.89,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 881,
+                "Gray Matter Vol (mm3)": 2510,
+                "Thickness Avg (mm)": 2.615,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5192,
+                "Gray Matter Vol (mm3)": 13740,
+                "Thickness Avg (mm)": 2.359,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2854,
+                "Gray Matter Vol (mm3)": 7752,
+                "Thickness Avg (mm)": 2.489,
+                "Mean Curvature (mm-1)": 0.135
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3566,
+                "Gray Matter Vol (mm3)": 8789,
+                "Thickness Avg (mm)": 2.18,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1591,
+                "Gray Matter Vol (mm3)": 5139,
+                "Thickness Avg (mm)": 2.833,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4280,
+                "Gray Matter Vol (mm3)": 13890,
+                "Thickness Avg (mm)": 2.851,
+                "Mean Curvature (mm-1)": 0.116
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 700,
+                "Gray Matter Vol (mm3)": 2201,
+                "Thickness Avg (mm)": 2.689,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1483,
+                "Gray Matter Vol (mm3)": 3740,
+                "Thickness Avg (mm)": 2.333,
+                "Mean Curvature (mm-1)": 0.095
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1505,
+                "Gray Matter Vol (mm3)": 4480,
+                "Thickness Avg (mm)": 2.608,
+                "Mean Curvature (mm-1)": 0.107
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 663,
+                "Gray Matter Vol (mm3)": 1896,
+                "Thickness Avg (mm)": 2.45,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1481,
+                "Gray Matter Vol (mm3)": 4303,
+                "Thickness Avg (mm)": 2.603,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1827,
+                "Gray Matter Vol (mm3)": 2902,
+                "Thickness Avg (mm)": 1.698,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4279,
+                "Gray Matter Vol (mm3)": 9405,
+                "Thickness Avg (mm)": 1.995,
+                "Mean Curvature (mm-1)": 0.106
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 964,
+                "Gray Matter Vol (mm3)": 2597,
+                "Thickness Avg (mm)": 2.526,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 3917,
+                "Gray Matter Vol (mm3)": 10410,
+                "Thickness Avg (mm)": 2.513,
+                "Mean Curvature (mm-1)": 0.103
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4419,
+                "Gray Matter Vol (mm3)": 11286,
+                "Thickness Avg (mm)": 2.343,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 682,
+                "Gray Matter Vol (mm3)": 2131,
+                "Thickness Avg (mm)": 2.746,
+                "Mean Curvature (mm-1)": 0.114
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4666,
+                "Gray Matter Vol (mm3)": 13433,
+                "Thickness Avg (mm)": 2.477,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 8659,
+                "Gray Matter Vol (mm3)": 26291,
+                "Thickness Avg (mm)": 2.694,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4155,
+                "Gray Matter Vol (mm3)": 9732,
+                "Thickness Avg (mm)": 2.108,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4170,
+                "Gray Matter Vol (mm3)": 14785,
+                "Thickness Avg (mm)": 2.886,
+                "Mean Curvature (mm-1)": 0.113
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2943,
+                "Gray Matter Vol (mm3)": 7572,
+                "Thickness Avg (mm)": 2.369,
+                "Mean Curvature (mm-1)": 0.109
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 291,
+                "Gray Matter Vol (mm3)": 812,
+                "Thickness Avg (mm)": 2.598,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1766,
+                "Gray Matter Vol (mm3)": 5434,
+                "Thickness Avg (mm)": 2.993,
+                "Mean Curvature (mm-1)": 0.095
+            }
+        ]
+    },
+    "MPR_CORO_T1_GADO": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1490131
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1469082
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1398749
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1377700
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 62656
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 45361
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 222627
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 267989
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 397226
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 631674
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 421657
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 1053332
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1841317
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1377700
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1469082
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 18371
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 53.7,
+                "RHS Volume (mm3)": 5389.7
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 5750.7,
+                "RHS Volume (mm3)": 5757.3
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 4118.4,
+                "RHS Volume (mm3)": 3402.2
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1934.0,
+                "RHS Volume (mm3)": 1228.3
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 9645.8,
+                "RHS Volume (mm3)": 8214.7
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 9795.2,
+                "RHS Volume (mm3)": 12585.4
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 11836.3,
+                "RHS Volume (mm3)": 3928.9
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 51.1,
+                "RHS Volume (mm3)": 84.3
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 14394.7,
+                "RHS Volume (mm3)": 13791.4
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 6456.8,
+                "RHS Volume (mm3)": 7331.3
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 7885.3,
+                "RHS Volume (mm3)": 4846.9
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 3392.0,
+                "RHS Volume (mm3)": 2417.3
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 5693.4,
+                "RHS Volume (mm3)": 5538.0
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 2684.7,
+                "RHS Volume (mm3)": 1543.7
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 6373.9,
+                "RHS Volume (mm3)": 5667.1
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3279.0,
+                "RHS Volume (mm3)": 2806.7
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 2341.0,
+                "RHS Volume (mm3)": 1372.1
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2678.3,
+                "RHS Volume (mm3)": 3240.0
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 5230.5,
+                "RHS Volume (mm3)": 4213.5
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 10356.6,
+                "RHS Volume (mm3)": 6070.8
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 823.3,
+                "RHS Volume (mm3)": 3801.9
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 12116.0,
+                "RHS Volume (mm3)": 12860.6
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 15416.8,
+                "RHS Volume (mm3)": 14801.7
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 1593.3,
+                "RHS Volume (mm3)": 2029.3
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 17634.5,
+                "RHS Volume (mm3)": 14037.7
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 24638.1,
+                "RHS Volume (mm3)": 14443.5
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 16582.1,
+                "RHS Volume (mm3)": 10443.4
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 7013.9,
+                "RHS Volume (mm3)": 6911.8
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 7275.5,
+                "RHS Volume (mm3)": 7385.1
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 520.6,
+                "RHS Volume (mm3)": 96.6
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 1235.1,
+                "RHS Volume (mm3)": 2451.0
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 797.7,
+                "RHS Volume (mm3)": 384.0
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 10660.3,
+                "RHS Volume (mm3)": 18566.2
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 266,
+                "Gray Matter Vol (mm3)": 229,
+                "Thickness Avg (mm)": 0.906,
+                "Mean Curvature (mm-1)": 0.036
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 1378,
+                "Gray Matter Vol (mm3)": 1069,
+                "Thickness Avg (mm)": 0.804,
+                "Mean Curvature (mm-1)": 0.048
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 1558,
+                "Gray Matter Vol (mm3)": 1294,
+                "Thickness Avg (mm)": 0.814,
+                "Mean Curvature (mm-1)": 0.061
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 426,
+                "Gray Matter Vol (mm3)": 361,
+                "Thickness Avg (mm)": 0.874,
+                "Mean Curvature (mm-1)": 0.054
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 1950,
+                "Gray Matter Vol (mm3)": 2069,
+                "Thickness Avg (mm)": 0.991,
+                "Mean Curvature (mm-1)": 0.05
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 2152,
+                "Gray Matter Vol (mm3)": 1667,
+                "Thickness Avg (mm)": 0.762,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 2426,
+                "Gray Matter Vol (mm3)": 2213,
+                "Thickness Avg (mm)": 0.891,
+                "Mean Curvature (mm-1)": 0.055
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 24,
+                "Gray Matter Vol (mm3)": 23,
+                "Thickness Avg (mm)": 0.953,
+                "Mean Curvature (mm-1)": 0.071
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 3178,
+                "Gray Matter Vol (mm3)": 2976,
+                "Thickness Avg (mm)": 0.92,
+                "Mean Curvature (mm-1)": 0.039
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 1646,
+                "Gray Matter Vol (mm3)": 1107,
+                "Thickness Avg (mm)": 0.678,
+                "Mean Curvature (mm-1)": 0.043
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 1678,
+                "Gray Matter Vol (mm3)": 2246,
+                "Thickness Avg (mm)": 1.193,
+                "Mean Curvature (mm-1)": 0.039
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 842,
+                "Gray Matter Vol (mm3)": 814,
+                "Thickness Avg (mm)": 0.905,
+                "Mean Curvature (mm-1)": 0.048
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 1866,
+                "Gray Matter Vol (mm3)": 1437,
+                "Thickness Avg (mm)": 0.775,
+                "Mean Curvature (mm-1)": 0.042
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 1013,
+                "Gray Matter Vol (mm3)": 1104,
+                "Thickness Avg (mm)": 1.052,
+                "Mean Curvature (mm-1)": 0.06
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1585,
+                "Gray Matter Vol (mm3)": 1821,
+                "Thickness Avg (mm)": 1.079,
+                "Mean Curvature (mm-1)": 0.046
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 612,
+                "Gray Matter Vol (mm3)": 259,
+                "Thickness Avg (mm)": 0.427,
+                "Mean Curvature (mm-1)": 0.015
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 317,
+                "Gray Matter Vol (mm3)": 314,
+                "Thickness Avg (mm)": 0.943,
+                "Mean Curvature (mm-1)": 0.045
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 753,
+                "Gray Matter Vol (mm3)": 417,
+                "Thickness Avg (mm)": 0.587,
+                "Mean Curvature (mm-1)": 0.022
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1120,
+                "Gray Matter Vol (mm3)": 1028,
+                "Thickness Avg (mm)": 0.898,
+                "Mean Curvature (mm-1)": 0.053
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 2302,
+                "Gray Matter Vol (mm3)": 1928,
+                "Thickness Avg (mm)": 0.813,
+                "Mean Curvature (mm-1)": 0.053
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 177,
+                "Gray Matter Vol (mm3)": 111,
+                "Thickness Avg (mm)": 0.712,
+                "Mean Curvature (mm-1)": 0.018
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 2459,
+                "Gray Matter Vol (mm3)": 2473,
+                "Thickness Avg (mm)": 0.943,
+                "Mean Curvature (mm-1)": 0.045
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 3133,
+                "Gray Matter Vol (mm3)": 2605,
+                "Thickness Avg (mm)": 0.813,
+                "Mean Curvature (mm-1)": 0.043
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 889,
+                "Gray Matter Vol (mm3)": 838,
+                "Thickness Avg (mm)": 0.963,
+                "Mean Curvature (mm-1)": 0.047
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 2476,
+                "Gray Matter Vol (mm3)": 2005,
+                "Thickness Avg (mm)": 0.807,
+                "Mean Curvature (mm-1)": 0.043
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 6166,
+                "Gray Matter Vol (mm3)": 6931,
+                "Thickness Avg (mm)": 1.017,
+                "Mean Curvature (mm-1)": 0.051
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 3082,
+                "Gray Matter Vol (mm3)": 3642,
+                "Thickness Avg (mm)": 1.047,
+                "Mean Curvature (mm-1)": 0.064
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 2191,
+                "Gray Matter Vol (mm3)": 1157,
+                "Thickness Avg (mm)": 0.538,
+                "Mean Curvature (mm-1)": 0.028
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 1408,
+                "Gray Matter Vol (mm3)": 722,
+                "Thickness Avg (mm)": 0.524,
+                "Mean Curvature (mm-1)": 0.024
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 160,
+                "Gray Matter Vol (mm3)": 61,
+                "Thickness Avg (mm)": 0.381,
+                "Mean Curvature (mm-1)": 0.014
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 899,
+                "Gray Matter Vol (mm3)": 610,
+                "Thickness Avg (mm)": 0.702,
+                "Mean Curvature (mm-1)": 0.039
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 1086,
+                "Gray Matter Vol (mm3)": 1847,
+                "Thickness Avg (mm)": 1.734,
+                "Mean Curvature (mm-1)": 0.2
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2584,
+                "Gray Matter Vol (mm3)": 7277,
+                "Thickness Avg (mm)": 2.801,
+                "Mean Curvature (mm-1)": 0.197
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 1372,
+                "Gray Matter Vol (mm3)": 4576,
+                "Thickness Avg (mm)": 3.092,
+                "Mean Curvature (mm-1)": 0.206
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 1033,
+                "Gray Matter Vol (mm3)": 3735,
+                "Thickness Avg (mm)": 3.099,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 1931,
+                "Gray Matter Vol (mm3)": 6421,
+                "Thickness Avg (mm)": 3.244,
+                "Mean Curvature (mm-1)": 0.174
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 3318,
+                "Gray Matter Vol (mm3)": 10308,
+                "Thickness Avg (mm)": 3.107,
+                "Mean Curvature (mm-1)": 0.186
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 1682,
+                "Gray Matter Vol (mm3)": 6493,
+                "Thickness Avg (mm)": 3.402,
+                "Mean Curvature (mm-1)": 0.146
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 1829,
+                "Gray Matter Vol (mm3)": 2916,
+                "Thickness Avg (mm)": 1.648,
+                "Mean Curvature (mm-1)": 0.183
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 4320,
+                "Gray Matter Vol (mm3)": 13908,
+                "Thickness Avg (mm)": 2.817,
+                "Mean Curvature (mm-1)": 0.143
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 3945,
+                "Gray Matter Vol (mm3)": 13077,
+                "Thickness Avg (mm)": 3.162,
+                "Mean Curvature (mm-1)": 0.239
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 1505,
+                "Gray Matter Vol (mm3)": 6664,
+                "Thickness Avg (mm)": 3.649,
+                "Mean Curvature (mm-1)": 0.165
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1520,
+                "Gray Matter Vol (mm3)": 4667,
+                "Thickness Avg (mm)": 2.67,
+                "Mean Curvature (mm-1)": 0.218
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 2012,
+                "Gray Matter Vol (mm3)": 7208,
+                "Thickness Avg (mm)": 3.372,
+                "Mean Curvature (mm-1)": 0.161
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 1425,
+                "Gray Matter Vol (mm3)": 3633,
+                "Thickness Avg (mm)": 2.392,
+                "Mean Curvature (mm-1)": 0.195
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 2645,
+                "Gray Matter Vol (mm3)": 6227,
+                "Thickness Avg (mm)": 2.223,
+                "Mean Curvature (mm-1)": 0.216
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 864,
+                "Gray Matter Vol (mm3)": 2991,
+                "Thickness Avg (mm)": 3.705,
+                "Mean Curvature (mm-1)": 0.262
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 746,
+                "Gray Matter Vol (mm3)": 2752,
+                "Thickness Avg (mm)": 3.774,
+                "Mean Curvature (mm-1)": 0.294
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 847,
+                "Gray Matter Vol (mm3)": 3332,
+                "Thickness Avg (mm)": 3.939,
+                "Mean Curvature (mm-1)": 0.231
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 900,
+                "Gray Matter Vol (mm3)": 4123,
+                "Thickness Avg (mm)": 3.907,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 2375,
+                "Gray Matter Vol (mm3)": 8266,
+                "Thickness Avg (mm)": 3.405,
+                "Mean Curvature (mm-1)": 0.186
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1057,
+                "Gray Matter Vol (mm3)": 2811,
+                "Thickness Avg (mm)": 2.678,
+                "Mean Curvature (mm-1)": 0.227
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4153,
+                "Gray Matter Vol (mm3)": 12298,
+                "Thickness Avg (mm)": 2.997,
+                "Mean Curvature (mm-1)": 0.189
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 3562,
+                "Gray Matter Vol (mm3)": 9009,
+                "Thickness Avg (mm)": 2.595,
+                "Mean Curvature (mm-1)": 0.178
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1112,
+                "Gray Matter Vol (mm3)": 2540,
+                "Thickness Avg (mm)": 2.278,
+                "Mean Curvature (mm-1)": 0.255
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4031,
+                "Gray Matter Vol (mm3)": 12964,
+                "Thickness Avg (mm)": 3.542,
+                "Mean Curvature (mm-1)": 0.243
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 9657,
+                "Gray Matter Vol (mm3)": 29782,
+                "Thickness Avg (mm)": 2.926,
+                "Mean Curvature (mm-1)": 0.172
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 3759,
+                "Gray Matter Vol (mm3)": 12428,
+                "Thickness Avg (mm)": 3.087,
+                "Mean Curvature (mm-1)": 0.196
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3549,
+                "Gray Matter Vol (mm3)": 10852,
+                "Thickness Avg (mm)": 2.984,
+                "Mean Curvature (mm-1)": 0.181
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 1702,
+                "Gray Matter Vol (mm3)": 6216,
+                "Thickness Avg (mm)": 3.73,
+                "Mean Curvature (mm-1)": 0.172
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 117,
+                "Gray Matter Vol (mm3)": 460,
+                "Thickness Avg (mm)": 3.984,
+                "Mean Curvature (mm-1)": 0.111
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1585,
+                "Gray Matter Vol (mm3)": 6073,
+                "Thickness Avg (mm)": 3.867,
+                "Mean Curvature (mm-1)": 0.178
+            }
+        ]
+    },
+    "MPR_SAG_T1": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1220916
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1195092
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1059845
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1034021
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 62468
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 226068
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 228709
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 454777
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 648705
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 257787
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 260308
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 518095
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1665122
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1034021
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1195092
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 21933
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 3032.0,
+                "RHS Volume (mm3)": 2975.3
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 6809.9,
+                "RHS Volume (mm3)": 5623.1
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 3107.3,
+                "RHS Volume (mm3)": 3235.0
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1026.6,
+                "RHS Volume (mm3)": 1216.9
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 7524.5,
+                "RHS Volume (mm3)": 6739.0
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 11595.8,
+                "RHS Volume (mm3)": 13134.9
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 7623.2,
+                "RHS Volume (mm3)": 7264.0
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 3999.9,
+                "RHS Volume (mm3)": 3661.9
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 12699.5,
+                "RHS Volume (mm3)": 12487.1
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 7071.3,
+                "RHS Volume (mm3)": 7689.8
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 6581.4,
+                "RHS Volume (mm3)": 7295.6
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 4992.4,
+                "RHS Volume (mm3)": 5101.2
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 7137.5,
+                "RHS Volume (mm3)": 7860.8
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 2019.9,
+                "RHS Volume (mm3)": 1902.8
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 4093.1,
+                "RHS Volume (mm3)": 4939.3
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 4075.8,
+                "RHS Volume (mm3)": 3366.9
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1220.0,
+                "RHS Volume (mm3)": 1321.6
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 3072.3,
+                "RHS Volume (mm3)": 3472.4
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 4298.9,
+                "RHS Volume (mm3)": 4944.2
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 7705.5,
+                "RHS Volume (mm3)": 8034.4
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 4012.5,
+                "RHS Volume (mm3)": 4013.9
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 13870.6,
+                "RHS Volume (mm3)": 12793.5
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 12470.7,
+                "RHS Volume (mm3)": 13094.8
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 2475.7,
+                "RHS Volume (mm3)": 1854.1
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 15221.1,
+                "RHS Volume (mm3)": 16828.6
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 19370.2,
+                "RHS Volume (mm3)": 20139.4
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 12497.5,
+                "RHS Volume (mm3)": 12354.9
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 7497.0,
+                "RHS Volume (mm3)": 6424.1
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 8376.8,
+                "RHS Volume (mm3)": 9054.9
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 405.1,
+                "RHS Volume (mm3)": 525.1
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 1034.5,
+                "RHS Volume (mm3)": 1023.5
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 831.6,
+                "RHS Volume (mm3)": 518.3
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 9908.6,
+                "RHS Volume (mm3)": 9372.0
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 1052,
+                "Gray Matter Vol (mm3)": 2546,
+                "Thickness Avg (mm)": 2.325,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2442,
+                "Gray Matter Vol (mm3)": 6338,
+                "Thickness Avg (mm)": 2.434,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2079,
+                "Gray Matter Vol (mm3)": 4328,
+                "Thickness Avg (mm)": 2.019,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 480,
+                "Gray Matter Vol (mm3)": 2282,
+                "Thickness Avg (mm)": 3.34,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2973,
+                "Gray Matter Vol (mm3)": 7905,
+                "Thickness Avg (mm)": 2.529,
+                "Mean Curvature (mm-1)": 0.126
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 4680,
+                "Gray Matter Vol (mm3)": 12230,
+                "Thickness Avg (mm)": 2.455,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3405,
+                "Gray Matter Vol (mm3)": 12114,
+                "Thickness Avg (mm)": 2.875,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 971,
+                "Gray Matter Vol (mm3)": 2860,
+                "Thickness Avg (mm)": 2.691,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5529,
+                "Gray Matter Vol (mm3)": 13195,
+                "Thickness Avg (mm)": 2.235,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2815,
+                "Gray Matter Vol (mm3)": 8471,
+                "Thickness Avg (mm)": 2.661,
+                "Mean Curvature (mm-1)": 0.137
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3635,
+                "Gray Matter Vol (mm3)": 8161,
+                "Thickness Avg (mm)": 2.081,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1722,
+                "Gray Matter Vol (mm3)": 4452,
+                "Thickness Avg (mm)": 2.352,
+                "Mean Curvature (mm-1)": 0.126
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4424,
+                "Gray Matter Vol (mm3)": 13430,
+                "Thickness Avg (mm)": 2.587,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 728,
+                "Gray Matter Vol (mm3)": 2576,
+                "Thickness Avg (mm)": 2.939,
+                "Mean Curvature (mm-1)": 0.082
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1484,
+                "Gray Matter Vol (mm3)": 3514,
+                "Thickness Avg (mm)": 2.268,
+                "Mean Curvature (mm-1)": 0.096
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1547,
+                "Gray Matter Vol (mm3)": 4555,
+                "Thickness Avg (mm)": 2.578,
+                "Mean Curvature (mm-1)": 0.115
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 666,
+                "Gray Matter Vol (mm3)": 2045,
+                "Thickness Avg (mm)": 2.575,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1370,
+                "Gray Matter Vol (mm3)": 3381,
+                "Thickness Avg (mm)": 2.42,
+                "Mean Curvature (mm-1)": 0.104
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1419,
+                "Gray Matter Vol (mm3)": 2312,
+                "Thickness Avg (mm)": 1.829,
+                "Mean Curvature (mm-1)": 0.129
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4410,
+                "Gray Matter Vol (mm3)": 9644,
+                "Thickness Avg (mm)": 2.063,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1057,
+                "Gray Matter Vol (mm3)": 2425,
+                "Thickness Avg (mm)": 2.234,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4588,
+                "Gray Matter Vol (mm3)": 12123,
+                "Thickness Avg (mm)": 2.505,
+                "Mean Curvature (mm-1)": 0.106
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4139,
+                "Gray Matter Vol (mm3)": 11273,
+                "Thickness Avg (mm)": 2.517,
+                "Mean Curvature (mm-1)": 0.125
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1132,
+                "Gray Matter Vol (mm3)": 3404,
+                "Thickness Avg (mm)": 2.622,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4451,
+                "Gray Matter Vol (mm3)": 11748,
+                "Thickness Avg (mm)": 2.357,
+                "Mean Curvature (mm-1)": 0.131
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7759,
+                "Gray Matter Vol (mm3)": 21120,
+                "Thickness Avg (mm)": 2.474,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4219,
+                "Gray Matter Vol (mm3)": 10240,
+                "Thickness Avg (mm)": 2.182,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4275,
+                "Gray Matter Vol (mm3)": 13518,
+                "Thickness Avg (mm)": 2.759,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3010,
+                "Gray Matter Vol (mm3)": 7984,
+                "Thickness Avg (mm)": 2.475,
+                "Mean Curvature (mm-1)": 0.136
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 409,
+                "Gray Matter Vol (mm3)": 990,
+                "Thickness Avg (mm)": 2.518,
+                "Mean Curvature (mm-1)": 0.139
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1824,
+                "Gray Matter Vol (mm3)": 4995,
+                "Thickness Avg (mm)": 2.803,
+                "Mean Curvature (mm-1)": 0.113
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 826,
+                "Gray Matter Vol (mm3)": 1999,
+                "Thickness Avg (mm)": 2.065,
+                "Mean Curvature (mm-1)": 0.113
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2085,
+                "Gray Matter Vol (mm3)": 5321,
+                "Thickness Avg (mm)": 2.358,
+                "Mean Curvature (mm-1)": 0.108
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2020,
+                "Gray Matter Vol (mm3)": 4286,
+                "Thickness Avg (mm)": 2.058,
+                "Mean Curvature (mm-1)": 0.142
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 489,
+                "Gray Matter Vol (mm3)": 2182,
+                "Thickness Avg (mm)": 2.808,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2633,
+                "Gray Matter Vol (mm3)": 7081,
+                "Thickness Avg (mm)": 2.466,
+                "Mean Curvature (mm-1)": 0.133
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 5619,
+                "Gray Matter Vol (mm3)": 15510,
+                "Thickness Avg (mm)": 2.502,
+                "Mean Curvature (mm-1)": 0.116
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 3727,
+                "Gray Matter Vol (mm3)": 13088,
+                "Thickness Avg (mm)": 2.896,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 915,
+                "Gray Matter Vol (mm3)": 2305,
+                "Thickness Avg (mm)": 2.325,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 5287,
+                "Gray Matter Vol (mm3)": 13434,
+                "Thickness Avg (mm)": 2.332,
+                "Mean Curvature (mm-1)": 0.132
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2791,
+                "Gray Matter Vol (mm3)": 7777,
+                "Thickness Avg (mm)": 2.505,
+                "Mean Curvature (mm-1)": 0.144
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 3691,
+                "Gray Matter Vol (mm3)": 8400,
+                "Thickness Avg (mm)": 2.13,
+                "Mean Curvature (mm-1)": 0.134
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1682,
+                "Gray Matter Vol (mm3)": 4635,
+                "Thickness Avg (mm)": 2.415,
+                "Mean Curvature (mm-1)": 0.147
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 4201,
+                "Gray Matter Vol (mm3)": 13111,
+                "Thickness Avg (mm)": 2.808,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 724,
+                "Gray Matter Vol (mm3)": 2180,
+                "Thickness Avg (mm)": 2.574,
+                "Mean Curvature (mm-1)": 0.098
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1536,
+                "Gray Matter Vol (mm3)": 3457,
+                "Thickness Avg (mm)": 2.158,
+                "Mean Curvature (mm-1)": 0.104
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1522,
+                "Gray Matter Vol (mm3)": 4250,
+                "Thickness Avg (mm)": 2.534,
+                "Mean Curvature (mm-1)": 0.112
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 628,
+                "Gray Matter Vol (mm3)": 2022,
+                "Thickness Avg (mm)": 2.702,
+                "Mean Curvature (mm-1)": 0.128
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1502,
+                "Gray Matter Vol (mm3)": 4167,
+                "Thickness Avg (mm)": 2.528,
+                "Mean Curvature (mm-1)": 0.123
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1919,
+                "Gray Matter Vol (mm3)": 3211,
+                "Thickness Avg (mm)": 1.832,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4456,
+                "Gray Matter Vol (mm3)": 9506,
+                "Thickness Avg (mm)": 1.97,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 1007,
+                "Gray Matter Vol (mm3)": 3128,
+                "Thickness Avg (mm)": 2.678,
+                "Mean Curvature (mm-1)": 0.121
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 4060,
+                "Gray Matter Vol (mm3)": 10040,
+                "Thickness Avg (mm)": 2.395,
+                "Mean Curvature (mm-1)": 0.105
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4641,
+                "Gray Matter Vol (mm3)": 10890,
+                "Thickness Avg (mm)": 2.274,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 689,
+                "Gray Matter Vol (mm3)": 1895,
+                "Thickness Avg (mm)": 2.464,
+                "Mean Curvature (mm-1)": 0.118
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 5000,
+                "Gray Matter Vol (mm3)": 12660,
+                "Thickness Avg (mm)": 2.329,
+                "Mean Curvature (mm-1)": 0.127
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 9123,
+                "Gray Matter Vol (mm3)": 25413,
+                "Thickness Avg (mm)": 2.498,
+                "Mean Curvature (mm-1)": 0.119
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 4180,
+                "Gray Matter Vol (mm3)": 9705,
+                "Thickness Avg (mm)": 2.149,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 4209,
+                "Gray Matter Vol (mm3)": 13850,
+                "Thickness Avg (mm)": 2.816,
+                "Mean Curvature (mm-1)": 0.107
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 3008,
+                "Gray Matter Vol (mm3)": 7538,
+                "Thickness Avg (mm)": 2.374,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 303,
+                "Gray Matter Vol (mm3)": 706,
+                "Thickness Avg (mm)": 2.203,
+                "Mean Curvature (mm-1)": 0.117
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1870,
+                "Gray Matter Vol (mm3)": 5026,
+                "Thickness Avg (mm)": 2.698,
+                "Mean Curvature (mm-1)": 0.111
+            }
+        ]
+    },
+    "AVERAGES": {
+        "brain": [
+            {
+                "Structure": "BrainSeg",
+                "Volume (mm3)": 1333619.14
+            },
+            {
+                "Structure": "BrainSegNotVent",
+                "Volume (mm3)": 1309891.29
+            },
+            {
+                "Structure": "BrainSegNotVentSurf",
+                "Volume (mm3)": 1309891.29
+            },
+            {
+                "Structure": "CerebralWhiteMatter",
+                "Volume (mm3)": 734750.71
+            },
+            {
+                "Structure": "Cortex",
+                "Volume (mm3)": 390402.29
+            },
+            {
+                "Structure": "Mask",
+                "Volume (mm3)": 1738542.29
+            },
+            {
+                "Structure": "SubCortGray",
+                "Volume (mm3)": 62349.43
+            },
+            {
+                "Structure": "SupraTentorial",
+                "Volume (mm3)": 1207383.71
+            },
+            {
+                "Structure": "SupraTentorialNotVent",
+                "Volume (mm3)": 1183655.86
+            },
+            {
+                "Structure": "SupraTentorialNotVentVox",
+                "Volume (mm3)": 1183655.86
+            },
+            {
+                "Structure": "TotalGray",
+                "Volume (mm3)": 552873.0
+            },
+            {
+                "Structure": "VentricleChoroidVol",
+                "Volume (mm3)": 20611.57
+            },
+            {
+                "Structure": "lhCerebralWhiteMatter",
+                "Volume (mm3)": 382562.71
+            },
+            {
+                "Structure": "lhCortex",
+                "Volume (mm3)": 180844.0
+            },
+            {
+                "Structure": "rhCerebralWhiteMatter",
+                "Volume (mm3)": 352187.86
+            },
+            {
+                "Structure": "rhCortex",
+                "Volume (mm3)": 209557.57
+            }
+        ],
+        "whitematter": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "LHS Volume (mm3)": 2380.92,
+                "RHS Volume (mm3)": 3166.88
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "LHS Volume (mm3)": 6529.76,
+                "RHS Volume (mm3)": 5641.24
+            },
+            {
+                "Structure": "cuneus",
+                "LHS Volume (mm3)": 4001.06,
+                "RHS Volume (mm3)": 3927.34
+            },
+            {
+                "Structure": "entorhinal",
+                "LHS Volume (mm3)": 1374.27,
+                "RHS Volume (mm3)": 1136.51
+            },
+            {
+                "Structure": "frontalpole",
+                "LHS Volume (mm3)": 413.39,
+                "RHS Volume (mm3)": 441.07
+            },
+            {
+                "Structure": "fusiform",
+                "LHS Volume (mm3)": 8156.76,
+                "RHS Volume (mm3)": 6572.16
+            },
+            {
+                "Structure": "inferiorparietal",
+                "LHS Volume (mm3)": 10085.04,
+                "RHS Volume (mm3)": 12428.04
+            },
+            {
+                "Structure": "inferiortemporal",
+                "LHS Volume (mm3)": 8173.57,
+                "RHS Volume (mm3)": 6008.19
+            },
+            {
+                "Structure": "insula",
+                "LHS Volume (mm3)": 10357.57,
+                "RHS Volume (mm3)": 11916.23
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "LHS Volume (mm3)": 2518.56,
+                "RHS Volume (mm3)": 2143.81
+            },
+            {
+                "Structure": "lateraloccipital",
+                "LHS Volume (mm3)": 12765.89,
+                "RHS Volume (mm3)": 13189.64
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "LHS Volume (mm3)": 6792.04,
+                "RHS Volume (mm3)": 6957.73
+            },
+            {
+                "Structure": "lingual",
+                "LHS Volume (mm3)": 6997.2,
+                "RHS Volume (mm3)": 6228.11
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "LHS Volume (mm3)": 4091.07,
+                "RHS Volume (mm3)": 4000.76
+            },
+            {
+                "Structure": "middletemporal",
+                "LHS Volume (mm3)": 5785.11,
+                "RHS Volume (mm3)": 6925.53
+            },
+            {
+                "Structure": "paracentral",
+                "LHS Volume (mm3)": 4401.19,
+                "RHS Volume (mm3)": 5244.49
+            },
+            {
+                "Structure": "parahippocampal",
+                "LHS Volume (mm3)": 2982.1,
+                "RHS Volume (mm3)": 1710.7
+            },
+            {
+                "Structure": "parsopercularis",
+                "LHS Volume (mm3)": 3607.37,
+                "RHS Volume (mm3)": 3018.73
+            },
+            {
+                "Structure": "parsorbitalis",
+                "LHS Volume (mm3)": 1460.19,
+                "RHS Volume (mm3)": 1666.09
+            },
+            {
+                "Structure": "parstriangularis",
+                "LHS Volume (mm3)": 2882.24,
+                "RHS Volume (mm3)": 3356.5
+            },
+            {
+                "Structure": "pericalcarine",
+                "LHS Volume (mm3)": 4942.64,
+                "RHS Volume (mm3)": 4679.44
+            },
+            {
+                "Structure": "postcentral",
+                "LHS Volume (mm3)": 8274.84,
+                "RHS Volume (mm3)": 8803.94
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "LHS Volume (mm3)": 2809.99,
+                "RHS Volume (mm3)": 3535.31
+            },
+            {
+                "Structure": "precentral",
+                "LHS Volume (mm3)": 12693.94,
+                "RHS Volume (mm3)": 13143.87
+            },
+            {
+                "Structure": "precuneus",
+                "LHS Volume (mm3)": 13521.46,
+                "RHS Volume (mm3)": 13656.36
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "LHS Volume (mm3)": 2360.73,
+                "RHS Volume (mm3)": 2042.74
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "LHS Volume (mm3)": 15805.19,
+                "RHS Volume (mm3)": 15781.86
+            },
+            {
+                "Structure": "superiorfrontal",
+                "LHS Volume (mm3)": 18967.54,
+                "RHS Volume (mm3)": 18062.5
+            },
+            {
+                "Structure": "superiorparietal",
+                "LHS Volume (mm3)": 12969.0,
+                "RHS Volume (mm3)": 12411.57
+            },
+            {
+                "Structure": "superiortemporal",
+                "LHS Volume (mm3)": 8263.87,
+                "RHS Volume (mm3)": 6836.7
+            },
+            {
+                "Structure": "supramarginal",
+                "LHS Volume (mm3)": 8975.14,
+                "RHS Volume (mm3)": 8681.54
+            },
+            {
+                "Structure": "temporalpole",
+                "LHS Volume (mm3)": 1151.97,
+                "RHS Volume (mm3)": 1267.39
+            },
+            {
+                "Structure": "transversetemporal",
+                "LHS Volume (mm3)": 906.36,
+                "RHS Volume (mm3)": 628.16
+            }
+        ],
+        "lh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 798.86,
+                "Gray Matter Vol (mm3)": 1936.86,
+                "Thickness Avg (mm)": 2.06,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2079.14,
+                "Gray Matter Vol (mm3)": 4896.14,
+                "Thickness Avg (mm)": 2.1,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 2054.14,
+                "Gray Matter Vol (mm3)": 3566.57,
+                "Thickness Avg (mm)": 1.58,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 519.0,
+                "Gray Matter Vol (mm3)": 1620.0,
+                "Thickness Avg (mm)": 2.32,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2583.29,
+                "Gray Matter Vol (mm3)": 6690.57,
+                "Thickness Avg (mm)": 2.3,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 3565.14,
+                "Gray Matter Vol (mm3)": 8916.29,
+                "Thickness Avg (mm)": 2.13,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 2878.71,
+                "Gray Matter Vol (mm3)": 8696.86,
+                "Thickness Avg (mm)": 2.38,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1460.29,
+                "Gray Matter Vol (mm3)": 3884.57,
+                "Thickness Avg (mm)": 2.4,
+                "Mean Curvature (mm-1)": 0.09
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 624.29,
+                "Gray Matter Vol (mm3)": 1673.71,
+                "Thickness Avg (mm)": 2.1,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 4660.14,
+                "Gray Matter Vol (mm3)": 10650.86,
+                "Thickness Avg (mm)": 1.97,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2521.43,
+                "Gray Matter Vol (mm3)": 6766.29,
+                "Thickness Avg (mm)": 2.19,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 2844.57,
+                "Gray Matter Vol (mm3)": 6693.86,
+                "Thickness Avg (mm)": 2.04,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1503.43,
+                "Gray Matter Vol (mm3)": 3955.71,
+                "Thickness Avg (mm)": 2.15,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 3083.57,
+                "Gray Matter Vol (mm3)": 9139.86,
+                "Thickness Avg (mm)": 2.38,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1477.86,
+                "Gray Matter Vol (mm3)": 3423.43,
+                "Thickness Avg (mm)": 2.16,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 1220.0,
+                "Gray Matter Vol (mm3)": 2615.86,
+                "Thickness Avg (mm)": 2.16,
+                "Mean Curvature (mm-1)": 0.09
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1172.14,
+                "Gray Matter Vol (mm3)": 3165.43,
+                "Thickness Avg (mm)": 2.2,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 536.29,
+                "Gray Matter Vol (mm3)": 1548.57,
+                "Thickness Avg (mm)": 2.31,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1150.0,
+                "Gray Matter Vol (mm3)": 2691.71,
+                "Thickness Avg (mm)": 2.17,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1353.29,
+                "Gray Matter Vol (mm3)": 2314.14,
+                "Thickness Avg (mm)": 1.75,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 3784.0,
+                "Gray Matter Vol (mm3)": 8216.0,
+                "Thickness Avg (mm)": 1.89,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 795.43,
+                "Gray Matter Vol (mm3)": 1936.14,
+                "Thickness Avg (mm)": 2.01,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 3802.14,
+                "Gray Matter Vol (mm3)": 9502.86,
+                "Thickness Avg (mm)": 2.24,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 3989.0,
+                "Gray Matter Vol (mm3)": 8761.57,
+                "Thickness Avg (mm)": 2.0,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 1221.29,
+                "Gray Matter Vol (mm3)": 2977.29,
+                "Thickness Avg (mm)": 2.18,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 3849.43,
+                "Gray Matter Vol (mm3)": 9966.29,
+                "Thickness Avg (mm)": 2.18,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 7024.14,
+                "Gray Matter Vol (mm3)": 18334.0,
+                "Thickness Avg (mm)": 2.32,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 3807.71,
+                "Gray Matter Vol (mm3)": 8283.71,
+                "Thickness Avg (mm)": 1.86,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3865.86,
+                "Gray Matter Vol (mm3)": 10830.43,
+                "Thickness Avg (mm)": 2.22,
+                "Mean Curvature (mm-1)": 0.1
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2687.0,
+                "Gray Matter Vol (mm3)": 6994.86,
+                "Thickness Avg (mm)": 2.21,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 322.14,
+                "Gray Matter Vol (mm3)": 731.29,
+                "Thickness Avg (mm)": 2.13,
+                "Mean Curvature (mm-1)": 0.12
+            }
+        ],
+        "rh_dkatlas": [
+            {
+                "Structure": "caudalanteriorcingulate",
+                "Surface Area (mm2)": 718.71,
+                "Gray Matter Vol (mm3)": 1650.86,
+                "Thickness Avg (mm)": 1.92,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "caudalmiddlefrontal",
+                "Surface Area (mm2)": 2065.29,
+                "Gray Matter Vol (mm3)": 5480.43,
+                "Thickness Avg (mm)": 2.39,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "cuneus",
+                "Surface Area (mm2)": 1910.57,
+                "Gray Matter Vol (mm3)": 4302.29,
+                "Thickness Avg (mm)": 2.13,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "entorhinal",
+                "Surface Area (mm2)": 953.57,
+                "Gray Matter Vol (mm3)": 3109.14,
+                "Thickness Avg (mm)": 2.53,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "fusiform",
+                "Surface Area (mm2)": 2112.43,
+                "Gray Matter Vol (mm3)": 6135.57,
+                "Thickness Avg (mm)": 2.61,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "inferiorparietal",
+                "Surface Area (mm2)": 4431.29,
+                "Gray Matter Vol (mm3)": 12626.29,
+                "Thickness Avg (mm)": 2.53,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "inferiortemporal",
+                "Surface Area (mm2)": 2769.0,
+                "Gray Matter Vol (mm3)": 9504.71,
+                "Thickness Avg (mm)": 2.78,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "insula",
+                "Surface Area (mm2)": 1639.0,
+                "Gray Matter Vol (mm3)": 4927.86,
+                "Thickness Avg (mm)": 2.83,
+                "Mean Curvature (mm-1)": 0.11
+            },
+            {
+                "Structure": "isthmuscingulate",
+                "Surface Area (mm2)": 1102.2,
+                "Gray Matter Vol (mm3)": 2517.8,
+                "Thickness Avg (mm)": 2.24,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "lateraloccipital",
+                "Surface Area (mm2)": 4911.71,
+                "Gray Matter Vol (mm3)": 13365.29,
+                "Thickness Avg (mm)": 2.34,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "lateralorbitofrontal",
+                "Surface Area (mm2)": 2981.14,
+                "Gray Matter Vol (mm3)": 8435.86,
+                "Thickness Avg (mm)": 2.48,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "lingual",
+                "Surface Area (mm2)": 2723.57,
+                "Gray Matter Vol (mm3)": 7286.29,
+                "Thickness Avg (mm)": 2.47,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "medialorbitofrontal",
+                "Surface Area (mm2)": 1557.57,
+                "Gray Matter Vol (mm3)": 4367.57,
+                "Thickness Avg (mm)": 2.39,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "middletemporal",
+                "Surface Area (mm2)": 3225.14,
+                "Gray Matter Vol (mm3)": 10282.71,
+                "Thickness Avg (mm)": 2.84,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "paracentral",
+                "Surface Area (mm2)": 1788.43,
+                "Gray Matter Vol (mm3)": 4010.0,
+                "Thickness Avg (mm)": 2.09,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "parahippocampal",
+                "Surface Area (mm2)": 810.57,
+                "Gray Matter Vol (mm3)": 2128.43,
+                "Thickness Avg (mm)": 2.39,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "parsopercularis",
+                "Surface Area (mm2)": 1184.71,
+                "Gray Matter Vol (mm3)": 3540.57,
+                "Thickness Avg (mm)": 2.74,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "parsorbitalis",
+                "Surface Area (mm2)": 647.71,
+                "Gray Matter Vol (mm3)": 2021.43,
+                "Thickness Avg (mm)": 2.72,
+                "Mean Curvature (mm-1)": 0.16
+            },
+            {
+                "Structure": "parstriangularis",
+                "Surface Area (mm2)": 1229.71,
+                "Gray Matter Vol (mm3)": 3583.29,
+                "Thickness Avg (mm)": 2.75,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "pericalcarine",
+                "Surface Area (mm2)": 1512.43,
+                "Gray Matter Vol (mm3)": 3082.71,
+                "Thickness Avg (mm)": 2.19,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "postcentral",
+                "Surface Area (mm2)": 4104.14,
+                "Gray Matter Vol (mm3)": 9593.57,
+                "Thickness Avg (mm)": 2.22,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "posteriorcingulate",
+                "Surface Area (mm2)": 956.43,
+                "Gray Matter Vol (mm3)": 2443.57,
+                "Thickness Avg (mm)": 2.3,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "precentral",
+                "Surface Area (mm2)": 3964.86,
+                "Gray Matter Vol (mm3)": 10195.29,
+                "Thickness Avg (mm)": 2.42,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "precuneus",
+                "Surface Area (mm2)": 4165.57,
+                "Gray Matter Vol (mm3)": 9803.86,
+                "Thickness Avg (mm)": 2.2,
+                "Mean Curvature (mm-1)": 0.13
+            },
+            {
+                "Structure": "rostralanteriorcingulate",
+                "Surface Area (mm2)": 842.71,
+                "Gray Matter Vol (mm3)": 2152.0,
+                "Thickness Avg (mm)": 2.31,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "rostralmiddlefrontal",
+                "Surface Area (mm2)": 4305.71,
+                "Gray Matter Vol (mm3)": 11636.71,
+                "Thickness Avg (mm)": 2.51,
+                "Mean Curvature (mm-1)": 0.15
+            },
+            {
+                "Structure": "superiorfrontal",
+                "Surface Area (mm2)": 8696.43,
+                "Gray Matter Vol (mm3)": 24135.71,
+                "Thickness Avg (mm)": 2.49,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "superiorparietal",
+                "Surface Area (mm2)": 3922.29,
+                "Gray Matter Vol (mm3)": 9503.29,
+                "Thickness Avg (mm)": 2.19,
+                "Mean Curvature (mm-1)": 0.14
+            },
+            {
+                "Structure": "superiortemporal",
+                "Surface Area (mm2)": 3840.29,
+                "Gray Matter Vol (mm3)": 12240.86,
+                "Thickness Avg (mm)": 2.74,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "supramarginal",
+                "Surface Area (mm2)": 2512.0,
+                "Gray Matter Vol (mm3)": 6609.71,
+                "Thickness Avg (mm)": 2.56,
+                "Mean Curvature (mm-1)": 0.12
+            },
+            {
+                "Structure": "transversetemporal",
+                "Surface Area (mm2)": 241.43,
+                "Gray Matter Vol (mm3)": 594.86,
+                "Thickness Avg (mm)": 2.49,
+                "Mean Curvature (mm-1)": 0.11
+            }
+        ]
+    }
+}

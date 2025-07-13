@@ -4,6 +4,7 @@ import pathlib
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
+from .utils import get_folder_names, get_nifti_dimensions
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +99,21 @@ def process_paired_volumes(left_file: pathlib.Path, right_file: pathlib.Path) ->
         except (IndexError, ValueError) as e:
             logger.warning(f"Row {idx}: Skipping row due to error: {e}")
     return volumes
+
+
+def record_nifti_dimensions(study_path: pathlib.Path) -> None:
+    series_list = get_folder_names(directory=study_path / "DICOM")
+    series_dict = {
+        s: get_nifti_dimensions(file_path=study_path / f"NIFTI/{s}.nii.gz")
+        for s in series_list
+    }
+    try:
+        with (study_path / "JSON" / "niftiDimensions.json").open("w") as f:
+            # noinspection PyTypeChecker
+            json.dump(series_dict, f, indent=4)
+        logger.info(f"Wrote Nifti dimensions JSON to {study_path / 'JSON' / 'niftiDimensions.json'}")
+    except Exception as e:
+        logger.error(f"Error writing global JSON file 'niftiDimensions.json': {e}")
 
 
 def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
@@ -583,3 +599,5 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
             logger.info(f"Wrote global JSON to {json_path / fname}")
         except Exception as e:
             logger.error(f"Error writing global JSON file {fname}: {e}")
+
+    record_nifti_dimensions(study_path=json_path.parent)

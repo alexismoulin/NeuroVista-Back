@@ -1,0 +1,352 @@
+{
+    "hippocampus": [
+        {
+            "Structure": "Hippocampal_tail",
+            "LHS Volume (mm3)": 815.01,
+            "RHS Volume (mm3)": 855.24
+        },
+        {
+            "Structure": "subiculum-body",
+            "LHS Volume (mm3)": 309.74,
+            "RHS Volume (mm3)": 280.08
+        },
+        {
+            "Structure": "CA1-body",
+            "LHS Volume (mm3)": 145.31,
+            "RHS Volume (mm3)": 187.26
+        },
+        {
+            "Structure": "subiculum-head",
+            "LHS Volume (mm3)": 272.64,
+            "RHS Volume (mm3)": 260.1
+        },
+        {
+            "Structure": "hippocampal-fissure",
+            "LHS Volume (mm3)": 148.2,
+            "RHS Volume (mm3)": 142.16
+        },
+        {
+            "Structure": "presubiculum-head",
+            "LHS Volume (mm3)": 187.65,
+            "RHS Volume (mm3)": 172.31
+        },
+        {
+            "Structure": "CA1-head",
+            "LHS Volume (mm3)": 665.01,
+            "RHS Volume (mm3)": 733.38
+        },
+        {
+            "Structure": "presubiculum-body",
+            "LHS Volume (mm3)": 210.09,
+            "RHS Volume (mm3)": 187.11
+        },
+        {
+            "Structure": "parasubiculum",
+            "LHS Volume (mm3)": 88.9,
+            "RHS Volume (mm3)": 85.97
+        },
+        {
+            "Structure": "molecular_layer_HP-head",
+            "LHS Volume (mm3)": 434.18,
+            "RHS Volume (mm3)": 462.44
+        },
+        {
+            "Structure": "molecular_layer_HP-body",
+            "LHS Volume (mm3)": 276.4,
+            "RHS Volume (mm3)": 296.25
+        },
+        {
+            "Structure": "GC-ML-DG-head",
+            "LHS Volume (mm3)": 185.03,
+            "RHS Volume (mm3)": 205.03
+        },
+        {
+            "Structure": "CA3-body",
+            "LHS Volume (mm3)": 94.76,
+            "RHS Volume (mm3)": 130.8
+        },
+        {
+            "Structure": "GC-ML-DG-body",
+            "LHS Volume (mm3)": 168.33,
+            "RHS Volume (mm3)": 176.87
+        },
+        {
+            "Structure": "CA4-head",
+            "LHS Volume (mm3)": 153.92,
+            "RHS Volume (mm3)": 174.9
+        },
+        {
+            "Structure": "CA4-body",
+            "LHS Volume (mm3)": 146.27,
+            "RHS Volume (mm3)": 157.54
+        },
+        {
+            "Structure": "fimbria",
+            "LHS Volume (mm3)": 105.13,
+            "RHS Volume (mm3)": 94.48
+        },
+        {
+            "Structure": "CA3-head",
+            "LHS Volume (mm3)": 134.11,
+            "RHS Volume (mm3)": 164.28
+        },
+        {
+            "Structure": "HATA",
+            "LHS Volume (mm3)": 71.16,
+            "RHS Volume (mm3)": 90.71
+        },
+        {
+            "Structure": "Whole_hippocampus",
+            "LHS Volume (mm3)": 4463.64,
+            "RHS Volume (mm3)": 4714.74
+        },
+        {
+            "Structure": "Whole_hippocampal_body",
+            "LHS Volume (mm3)": 1456.02,
+            "RHS Volume (mm3)": 1510.38
+        },
+        {
+            "Structure": "Whole_hippocampal_head",
+            "LHS Volume (mm3)": 2192.61,
+            "RHS Volume (mm3)": 2349.12
+        }
+    ],
+    "thalamus": [
+        {
+            "Structure": "LGN",
+            "LHS Volume (mm3)": 262.94,
+            "RHS Volume (mm3)": 270.97
+        },
+        {
+            "Structure": "MGN",
+            "LHS Volume (mm3)": 76.59,
+            "RHS Volume (mm3)": 81.75
+        },
+        {
+            "Structure": "PuI",
+            "LHS Volume (mm3)": 284.55,
+            "RHS Volume (mm3)": 355.03
+        },
+        {
+            "Structure": "PuM",
+            "LHS Volume (mm3)": 1294.73,
+            "RHS Volume (mm3)": 1529.26
+        },
+        {
+            "Structure": "L-Sg",
+            "LHS Volume (mm3)": 10.71,
+            "RHS Volume (mm3)": 16.15
+        },
+        {
+            "Structure": "VPL",
+            "LHS Volume (mm3)": 1076.78,
+            "RHS Volume (mm3)": 963.47
+        },
+        {
+            "Structure": "CM",
+            "LHS Volume (mm3)": 243.05,
+            "RHS Volume (mm3)": 263.33
+        },
+        {
+            "Structure": "VLa",
+            "LHS Volume (mm3)": 726.58,
+            "RHS Volume (mm3)": 719.03
+        },
+        {
+            "Structure": "PuA",
+            "LHS Volume (mm3)": 251.87,
+            "RHS Volume (mm3)": 279.91
+        },
+        {
+            "Structure": "MDm",
+            "LHS Volume (mm3)": 804.51,
+            "RHS Volume (mm3)": 845.46
+        },
+        {
+            "Structure": "Pf",
+            "LHS Volume (mm3)": 61.27,
+            "RHS Volume (mm3)": 63.91
+        },
+        {
+            "Structure": "VAmc",
+            "LHS Volume (mm3)": 34.22,
+            "RHS Volume (mm3)": 37.34
+        },
+        {
+            "Structure": "MDl",
+            "LHS Volume (mm3)": 254.41,
+            "RHS Volume (mm3)": 293.03
+        },
+        {
+            "Structure": "CeM",
+            "LHS Volume (mm3)": 60.04,
+            "RHS Volume (mm3)": 72.21
+        },
+        {
+            "Structure": "VA",
+            "LHS Volume (mm3)": 446.08,
+            "RHS Volume (mm3)": 427.48
+        },
+        {
+            "Structure": "MV(Re)",
+            "LHS Volume (mm3)": 10.63,
+            "RHS Volume (mm3)": 12.48
+        },
+        {
+            "Structure": "VM",
+            "LHS Volume (mm3)": 25.41,
+            "RHS Volume (mm3)": 25.68
+        },
+        {
+            "Structure": "CL",
+            "LHS Volume (mm3)": 27.16,
+            "RHS Volume (mm3)": 32.49
+        },
+        {
+            "Structure": "PuL",
+            "LHS Volume (mm3)": 181.41,
+            "RHS Volume (mm3)": 216.8
+        },
+        {
+            "Structure": "Pt",
+            "LHS Volume (mm3)": 7.24,
+            "RHS Volume (mm3)": 7.41
+        },
+        {
+            "Structure": "AV",
+            "LHS Volume (mm3)": 137.01,
+            "RHS Volume (mm3)": 138.99
+        },
+        {
+            "Structure": "Pc",
+            "LHS Volume (mm3)": 4.36,
+            "RHS Volume (mm3)": 5.29
+        },
+        {
+            "Structure": "VLp",
+            "LHS Volume (mm3)": 953.47,
+            "RHS Volume (mm3)": 929.66
+        },
+        {
+            "Structure": "LP",
+            "LHS Volume (mm3)": 122.23,
+            "RHS Volume (mm3)": 106.14
+        },
+        {
+            "Structure": "LD",
+            "LHS Volume (mm3)": 14.65,
+            "RHS Volume (mm3)": 33.4
+        },
+        {
+            "Structure": "Whole_thalamus",
+            "LHS Volume (mm3)": 7371.89,
+            "RHS Volume (mm3)": 7726.66
+        }
+    ],
+    "amygdala": [
+        {
+            "Structure": "Lateral-nucleus",
+            "LHS Volume (mm3)": 747.13,
+            "RHS Volume (mm3)": 772.29
+        },
+        {
+            "Structure": "Basal-nucleus",
+            "LHS Volume (mm3)": 508.59,
+            "RHS Volume (mm3)": 538.53
+        },
+        {
+            "Structure": "Accessory-Basal-nucleus",
+            "LHS Volume (mm3)": 304.56,
+            "RHS Volume (mm3)": 332.01
+        },
+        {
+            "Structure": "Anterior-amygdaloid-area-AAA",
+            "LHS Volume (mm3)": 58.83,
+            "RHS Volume (mm3)": 63.68
+        },
+        {
+            "Structure": "Central-nucleus",
+            "LHS Volume (mm3)": 48.14,
+            "RHS Volume (mm3)": 53.97
+        },
+        {
+            "Structure": "Medial-nucleus",
+            "LHS Volume (mm3)": 16.32,
+            "RHS Volume (mm3)": 17.79
+        },
+        {
+            "Structure": "Cortical-nucleus",
+            "LHS Volume (mm3)": 26.53,
+            "RHS Volume (mm3)": 29.78
+        },
+        {
+            "Structure": "Corticoamygdaloid-transitio",
+            "LHS Volume (mm3)": 206.91,
+            "RHS Volume (mm3)": 232.02
+        },
+        {
+            "Structure": "Paralaminar-nucleus",
+            "LHS Volume (mm3)": 60.02,
+            "RHS Volume (mm3)": 66.58
+        },
+        {
+            "Structure": "Whole_amygdala",
+            "LHS Volume (mm3)": 1977.03,
+            "RHS Volume (mm3)": 2106.66
+        }
+    ],
+    "brain_stem": [
+        {
+            "Structure": "Medulla",
+            "Volume (mm3)": 3763.16
+        },
+        {
+            "Structure": "Pons",
+            "Volume (mm3)": 15186.29
+        },
+        {
+            "Structure": "SCP",
+            "Volume (mm3)": 187.06
+        },
+        {
+            "Structure": "Midbrain",
+            "Volume (mm3)": 6350.18
+        },
+        {
+            "Structure": "Whole_brainstem",
+            "Volume (mm3)": 25486.68
+        }
+    ],
+    "hypothalamus": [
+        {
+            "Structure": "anterior-inferior",
+            "LHS Volume (mm3)": 21.826,
+            "RHS Volume (mm3)": 18.438
+        },
+        {
+            "Structure": "anterior-superior",
+            "LHS Volume (mm3)": 39.628,
+            "RHS Volume (mm3)": 32.403
+        },
+        {
+            "Structure": "posterior",
+            "LHS Volume (mm3)": 122.848,
+            "RHS Volume (mm3)": 134.422
+        },
+        {
+            "Structure": "tubular inferior",
+            "LHS Volume (mm3)": 162.015,
+            "RHS Volume (mm3)": 171.705
+        },
+        {
+            "Structure": "tubular superior",
+            "LHS Volume (mm3)": 146.115,
+            "RHS Volume (mm3)": 118.417
+        },
+        {
+            "Structure": "whole",
+            "LHS Volume (mm3)": 492.432,
+            "RHS Volume (mm3)": 475.385
+        }
+    ]
+}
