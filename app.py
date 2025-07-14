@@ -108,8 +108,8 @@ def general(patient: str, study: str) -> Tuple[Response, int]:
     return serve_json(patient, study, filename="general.json", err_msg="No general data")
 
 
-@app.get("/series/<patient>/<study>")
-def get_nifti_dim(patient: str, study: str) -> Tuple[Response, int]:
+@app.get("/nifti_dim/<patient>/<study>")
+def nifti_dim(patient: str, study: str) -> Tuple[Response, int]:
     return serve_json(patient, study, filename="niftiDimensions.json", err_msg="No nifti dimension data")
 
 
