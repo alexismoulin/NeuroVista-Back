@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import queue
+from configparser import ConfigParser
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from threading import Event
@@ -27,9 +28,13 @@ from core.utils import (
 
 logger = logging.getLogger(__name__)
 
+# Read configuration for base data path
+config = ConfigParser()
+config.read(filenames="./config.ini")
+BASE_DATA_PATH = Path(config.get(section="DATA", option="mockup_data"))
+
 # Shared constants for the processing pipeline
 STEP_COMPLETION_QUEUE = queue.Queue()
-BASE_DATA_PATH = Path("./DATA")
 processing_event = Event()
 
 
