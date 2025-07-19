@@ -9,3 +9,5 @@ pandas
 pytest
 werkzeug
 numpy
+scikit-image
+trimesh
