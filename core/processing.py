@@ -24,14 +24,14 @@ from core.utils import (
     segment_subregions,
     segment_hypothalamus
 )
-from viewer import create_gltf_models
+from core.viewer import create_gltf_models
 
 logger = logging.getLogger(__name__)
 
 # Read configuration for base data path
 config = ConfigParser()
 config.read(filenames="./config.ini")
-BASE_DATA_PATH = Path(config.get(section="DATA", option="mockup_data"))
+BASE_DATA_PATH = Path(config.get(section="DATA", option="real_data"))
 
 # Shared constants for the processing pipeline
 STEP_COMPLETION_QUEUE = queue.Queue()

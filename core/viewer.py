@@ -13,11 +13,8 @@ logger = logging.getLogger(__name__)
 
 Color = Tuple[int, int, int, int]
 LUTEntry = Tuple[str, Color]
-LUT_PATH = Path("../FreeSurferColorLUT.txt")
-MGZ_TO_PROCESS = [
-    "aseg.mgz", "brainstemSsLabels.mgz", "ThalamicNuclei.mgz", "hypothalamic_subunits_seg.v1.mgz",
-    "lh.hippoAmygLabels.mgz", "rh.hippoAmygLabels.mgz", "wmparc.mgz", "aparc.DKTatlas+aseg.mgz"
-]
+LUT_PATH = Path.cwd() / "FreeSurferColorLUT.txt"
+
 
 def load_lut() -> Dict[int, LUTEntry]:
     lut: Dict[int, LUTEntry] = {}
@@ -81,7 +78,7 @@ def mgz_labels_to_gltf(
     if not isinstance(img, SpatialImage):
         raise TypeError(f"Expected SpatialImage, got {type(img)}")
 
-    data = img.get_fdata(dtype=np.int32)
+    data = img.get_fdata().astype(np.int32)
     affine = img.affine
     labels = sorted(l for l in np.unique(data) if l != 0)
 
@@ -305,6 +302,7 @@ def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str):
         mgz_path=freesurfer_path / folder / "mri" / "aseg.mgz",
         out_gltf=viewer_path / folder / "aseg.glb"
     )
+    """
     mgz_labels_to_gltf(
         mgz_path=freesurfer_path / folder / "mri" / "brainstemSsLabels.mgz",
         out_gltf=viewer_path / folder / "brainstemSsLabels.glb"
@@ -334,4 +332,5 @@ def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str):
         out_gltf=viewer_path / folder / "aparc.DKTatlas+aseg.glb",
         include_labels=ctx_labels
     )
+    """
     logger.info(f"GLTF extracted for: {folder}")
