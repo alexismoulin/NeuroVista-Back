@@ -5,7 +5,7 @@ import time
 import queue
 from configparser import ConfigParser
 from pathlib import Path
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from typing import List, Dict
 from functools import partial
@@ -22,9 +22,9 @@ from core.utils import (
     reconall,
     process_lesions,
     segment_subregions,
-    segment_hypothalamus,
-    process_corestats
+    segment_hypothalamus
 )
+from viewer import create_gltf_models
 
 logger = logging.getLogger(__name__)
 
@@ -179,37 +179,13 @@ def generate_json_files(folders: List[str],
         raise
     logger.info("JSON files generation completed")
 
-def process_corestats_for_series(series: str, freesurfer_path: Path, corestats_folder: Path) -> None:
-    """
-    Process core statistics for a single series.
-    """
-    try:
-        fs_series_path = freesurfer_path / series
-        corestats_series_folder = corestats_folder / series
-        process_corestats(fs_series_path, corestats_series_folder)
-        logger.info("Successfully processed corestats for series: %s", series)
-    except Exception as e:
-        logger.exception("Error processing corestats for series %s: %s", series, e)
-        raise
 
-def process_corestats_for_all(folders: List[str],
-                              freesurfer_path: Path,
-                              corestats_folder: Path) -> None:
-    """
-    Process core statistics for all series in parallel.
-    """
-    with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
-        futures = [
-            executor.submit(process_corestats_for_series, series, freesurfer_path, corestats_folder)
-            for series in folders
-        ]
-        for future in as_completed(futures):
-            try:
-                future.result()
-            except Exception as e:
-                logger.exception("Exception in corestats processing: %s", e)
-                raise
-    logger.info("Core statistics processing completed for all series.")
+def process_viewer(folders: List[str], viewer_path: Path, freesurfer_path: Path):
+    for folder in folders:
+        output_dir = viewer_path / folder
+        output_dir.mkdir(parents=True, exist_ok=True)
+        create_gltf_models(freesurfer_path=freesurfer_path, viewer_path=viewer_path, folder=folder)
+
 
 def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> None:
     """
@@ -223,7 +199,7 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
         fs_path = folders_dict["freesurfer"]
         samseg_path = folders_dict["samseg"]
         json_folder = folders_dict["json"]
-        corestats_folder = folders_dict["corestats"]
+        viewer_folder = folders_dict["viewer"]
 
         try:
             save_dicoms(request_files=request_files, dicom_directory=dicom_dir)
@@ -289,13 +265,13 @@ def run_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileS
             notify_failure("json")
             return
 
-        # Core statistics processing
+        # GLTF processing
         try:
-            process_corestats_for_all(folders=series_folders, freesurfer_path=fs_path, corestats_folder=corestats_folder)
-            notify_step("corestats")
+            process_viewer(folders=series_folders, freesurfer_path=fs_path, viewer_path=viewer_folder)
+            notify_step("viewer")
         except Exception as e:
-            logger.exception("Error during core statistics processing: %s", e)
-            notify_failure("corestats")
+            logger.exception("Error during viewer processing: %s", e)
+            notify_failure("viewer")
             return
 
     finally:
