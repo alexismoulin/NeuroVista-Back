@@ -41,6 +41,7 @@ def load_lut() -> Dict[int, LUTEntry]:
                 logger.warning("Bad RGBA in LUT line: %s", line)
     return lut
 
+
 def deterministic_color(label: int) -> Color:
     return (
         (label * 37) % 256,
@@ -58,17 +59,14 @@ def mgz_labels_to_gltf(
     """
     Convert a labeled FreeSurfer MGZ segmentation volume to a multi-mesh GLTF scene.
 
-    Parameters
-    ----------
-    mgz_path : Path
-        Path to .mgz volume with integer labels.
-    out_gltf : str | Path | file-like
-        Output destination for GLTF/GLB (trimesh chooses format by extension).
-    min_vertices : int
-        Skip meshes whose extracted surface has fewer than this many vertices.
-    log_every : bool
-        If True, log each processed label.
+    Cropping note
+    -------------
+    Bounding boxes that are thinner than 2 voxels along any dimension are
+    expanded by one voxel in that dimension (clamped to the image bounds)
+    so that skimage.measure.marching_cubes receives an array >= 2x2x2.
+    If, after expansion, any dimension is still < 2, the label is skipped.
     """
+    mgz_path = Path(mgz_path)
     if not mgz_path.exists():
         raise FileNotFoundError(mgz_path)
     if not LUT_PATH.exists():
@@ -83,25 +81,50 @@ def mgz_labels_to_gltf(
     labels = sorted(l for l in np.unique(data) if l != 0)
 
     lut = load_lut()
-
     scene = trimesh.Scene()
 
-    for label in labels:
-        # Cheap presence test
-        if not np.any(data == label):
-            continue
+    # Normalize out_gltf target & ensure directory if path-like
+    if isinstance(out_gltf, (str, Path)):
+        out_gltf = Path(out_gltf)
+        out_gltf.parent.mkdir(parents=True, exist_ok=True)
+        export_target: Union[str, Path, TextIO] = str(out_gltf)
+    else:
+        export_target = out_gltf  # file-like
 
-        # Optionally crop for performance
+    for label in labels:
         coords = np.argwhere(data == label)
         if coords.size == 0:
             continue
+
+        # initial bbox
         z0, y0, x0 = coords.min(0)
         z1, y1, x1 = coords.max(0) + 1
-        sub: np.ndarray = (data[z0:z1, y0:y1, x0:x1] == label) # type: ignore[assignment]
+
+        # expand thin dims by 1 voxel each side (clamped)
+        def expand(lo, hi, dim):
+            if hi - lo >= 2:
+                return lo, hi
+            lo = max(lo - 1, 0)
+            hi = min(hi + 1, dim)
+            return lo, hi
+
+        z0e, z1e = expand(z0, z1, data.shape[0])
+        y0e, y1e = expand(y0, y1, data.shape[1])
+        x0e, x1e = expand(x0, x1, data.shape[2])
+
+        sub = (data[z0e:z1e, y0e:y1e, x0e:x1e] == label).astype(np.uint8)
+
+        # final guard: skip if still too thin (e.g., near volume edge)
+        if any(d < 2 for d in sub.shape):
+            logger.info(
+                "Skipping label %d: cropped volume %s too thin after expansion.",
+                label, sub.shape
+            )
+            continue
 
         # Extract surface
         try:
-            verts, faces, normals, _ = marching_cubes(volume=sub.astype(np.uint8), level=0.5)
+            verts, faces, normals, _ = marching_cubes(volume=sub, level=0.5)
         except RuntimeError as e:
             logger.warning("Marching cubes failed for label %d: %s", label, e)
             continue
@@ -109,15 +132,13 @@ def mgz_labels_to_gltf(
         if len(verts) < min_vertices:
             continue
 
-        # marching_cubes returns (z,y,x); reorder to (x,y,z) in global index space
-        verts[:, [0, 1, 2]] = verts[:, [0, 1, 2]]  # (clarity) still (z,y,x)
+        # marching_cubes returns (z,y,x); reorder to (x,y,z) & shift
         verts_xyz = verts[:, [2, 1, 0]]
-        # Add crop offsets
-        verts_xyz[:, 0] += x0
-        verts_xyz[:, 1] += y0
-        verts_xyz[:, 2] += z0
+        verts_xyz[:, 0] += x0e
+        verts_xyz[:, 1] += y0e
+        verts_xyz[:, 2] += z0e
 
-        # Apply affine to get world coordinates
+        # Apply affine to world coordinates
         verts_world = apply_affine(aff=affine, pts=verts_xyz)
 
         name, color_rgba = lut.get(label, (f"Label_{label}", deterministic_color(label)))
@@ -134,10 +155,13 @@ def mgz_labels_to_gltf(
         scene.add_geometry(mesh, node_name=f"{label}_{name}")
 
         if log_every:
-            logger.info("Label %d (%s): %d verts, %d faces", label, name, len(verts_world), len(faces))
+            logger.info(
+                "Label %d (%s): %d verts, %d faces (crop %s).",
+                label, name, len(verts_world), len(faces), sub.shape
+            )
 
-    scene.export(out_gltf)
-    logger.info("Wrote GLTF: %s", out_gltf)
+    scene.export(export_target)
+    logger.info("Wrote GLTF: %s", export_target)
 
 
 def combine_mgzs_to_gltf(lh_mgz: Path, rh_mgz: Path, out_gltf: Path, min_vertices: int = 0) -> None:
@@ -154,7 +178,7 @@ def combine_mgzs_to_gltf(lh_mgz: Path, rh_mgz: Path, out_gltf: Path, min_vertice
         img = nib.load(str(mgz_path))
         if not isinstance(img, SpatialImage):
             raise TypeError(f"{mgz_path} is not a spatial image")
-        data = img.get_fdata(dtype=np.int32)
+        data = img.get_fdata().astype(np.int32)
         affine = img.affine
 
         labels = sorted(l for l in np.unique(data) if l != 0)
@@ -231,7 +255,7 @@ def extract_labels_to_gltf(
     img = nib.load(str(mgz_path))
     if not isinstance(img, SpatialImage):
         raise TypeError(f"{mgz_path} is not a spatial image")
-    data = img.get_fdata(dtype=np.int32)
+    data = img.get_fdata().astype(np.int32)
     affine = img.affine
 
     # Load LUT once
@@ -302,7 +326,6 @@ def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str):
         mgz_path=freesurfer_path / folder / "mri" / "aseg.mgz",
         out_gltf=viewer_path / folder / "aseg.glb"
     )
-    """
     mgz_labels_to_gltf(
         mgz_path=freesurfer_path / folder / "mri" / "brainstemSsLabels.mgz",
         out_gltf=viewer_path / folder / "brainstemSsLabels.glb"
@@ -332,5 +355,4 @@ def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str):
         out_gltf=viewer_path / folder / "aparc.DKTatlas+aseg.glb",
         include_labels=ctx_labels
     )
-    """
     logger.info(f"GLTF extracted for: {folder}")
