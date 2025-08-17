@@ -156,6 +156,9 @@ def remove_double_extension(file: Path) -> str:
     return file.stem
 
 
+# ---- FreeSurfer utils ----
+
+
 def reconall(base_dir: Path) -> None:
     """
     Run FreeSurfer's recon-all processing on NIfTI files within the base directory.

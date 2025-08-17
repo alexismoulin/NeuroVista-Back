@@ -237,7 +237,7 @@ def mgz_labels_to_gltf(
     logger.info("Wrote GLTF: %s", export_target)
 
 
-def _fs_affine(img: SpatialImage) -> np.ndarray:
+def fs_affine(img: SpatialImage) -> np.ndarray:
     """
     Return the preferred FreeSurfer voxel→world transform.
 
@@ -324,7 +324,7 @@ def combine_mgzs_to_gltf(
             raise TypeError(f"{mgz_path} is not a spatial image")
 
         data = img.get_fdata().astype(np.int32)
-        affine = _fs_affine(img)
+        affine = fs_affine(img)
 
         labels = sorted(int(l) for l in np.unique(data) if l != 0)
         for label in labels:

@@ -4,7 +4,8 @@ import logging
 import queue
 import mimetypes
 from core.utils import sanitize_name, list_folder_subfolders
-from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, read_json_file
+from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, read_json_file, \
+    prepare_processing
 from typing import Tuple
 from pathlib import Path
 
@@ -19,8 +20,35 @@ mimetypes.add_type("model/gltf-binary", ".glb")
 
 def serve_json(patient: str, study: str, filename: str, err_msg: str) -> Tuple[Response, int]:
     """
-        Helper to serve a JSON file from disk or return an error.
-    """
+     Serve a JSON file for a given patient/study or return an error payload.
+
+     The path is constructed as:
+     ``<BASE_DATA_PATH>/<patient>/<study>/JSON/<filename>`` with
+     patient and study sanitized via :func:`sanitize_name`.
+
+     Parameters
+     ----------
+     patient : str
+         Patient identifier (unsanitized; will be sanitized internally).
+     study : str
+         Study identifier (unsanitized; will be sanitized internally).
+     filename : str
+         JSON filename to serve (e.g., ``"cortical.json"``).
+     err_msg : str
+         Error message to include in the 404 response payload when the file
+         is missing or unreadable.
+
+     Returns
+     -------
+     (flask.Response, int)
+         ``(jsonify(payload), status_code)`` where status is 200 on success
+         and 404 otherwise.
+
+     Notes
+     -----
+     Uses :func:`read_json_file` which returns an empty dict if the file cannot
+     be read. An empty result is treated as missing and yields a 404.
+     """
     path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / filename
     data = read_json_file(path)
     if data:
@@ -30,16 +58,37 @@ def serve_json(patient: str, study: str, filename: str, err_msg: str) -> Tuple[R
 
 @app.get("/")
 def home() -> str:
-    """Basic home endpoint."""
-    return "Home"
+    """
+    Basic health/home endpoint.
+
+    Returns
+    -------
+    str
+        Static string ``"Home"`` indicating the service is reachable.
+    """
+    return "Home - Backend service is reachable"
 
 
 @app.get("/stream")
 def stream() -> Response:
     """
-    Stream processing step completions to the frontend in real time using Server-Sent Events (SSE).
-    """
+    Stream step-by-step pipeline updates via Server-Sent Events (SSE).
 
+    The stream emits a message whenever a step is placed into the global
+    :data:`STEP_COMPLETION_QUEUE`. If no message is available within one
+    second, a ``heartbeat`` is sent to keep the connection alive.
+
+    Returns
+    -------
+    flask.Response
+        Streaming response with MIME type ``text/event-stream`` and
+        ``Cache-Control: no-cache``.
+
+    Notes
+    -----
+    The payload format follows SSE conventions: lines prefixed with
+    ``"data: "`` and terminated by a blank line.
+    """
     @stream_with_context
     def event_stream():
         while True:
@@ -60,6 +109,29 @@ def stream() -> Response:
 
 @app.post("/run_script")
 def run_script() -> Response:
+    """
+    Validate inputs and kick off the processing pipeline.
+
+    Behavior:
+    - Rejects the request with 400 if processing is already in progress.
+    - Validates ``patient``, ``study``, and that at least one file is present
+      under the ``dicoms`` form field; returns 400 on validation errors.
+    - Creates the workspace and persists uploaded DICOMs via
+      :func:`prepare_processing`.
+    - Executes the processing pipeline via :func:`run_processing`.
+    - Returns HTTP 202 with a message on successful start.
+
+    Returns
+    -------
+    flask.Response
+        JSON response with appropriate HTTP status code (400, 202).
+
+    Notes
+    -----
+    The global :data:`processing_event` flag is set before preparation and
+    cleared by the pipeline at the end. Progress can be monitored via the
+    ``/stream`` SSE endpoint.
+    """
     if processing_event.is_set():
         response = make_response(jsonify({"error": "Processing already in progress"}))
         response.status_code = 400
@@ -78,7 +150,8 @@ def run_script() -> Response:
 
     base_path = BASE_DATA_PATH / patient / study
     processing_event.set()
-    run_processing(base_path=base_path, request_files=request.files)
+    folders_dict = prepare_processing(base_path, request_files=request.files)
+    run_processing(base_path, folders_dict)
     response = make_response(jsonify({"message": "Processing started"}))
     response.status_code = 202
     return response
@@ -86,6 +159,19 @@ def run_script() -> Response:
 
 @app.get("/studies")
 def studies() -> Response:
+    """
+    List all available ``(patient, study)`` pairs found on disk.
+
+    Returns
+    -------
+    flask.Response
+        200 with a JSON array of pairs on success, or 404 with an error
+        payload when no data is found.
+
+    Notes
+    -----
+    Uses :func:`list_folder_subfolders` rooted at :data:`BASE_DATA_PATH`.
+    """
     couples = list_folder_subfolders(directory_path=BASE_DATA_PATH)
     if couples:
         logger.info("Found study/patient couples: %s", couples)
@@ -101,30 +187,117 @@ def studies() -> Response:
 
 @app.get("/cortical/<string:patient>/<string:study>")
 def cortical(patient: str, study: str) -> Tuple[Response, int]:
+    """
+    Retrieve cortical metrics JSON for a given patient/study.
+
+    Parameters
+    ----------
+    patient : str
+        Patient identifier.
+    study : str
+        Study identifier.
+
+    Returns
+    -------
+    (flask.Response, int)
+        JSON payload and HTTP status code (200 or 404).
+    """
     return serve_json(patient, study, filename="cortical.json", err_msg="No cortical data")
 
 
 @app.get("/subcortical/<string:patient>/<string:study>")
 def subcortical(patient: str, study: str) -> Tuple[Response, int]:
+    """
+    Retrieve subcortical metrics JSON for a given patient/study.
+
+    Parameters
+    ----------
+    patient : str
+        Patient identifier.
+    study : str
+        Study identifier.
+
+    Returns
+    -------
+    (flask.Response, int)
+        JSON payload and HTTP status code (200 or 404).
+    """
     return serve_json(patient, study, filename="subcortical.json", err_msg="No subcortical data")
 
 
 @app.get("/general/<string:patient>/<string:study>")
 def general(patient: str, study: str) -> Tuple[Response, int]:
+    """
+    Retrieve general metrics JSON for a given patient/study.
+
+    Parameters
+    ----------
+    patient : str
+        Patient identifier.
+    study : str
+        Study identifier.
+
+    Returns
+    -------
+    (flask.Response, int)
+        JSON payload and HTTP status code (200 or 404).
+    """
     return serve_json(patient, study, filename="general.json", err_msg="No general data")
 
 
 @app.get("/nifti_dim/<string:patient>/<string:study>")
 def nifti_dim(patient: str, study: str) -> Tuple[Response, int]:
+    """
+    Retrieve NIfTI dimensions JSON for a given patient/study.
+
+    Parameters
+    ----------
+    patient : str
+        Patient identifier.
+    study : str
+        Study identifier.
+
+    Returns
+    -------
+    (flask.Response, int)
+        JSON payload and HTTP status code (200 or 404).
+    """
     return serve_json(patient, study, filename="niftiDimensions.json", err_msg="No nifti dimension data")
 
 
 @app.route("/models/<string:patient>/<string:study>/<string:series>/<string:filename>")
 def serve_model(patient: str, study: str, series:str, filename: str) -> Response:
     """
-    Stream a .gltf / .glb that was previously generated by create_gltf_models.
-    """
+    Serve a generated 3D model (``.gltf``/``.glb``) for a patient/study/series.
 
+    The resolved path is:
+    ``<CWD>/<BASE_DATA_PATH>/<patient>/<study>/VIEWER/<series>/<filename>``.
+
+    A safety check ensures the requested file exists and is a child of the
+    expected directory to avoid directory traversal.
+
+    Parameters
+    ----------
+    patient : str
+        Patient identifier.
+    study : str
+        Study identifier.
+    series : str
+        Series identifier (viewer subfolder).
+    filename : str
+        Model filename to serve (``.gltf`` or ``.glb``).
+
+    Returns
+    -------
+    flask.Response
+        404 JSON error if the file is missing or invalid; otherwise a file
+        response with conditional requests enabled and a small ``max_age``.
+
+    Notes
+    -----
+    The correct GLTF MIME types are registered at module import time via
+    :mod:`mimetypes`.
+    """
     path = Path.cwd() / BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "VIEWER" / sanitize_name(series)
     requested = (path / filename).resolve()
 

@@ -40,22 +40,68 @@ processing_event = Event()
 
 def notify_step(step: str) -> None:
     """
-    Helper function to notify that a processing step is complete.
+    Notify listeners that a processing step has completed.
+
+    The step name is pushed into the global ``STEP_COMPLETION_QUEUE`` so
+    external consumers (e.g., a UI thread or websocket) can consume progress
+    updates.
+
+    Parameters
+    ----------
+    step : str
+        Logical step identifier (e.g., ``"dicom"``, ``"nifti"``, ``"recon"``).
+
+    Returns
+    -------
+    None
     """
     STEP_COMPLETION_QUEUE.put(step)
 
 def notify_failure(step: str) -> None:
     """
-    Helper function to notify that a processing step has failed.
-    It prefixes the step key with 'failed_'.
+    Notify listeners that a processing step failed.
+
+    Internally prefixes the provided step key with ``"failed_"`` and forwards
+    it to :func:`notify_step`.
+
+    Parameters
+    ----------
+    step : str
+        Logical step identifier that failed.
+
+    Returns
+    -------
+    None
     """
     notify_step(f"failed_{step}")
 
 def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_directory: Path) -> None:
     """
-    Save uploaded DICOM files into subdirectories based on their SeriesDescription.
-    Only processes DICOM images and skips DICOMDIR files.
-    """
+        Save uploaded DICOMs to disk, grouped by series.
+
+        For each uploaded file under the ``"dicoms"`` form key, this function:
+        1) Skips DICOMDIR files (by filename or SOPClassUID).
+        2) Reads the file's ``SeriesDescription`` (fallback ``"UNKNOWN"``),
+           replacing spaces with underscores.
+        3) Creates ``<dicom_directory>/<SeriesDescription>/`` if needed.
+        4) Saves the file with a ``.dcm`` extension (added if missing).
+
+        Parameters
+        ----------
+        request_files : ImmutableMultiDict[str, FileStorage]
+            Incoming files from a Werkzeug/Flask request.
+        dicom_directory : Path
+            Root directory where per-series folders will be created.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Errors while handling individual files are logged and skipped; the
+        function continues with remaining files.
+        """
     for dicom_file in request_files.getlist("dicoms"):
         try:
             if "DICOMDIR" in dicom_file.filename.upper():
@@ -72,7 +118,7 @@ def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_direc
             series_dir = dicom_directory / series_description
             series_dir.mkdir(parents=True, exist_ok=True)
             dicom_file.stream.seek(0)
-            dest_file = series_dir / add_dcm_extension(os.path.basename(dicom_file.filename))
+            dest_file = series_dir / add_dcm_extension(filename=os.path.basename(dicom_file.filename))
             dicom_file.save(dst=str(dest_file))
         except Exception as e:
             logger.exception("Skipping file %s due to error: %s", dicom_file.filename, e)
@@ -80,9 +126,29 @@ def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_direc
 
 def convert_to_nifti(dicom_directory: Path, nifti_directory: Path) -> None:
     """
-    Convert each DICOM series in the dicom_directory to a single NIfTI file.
-    """
-    for folder in get_folder_names(dicom_directory):
+      Convert each DICOM series to a single NIfTI file.
+
+      For every direct subfolder in ``dicom_directory`` (assumed to represent a
+      DICOM series), writes ``<folder>.nii.gz`` into ``nifti_directory`` using
+      :mod:`dicom2nifti`.
+
+      Parameters
+      ----------
+      dicom_directory : Path
+          Directory containing one subfolder per DICOM series.
+      nifti_directory : Path
+          Destination directory for the generated ``.nii.gz`` files.
+
+      Returns
+      -------
+      None
+
+      Notes
+      -----
+      Exceptions per series are logged and skipped; the conversion continues for
+      remaining series.
+      """
+    for folder in get_folder_names(directory=dicom_directory):
         input_dir = dicom_directory / folder
         output_file = nifti_directory / f"{folder}.nii.gz"
         try:
@@ -96,7 +162,25 @@ def convert_to_nifti(dicom_directory: Path, nifti_directory: Path) -> None:
 
 def run_reconall(base_dir: Path) -> None:
     """
-    Execute FreeSurfer recon-all process on the given base directory.
+    Run the FreeSurfer ``recon-all`` pipeline for a subject.
+
+    Parameters
+    ----------
+    base_dir : Path
+        Base directory containing the subject tree expected by FreeSurfer.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    Exception
+        Propagates any error raised by the underlying :func:`reconall` helper.
+
+    Notes
+    -----
+    Logs the elapsed wall-clock time for the reconstruction.
     """
     start_time = time.time()
     try:
@@ -109,8 +193,26 @@ def run_reconall(base_dir: Path) -> None:
 
 def process_lesions_for_series(series: str, freesurfer_path: Path, samseg_path: Path) -> None:
     """
-    Process lesions for a single series.
-    """
+        Run lesion processing for a single series.
+
+        Parameters
+        ----------
+        series : str
+            Series identifier (folder name).
+        freesurfer_path : Path
+            Root path containing FreeSurfer outputs organized by series.
+        samseg_path : Path
+            Root path for SAMSEG-related inputs/outputs for the series.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        Exception
+            Re-raises any error from :func:`process_lesions` after logging.
+        """
     try:
         process_lesions(freesurfer_path, samseg_path, series)
     except Exception as e:
@@ -120,6 +222,24 @@ def process_lesions_for_series(series: str, freesurfer_path: Path, samseg_path: 
 def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_path: Path) -> None:
     """
     Process lesions for all series in parallel.
+
+    Parameters
+    ----------
+    folders : list of str
+        Series identifiers to process.
+    freesurfer_path : Path
+        Root FreeSurfer directory.
+    samseg_path : Path
+        Root SAMSEG directory.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Uses a :class:`concurrent.futures.ThreadPoolExecutor` with
+    ``max_workers = max(1, os.cpu_count())`` to parallelize series-level work.
     """
     with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
         executor.map(partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path), folders)
@@ -127,7 +247,26 @@ def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_pa
 
 def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> None:
     """
-    Run subcortical segmentation (thalamus, brainstem, hippo-amygdala) for each series.
+    Run subcortical subregion segmentations for each series.
+
+    Executes segmentation for:
+    ``thalamus``, ``brainstem``, and ``hippo-amygdala``.
+
+    Parameters
+    ----------
+    folders : list of str
+        Series identifiers to process.
+    freesurfer_path : Path
+        Root FreeSurfer directory.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Errors are logged per series/structure and do not stop iteration of the
+    remaining tasks.
     """
     for folder in folders:
         for structure in ["thalamus", "brainstem", "hippo-amygdala"]:
@@ -140,6 +279,21 @@ def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> Non
 def segment_hypothalamus_for_all(folders: List[str], freesurfer_path: Path) -> None:
     """
     Run hypothalamus segmentation for each series.
+
+    Parameters
+    ----------
+    folders : list of str
+        Series identifiers to process.
+    freesurfer_path : Path
+        Root FreeSurfer directory.
+
+    Returns
+    -------
+    None
+
+    Notes
+    -----
+    Errors are logged per series and do not stop the loop.
     """
     for folder in folders:
         try:
@@ -154,7 +308,37 @@ def generate_json_files(folders: List[str],
                         samseg_path: Path,
                         json_folder: Path) -> None:
     """
-    Generate JSON files for each series and compute averages and global metrics.
+    Generate per-series JSON outputs and aggregated summaries.
+
+    For each series, runs :func:`run_jsonifier` into ``<json_folder>/<series>/``.
+    Then computes cohort-level averages for several categories and a global
+    summary file.
+
+    Parameters
+    ----------
+    folders : list of str
+        Series identifiers to process.
+    freesurfer_path : Path
+        Root FreeSurfer directory.
+    samseg_path : Path
+        Root SAMSEG directory.
+    json_folder : Path
+        Root directory where JSON outputs will be written.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    Exception
+        Propagates failures from per-series JSON generation or aggregation.
+
+    Side Effects
+    ------------
+    Creates (at minimum) files like:
+    ``cortical.json``, ``subcortical.json``, ``general.json`` per series, and
+    aggregated outputs in ``<json_folder>/AVERAGES/`` plus a global JSON.
     """
     for folder in folders:
         output_dir = json_folder / folder
@@ -181,7 +365,26 @@ def generate_json_files(folders: List[str],
     logger.info("JSON files generation completed")
 
 
-def process_viewer(folders: List[str], viewer_path: Path, freesurfer_path: Path):
+def process_viewer(folders: List[str], viewer_path: Path, freesurfer_path: Path) -> None:
+    """
+    Produce GLTF/GLB models for each series for interactive viewing.
+
+    Uses :func:`core.viewer.create_gltf_models` to export standard sets of
+    meshes derived from FreeSurfer outputs into ``<viewer_path>/<series>/``.
+
+    Parameters
+    ----------
+    folders : list of str
+        Series identifiers to process.
+    viewer_path : Path
+        Destination root for viewer assets.
+    freesurfer_path : Path
+        Root FreeSurfer directory.
+
+    Returns
+    -------
+    None
+    """
     for folder in folders:
         output_dir = viewer_path / folder
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -191,10 +394,30 @@ def process_viewer(folders: List[str], viewer_path: Path, freesurfer_path: Path)
 
 def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Optional[Dict[str, Path]]:
     """
-    1) Create all the subfolders under base_path (dicom, nifti, freesurfer, json, etc.).
-    2) Save uploaded DICOMs into base_path/<patient>/<study>/DICOM/<SeriesDescription>/*
+    Prepare on-disk folders and persist uploaded DICOMs.
 
-    Returns a dict of all the folder paths
+    This function:
+    1) Creates the expected directory hierarchy under ``base_path`` (e.g.,
+       ``dicom/``, ``nifti/``, ``freesurfer/``, ``samseg/``, ``json/``, ``viewer/``).
+    2) Saves uploaded DICOMs into ``<dicom>/ <SeriesDescription> / *``.
+    3) Emits a progress notification for the ``"dicom"`` step upon success.
+
+    Parameters
+    ----------
+    base_path : Path
+        Root path for the processing workspace.
+    request_files : ImmutableMultiDict[str, FileStorage]
+        Uploaded files from a request object (expects key ``"dicoms"``).
+
+    Returns
+    -------
+    dict[str, Path] or None
+        Mapping of logical folder names to paths if successful; ``None`` on failure.
+
+    Notes
+    -----
+    On failure, a ``"failed_dicom"`` notification is emitted and the error is
+    logged. Attention with Multithreading (e.g. gunicorn, it is not working properly)
     """
     # Create the entire hierarchy on disk
     folders_dict = create_folders(base_path)
@@ -213,9 +436,35 @@ def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, F
 
 def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
     """
-    Run the complete processing pipeline.
-    If a step fails, notify the failure and stop further processing.
-    """
+        Execute the full imaging pipeline end-to-end.
+
+        The pipeline steps are, in order:
+        1) DICOM→NIfTI conversion (``"nifti"``)
+        2) FreeSurfer ``recon-all`` (``"recon"``)
+        3) SAMSEG lesions (``"lesions"``)
+        4) Subcortical subregions (``"subs"``)
+        5) Hypothalamus segmentation (``"hyp"``)
+        6) JSON generation and aggregation (``"json"``)
+        7) Viewer GLTF/GLB export (``"viewer"``)
+
+        After each successful step a progress notification is emitted; on failure,
+        a ``"failed_<step>"`` notification is emitted and processing stops.
+
+        Parameters
+        ----------
+        base_path : Path
+            Root workspace directory (passed to :func:`run_reconall`).
+        folders_dict : dict[str, Path]
+            Folder mapping as returned by :func:`prepare_processing`.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        Clears the global :data:`processing_event` in a ``finally`` block.
+        """
     try:
         dicom_dir = folders_dict["dicom"]
         nifti_dir = folders_dict["nifti"]
@@ -294,7 +543,23 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
 
 def read_json_file(json_path: Path) -> Dict:
     """
-    Helper function to read a JSON file.
+    Read a JSON file from disk.
+
+    Parameters
+    ----------
+    json_path : Path
+        Path to a ``.json`` file.
+
+    Returns
+    -------
+    dict
+        Parsed JSON object on success. Returns an empty dict if the file
+        does not exist or cannot be read.
+
+    Notes
+    -----
+    Missing files are logged at exception level for visibility, but the
+    function handles the error by returning ``{}``.
     """
     try:
         with json_path.open("r") as f:
