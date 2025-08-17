@@ -17,6 +17,26 @@ LUT_PATH = Path.cwd() / "FreeSurferColorLUT.txt"
 
 
 def load_lut() -> Dict[int, LUTEntry]:
+    """
+    Parse a FreeSurfer-style color lookup table from ``LUT_PATH``.
+
+    Each non-comment, non-empty line is expected to contain::
+
+        <label:int> <name possibly with spaces> <R:int> <G:int> <B:int> <A:int>
+
+    Lines that cannot be parsed are skipped with a warning.
+
+    Returns
+    -------
+    Dict[int, LUTEntry]
+        Mapping from integer label ID to ``(name, (R, G, B, A))`` with
+        8-bit channels in the range 0–255.
+
+    Raises
+    ------
+    FileNotFoundError
+        If ``LUT_PATH`` does not exist.
+    """
     lut: Dict[int, LUTEntry] = {}
     with LUT_PATH.open() as f:
         for line in f:
@@ -43,6 +63,22 @@ def load_lut() -> Dict[int, LUTEntry]:
 
 
 def deterministic_color(label: int) -> Color:
+    """
+    Produce a stable fallback RGBA color for a label ID.
+
+    The mapping uses simple modular arithmetic to yield reproducible,
+    visually distinct colors without consulting the LUT.
+
+    Parameters
+    ----------
+    label : int
+        Integer label identifier.
+
+    Returns
+    -------
+    Color
+        ``(R, G, B, A)`` tuple with 8-bit channels; alpha is always 255.
+    """
     return (
         (label * 37) % 256,
         (label * 67) % 256,
@@ -57,15 +93,52 @@ def mgz_labels_to_gltf(
     log_every: bool = True
 ) -> None:
     """
-    Convert a labeled FreeSurfer MGZ segmentation volume to a multi-mesh GLTF scene.
+        Convert a labeled FreeSurfer MGZ segmentation volume into a multi-mesh GLTF scene.
 
-    Cropping note
-    -------------
-    Bounding boxes that are thinner than 2 voxels along any dimension are
-    expanded by one voxel in that dimension (clamped to the image bounds)
-    so that skimage.measure.marching_cubes receives an array >= 2x2x2.
-    If, after expansion, any dimension is still < 2, the label is skipped.
-    """
+        One mesh is produced per non-zero integer label found in the volume. Vertex
+        positions are exported in scanner RAS (``img.affine``) world space. Per-vertex
+        RGBA colors are taken from ``FreeSurferColorLUT.txt`` (``LUT_PATH``) when
+        available, falling back to :func:`deterministic_color` otherwise.
+
+        Parameters
+        ----------
+        mgz_path : Path
+            Path to a labeled segmentation volume (``.mgz``).
+        out_gltf : str | Path | TextIO
+            Output target for the GLTF/GLB. If a path or string is given, parent
+            directories are created as needed and the format is inferred from the
+            extension (``.gltf``/``.glb``). A writable file-like object is also accepted.
+        min_vertices : int, optional
+            Skip labels whose extracted surface has fewer than this many vertices.
+            Default is 0 (export all).
+        log_every : bool, optional
+            If ``True``, emit an ``INFO`` log line per exported label. Default ``True``.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        FileNotFoundError
+            If ``mgz_path`` or ``LUT_PATH`` does not exist.
+        TypeError
+            If the loaded image is not a :class:`~nibabel.spatialimages.SpatialImage`.
+
+        Notes
+        -----
+        * **Surface extraction**: Surfaces are obtained with
+          :func:`skimage.measure.marching_cubes` at level 0.5. Failures are logged
+          and the corresponding label is skipped.
+        * **Cropping**: Each label is cropped to its tight voxel bounding box to
+          accelerate meshing. Bounding boxes thinner than 2 voxels along any
+          dimension are expanded by one voxel on each side (clamped to image
+          bounds) so that marching cubes receives an array at least ``2×2×2``. If
+          a dimension is still ``< 2`` after expansion, that label is skipped.
+        * **Coordinate conventions**: ``marching_cubes`` returns vertices in (z, y, x).
+          These are reordered to (x, y, z), shifted by the crop origin, and mapped
+          to world coordinates with ``img.affine`` (scanner RAS).
+        """
     mgz_path = Path(mgz_path)
     if not mgz_path.exists():
         raise FileNotFoundError(mgz_path)
@@ -166,8 +239,22 @@ def mgz_labels_to_gltf(
 
 def _fs_affine(img: SpatialImage) -> np.ndarray:
     """
-    Prefer FreeSurfer tkregister RAS (what Freeview shows).
-    Fallback to scanner RAS if not available.
+    Return the preferred FreeSurfer voxel→world transform.
+
+    Attempts to read the FreeSurfer *tkregister RAS* matrix (what Freeview shows)
+    from the header via ``get_vox2ras_tkr()``. If unavailable or an error occurs,
+    falls back to the image's ``affine`` (scanner RAS).
+
+    Parameters
+    ----------
+    img : SpatialImage
+        Nibabel spatial image.
+
+    Returns
+    -------
+    numpy.ndarray
+        ``4×4`` affine mapping voxel indices ``(i, j, k, 1)`` → RAS coordinates
+        ``(x, y, z, 1)``.
     """
     hdr = getattr(img, "header", None)
     if hdr is not None and hasattr(hdr, "get_vox2ras_tkr"):
@@ -186,20 +273,41 @@ def combine_mgzs_to_gltf(
     gap_mm: float = 30.0,
 ) -> None:
     """
-    Merge left- and right-hemisphere MGZ segmentations into one GLTF, and
-    translate them apart along the RAS-X axis so they don't overlap.
+    Merge left- and right-hemisphere MGZ segmentations into one GLTF and
+    translate them apart along the RAS-X axis so they do not overlap.
 
     Parameters
     ----------
     lh_mgz, rh_mgz : Path
         Left/right hemisphere MGZ segmentations.
     out_gltf : Path
-        Output .glb/.gltf path.
+        Output ``.glb``/``.gltf`` path (format inferred from extension).
     min_vertices : int
-        Skip labels with fewer than this many vertices.
+        Skip labels whose surface has fewer than this many vertices. Default 0.
     gap_mm : float
-        Distance in millimeters to add between hemispheres (center-to-center).
-        LH is shifted by -gap_mm/2, RH by +gap_mm/2 along RAS-X.
+        Distance in millimeters added between hemispheres (center-to-center).
+        LH is shifted by ``-gap_mm/2`` and RH by ``+gap_mm/2`` along RAS-X.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    FileNotFoundError
+        If any input MGZ or the LUT file is missing.
+    TypeError
+        If a loaded image is not a :class:`~nibabel.spatialimages.SpatialImage`.
+
+    Notes
+    -----
+    * Vertex positions are computed in FreeSurfer *tkregister RAS* space when
+      available (via :func:`_fs_affine`), matching Freeview, then offset along
+      RAS-X by ``±gap_mm/2``.
+    * Surfaces are extracted per label using :func:`skimage.measure.marching_cubes`
+      at level 0.5, operating on a cropped bounding box in voxel index order
+      ``(i, j, k)``. ``marching_cubes`` returns vertices in the same axis order.
+    * Colors come from the LUT when present, else :func:`deterministic_color`.
     """
     lut = load_lut()
     scene = trimesh.Scene()
@@ -285,16 +393,37 @@ def extract_labels_to_gltf(
     Parameters
     ----------
     mgz_path : Path
-        .mgz segmentation volume.
-    out_gltf : str|Path|file-like
-        Where to write the GLTF.
+        ``.mgz`` segmentation volume.
+    out_gltf : str | Path | file-like
+        Where to write the GLTF/GLB. Parent directories are created if needed
+        when a path is provided; the format is inferred from the extension.
     include_labels : list of int, optional
-        Whitelist of integer label IDs to export.  If None, include all labels.
+        Whitelist of integer label IDs to export. If ``None``, include all
+        labels (subject to ``include_names``).
     include_names : list of str, optional
-        Whitelist of structure-names (from LUT) to export.
-        Overrides include_labels if provided.
-    min_vertices : int
-        Skip labels whose surface has fewer than this many vertices.
+        Whitelist of structure names (from the LUT). If provided, this takes
+        precedence over ``include_labels``. Names not found in the LUT are
+        silently ignored.
+    min_vertices : int, optional
+        Skip labels whose surface has fewer than this many vertices. Default 0.
+
+    Returns
+    -------
+    None
+
+    Raises
+    ------
+    FileNotFoundError
+        If the LUT file is missing.
+    TypeError
+        If the loaded image is not a :class:`~nibabel.spatialimages.SpatialImage`.
+
+    Notes
+    -----
+    * Triangles are extracted per label with :func:`skimage.measure.marching_cubes`
+      at level 0.5 on the label's cropped bounding box.
+    * Vertex coordinates are exported in scanner RAS (``img.affine``) space.
+    * Colors come from the LUT when present, else :func:`deterministic_color`.
     """
     # Load image
     img = nib.load(str(mgz_path))
@@ -366,7 +495,41 @@ def extract_labels_to_gltf(
     logger.info("Wrote GLTF: %s", out_gltf)
 
 
-def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str):
+def create_gltf_models(freesurfer_path: Path, viewer_path: Path, folder: str) -> None:
+    """
+        Build a set of GLTF/GLB models for a FreeSurfer subject.
+
+        Given the root ``freesurfer_path`` containing ``<folder>/mri/`` and an
+        output ``viewer_path``, this orchestrates the standard exports:
+        - ``mri/aseg.mgz`` → ``aseg.glb``
+        - ``mri/brainstemSsLabels.mgz`` → ``brainstemSsLabels.glb``
+        - ``mri/ThalamicNuclei.mgz`` → ``ThalamicNuclei.glb``
+        - ``mri/hypothalamic_subunits_seg.v1.mgz`` → ``hypothalamic_subunits_seg.v1.glb``
+        - ``mri/lh.hippoAmygLabels.mgz`` + ``mri/rh.hippoAmygLabels.mgz`` combined and separated
+          along RAS-X → ``hippoAmygLabels.glb``
+        - ``mri/wmparc.mgz`` (labels 2000–2035 & 3000–3035) → ``wmparc.glb``
+        - ``mri/aparc.DKTatlas+aseg.mgz`` (labels 1002–1035 & 2002–2035) → ``aparc.DKTatlas+aseg.glb``
+
+        Parameters
+        ----------
+        freesurfer_path : Path
+            Root path containing subject folders (e.g., output of ``recon-all``).
+        viewer_path : Path
+            Destination root. Outputs are written to ``<viewer_path>/<folder>/``.
+        folder : str
+            Subject folder name (e.g., ``"sub-001"``).
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        This is a thin wrapper that delegates work to
+        :func:`mgz_labels_to_gltf`, :func:`combine_mgzs_to_gltf`,
+        and :func:`extract_labels_to_gltf`. Exceptions raised by those
+        functions (e.g., missing files, bad images) will propagate.
+        """
     mgz_labels_to_gltf(
         mgz_path=freesurfer_path / folder / "mri" / "aseg.mgz",
         out_gltf=viewer_path / folder / "aseg.glb"
