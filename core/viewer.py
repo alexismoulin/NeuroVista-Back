@@ -164,36 +164,74 @@ def mgz_labels_to_gltf(
     logger.info("Wrote GLTF: %s", export_target)
 
 
-def combine_mgzs_to_gltf(lh_mgz: Path, rh_mgz: Path, out_gltf: Path, min_vertices: int = 0) -> None:
+def _fs_affine(img: SpatialImage) -> np.ndarray:
     """
-    Merge left- and right-hemisphere MGZ segmentations into one GLTF.
-    Prefix each mesh name with 'lh - ' or 'rh - ' accordingly.
+    Prefer FreeSurfer tkregister RAS (what Freeview shows).
+    Fallback to scanner RAS if not available.
     """
-    # Load LUT once
-    lut = load_lut()  # assume same as earlier function
+    hdr = getattr(img, "header", None)
+    if hdr is not None and hasattr(hdr, "get_vox2ras_tkr"):
+        try:
+            return hdr.get_vox2ras_tkr()
+        except Exception:
+            pass
+    return img.affine
 
+
+def combine_mgzs_to_gltf(
+    lh_mgz: Path,
+    rh_mgz: Path,
+    out_gltf: Path,
+    min_vertices: int = 0,
+    gap_mm: float = 30.0,
+) -> None:
+    """
+    Merge left- and right-hemisphere MGZ segmentations into one GLTF, and
+    translate them apart along the RAS-X axis so they don't overlap.
+
+    Parameters
+    ----------
+    lh_mgz, rh_mgz : Path
+        Left/right hemisphere MGZ segmentations.
+    out_gltf : Path
+        Output .glb/.gltf path.
+    min_vertices : int
+        Skip labels with fewer than this many vertices.
+    gap_mm : float
+        Distance in millimeters to add between hemispheres (center-to-center).
+        LH is shifted by -gap_mm/2, RH by +gap_mm/2 along RAS-X.
+    """
+    lut = load_lut()
     scene = trimesh.Scene()
+
+    # Offsets in RAS (mm). X is left-right: LH negative, RH positive.
+    offsets = {
+        "lh": np.array([-gap_mm / 2.0, 0.0, 0.0], dtype=float),
+        "rh": np.array([+gap_mm / 2.0, 0.0, 0.0], dtype=float),
+    }
 
     for side, mgz_path in (("lh", lh_mgz), ("rh", rh_mgz)):
         img = nib.load(str(mgz_path))
         if not isinstance(img, SpatialImage):
             raise TypeError(f"{mgz_path} is not a spatial image")
-        data = img.get_fdata().astype(np.int32)
-        affine = img.affine
 
-        labels = sorted(l for l in np.unique(data) if l != 0)
+        data = img.get_fdata().astype(np.int32)
+        affine = _fs_affine(img)
+
+        labels = sorted(int(l) for l in np.unique(data) if l != 0)
         for label in labels:
             mask = (data == label)
             if not mask.any():
                 continue
 
-            # Crop to bounding box for efficiency
-            coords = np.argwhere(mask)
-            z0, y0, x0 = coords.min(0)
-            z1, y1, x1 = coords.max(0) + 1
-            sub = mask[z0:z1, y0:y1, x0:x1].astype(np.uint8)
+            # Crop bbox in voxel index order (i, j, k) == (X, Y, Z)
+            coords = np.argwhere(mask)  # -> (i, j, k)
+            i0, j0, k0 = coords.min(0)
+            i1, j1, k1 = coords.max(0) + 1
+            sub = mask[i0:i1, j0:j1, k0:k1].astype(np.uint8)
 
             try:
+                # marching_cubes returns verts in SAME axis order as the array: (i, j, k)
                 verts, faces, normals, _ = marching_cubes(sub, level=0.5)
             except RuntimeError:
                 logger.warning("MC failed on %s label %d", side, label)
@@ -201,11 +239,16 @@ def combine_mgzs_to_gltf(lh_mgz: Path, rh_mgz: Path, out_gltf: Path, min_vertice
             if len(verts) < min_vertices:
                 continue
 
-            # Reorder & shift into world coords
-            verts_xyz = verts[:, [2, 1, 0]]
-            verts_xyz += np.array([x0, y0, z0])
-            verts_world = nib.affines.apply_affine(affine, verts_xyz)
+            # Shift verts back into full-volume voxel index space (i, j, k)
+            verts_vox = verts + np.array([i0, j0, k0], dtype=verts.dtype)
 
+            # Map voxel indices -> world (tkregister RAS if available)
+            verts_world = apply_affine(affine, verts_vox)
+
+            # Push hemispheres apart along RAS-X
+            verts_world = verts_world + offsets[side]
+
+            # Color & name
             name, rgba = lut.get(label, (f"Label_{label}", deterministic_color(label)))
             r, g, b, a = rgba
             vertex_colors = np.tile([r, g, b, a], (len(verts_world), 1)) / 255.0
@@ -216,12 +259,14 @@ def combine_mgzs_to_gltf(lh_mgz: Path, rh_mgz: Path, out_gltf: Path, min_vertice
                 vertex_colors=vertex_colors,
                 process=False
             )
-            # Prefix mesh name
             prefixed = f"{side} - {name}"
             mesh.metadata = {"name": prefixed}
             scene.add_geometry(mesh, node_name=prefixed)
 
-            logger.info("Added %s label %d (%s): %d verts", side, label, name, len(verts_world))
+            logger.info(
+                "Added %s label %d (%s): %d verts (mean RAS-X after offset = %.2f)",
+                side, label, name, len(verts_world), float(verts_world[:, 0].mean())
+            )
 
     scene.export(str(out_gltf))
     logger.info("Wrote combined GLTF: %s", out_gltf)
