@@ -7,4 +7,4 @@ Backend running on:
 Main SW:
 - FreeSurfer 7.4.1
 
-docker build -t neurovista --platform linux/amd64 .
+docker build -t saiyajin/neurovista_back:0.2.0 --platform linux/amd64 .
