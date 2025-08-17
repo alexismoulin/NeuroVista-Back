@@ -2,10 +2,10 @@ import logging
 import os
 import re
 from pathlib import Path
-import shutil
 from typing import List, Tuple, Dict
 
 import nibabel as nib
+from nibabel.spatialimages import SpatialImage
 from nipype.interfaces.base import CommandLine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, MapNode
@@ -47,6 +47,30 @@ def get_folder_names(directory: Path) -> List[str]:
     return [p.name for p in directory.iterdir() if p.is_dir()]
 
 
+def list_folder_subfolders(directory_path: Path) -> List[Tuple[str, str]]:
+    """
+    List each folder within the directory along with its immediate subfolders.
+
+    For every folder found in the provided directory, the function returns tuples where the first
+    element is the folder name and the second element is the name of one of its subfolders.
+
+    Args:
+        directory_path (Path): The directory to search within.
+
+    Returns:
+        List[Tuple[str, str]]: A list of tuples in the format (folder_name, subfolder_name).
+    """
+    folder_subfolder_pairs = []
+
+    for folder in sorted(directory_path.iterdir()):
+        if folder.is_dir():
+            subfolders = [subfolder.name for subfolder in sorted(folder.iterdir()) if subfolder.is_dir()]
+            for subfolder in subfolders:
+                folder_subfolder_pairs.append((folder.name, subfolder))
+
+    return folder_subfolder_pairs
+
+
 def sanitize_name(name: str) -> str:
     """
     Sanitize an input string to prevent path traversal and remove unsafe characters.
@@ -82,7 +106,7 @@ def create_folders(base_path: Path) -> Dict[str, Path]:
         "samseg": base_path / "SAMSEG",
         "workflows": base_path / "WORKFLOWS",
         "json": base_path / "JSON",
-        "corestats": base_path / "CORESTATS",
+        "viewer": base_path / "VIEWER",
     }
     for folder in folders.values():
         folder.mkdir(parents=True, exist_ok=True)
@@ -108,6 +132,8 @@ def get_nifti_dimensions(file_path: Path) -> Tuple[int, ...]:
     if not file_path.exists():
         raise FileNotFoundError(f"NIfTI file not found: {file_path}")
     nifti_image = nib.load(file_path)
+    if not isinstance(nifti_image, SpatialImage):
+        raise TypeError(f"Expected SpatialImage, got {type(nifti_image)}")
     return nifti_image.shape
 
 
@@ -128,30 +154,6 @@ def remove_double_extension(file: Path) -> str:
     if name.endswith(".nii.gz"):
         return name[:-7]
     return file.stem
-
-
-def list_folder_subfolders(directory_path: Path) -> List[Tuple]:
-    """
-    List each folder within the directory along with its immediate subfolders.
-
-    For every folder found in the provided directory, the function returns tuples where the first
-    element is the folder name and the second element is the name of one of its subfolders.
-
-    Args:
-        directory_path (Path): The directory to search within.
-
-    Returns:
-        List[Tuple[str, str]]: A list of tuples in the format (folder_name, subfolder_name).
-    """
-    folder_subfolder_pairs = []
-
-    for folder in sorted(directory_path.iterdir()):
-        if folder.is_dir():
-            subfolders = [subfolder.name for subfolder in sorted(folder.iterdir()) if subfolder.is_dir()]
-            for subfolder in subfolders:
-                folder_subfolder_pairs.append((folder.name, subfolder))
-
-    return folder_subfolder_pairs
 
 
 def reconall(base_dir: Path) -> None:
@@ -363,54 +365,3 @@ def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
     except Exception as e:
         logger.error(f"Error during hypothalamus segmentation: {e}")
         raise
-
-
-def process_corestats(fs_path: Path, corestats_folder: Path) -> None:
-    """
-    Process core statistics by copying and renaming stats files from FreeSurfer.
-
-    The function copies all '.stats' files from the FreeSurfer 'stats' subfolder to the provided
-    corestats folder. It then renames these files to have a '.txt' extension. Additionally, it copies
-    any '.txt' files found in the 'mri' subfolder.
-
-    Args:
-        fs_path (Path): The FreeSurfer directory containing the 'stats' and 'mri' subfolders.
-        corestats_folder (Path): The destination folder for the core statistics files.
-
-    Returns:
-        None
-
-    Raises:
-        FileNotFoundError: If the FreeSurfer directory does not exist.
-        Exception: Propagates any exceptions raised during file renaming or copying.
-    """
-    if not fs_path.exists():
-        raise FileNotFoundError(f"FreeSurfer directory not found: {fs_path}")
-
-    stats_dir = fs_path / "stats"
-    mri_dir = fs_path / "mri"
-    corestats_folder.mkdir(parents=True, exist_ok=True)
-
-    # Copy .stats files from the stats subfolder
-    if stats_dir.exists():
-        for stats_file in stats_dir.glob("*.stats"):
-            shutil.copy2(stats_file, corestats_folder)
-    else:
-        logger.warning(f"No stats directory found in FreeSurfer path: {fs_path}")
-
-    # Rename stats files to txt files
-    for stats_file in corestats_folder.glob("*.stats"):
-        txt_file = stats_file.with_suffix(".txt")
-        try:
-            stats_file.rename(txt_file)
-            logger.info(f"Renamed {stats_file} to {txt_file}")
-        except Exception as e:
-            logger.error(f"Error renaming file {stats_file}: {e}")
-            raise
-
-    # Copy .txt files from the mri subfolder
-    if mri_dir.exists():
-        for mri_file in mri_dir.glob("*.txt"):
-            shutil.copy2(mri_file, corestats_folder)
-
-    logger.info(f"Core statistics processed and saved to {corestats_folder}")

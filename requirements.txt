@@ -9,4 +9,5 @@ pandas
 pytest
 werkzeug
 numpy
-gunicorn
+scikit-image
+trimesh
