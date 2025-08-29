@@ -2,7 +2,6 @@ import logging
 import os
 import time
 import queue
-from configparser import ConfigParser
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 from threading import Event
@@ -18,11 +17,6 @@ from core.fs_utils import reconall, process_lesions_for_series, segment_subregio
 from core.viewer import create_gltf_models
 
 logger = logging.getLogger(__name__)
-
-# Read configuration for base data path
-config = ConfigParser()
-config.read(filenames="./config.ini")
-BASE_DATA_PATH = Path(config.get(section="DATA", option="real_data"))
 
 # Shared constants for the processing pipeline
 STEP_COMPLETION_QUEUE = queue.Queue()

@@ -3,8 +3,8 @@ from flask_cors import CORS
 import logging
 import queue
 import mimetypes
-from core.utils import sanitize_name, list_folder_subfolders, serve_json
-from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, prepare_processing
+from core.utils import BASE_DATA_PATH, sanitize_name, list_folder_subfolders, serve_json
+from core.processing import STEP_COMPLETION_QUEUE, processing_event, run_processing, prepare_processing
 from typing import Tuple
 from pathlib import Path
 
