@@ -1,16 +1,19 @@
 import logging
-import os
 import re
+import json
 from pathlib import Path
+from configparser import ConfigParser
 from typing import List, Tuple, Dict
-
+from flask import jsonify, Response
 import nibabel as nib
 from nibabel.spatialimages import SpatialImage
-from nipype.interfaces.base import CommandLine
-from nipype.interfaces.freesurfer import ReconAll
-from nipype.pipeline.engine import Workflow, MapNode
 
 logger = logging.getLogger(__name__)
+
+# Read configuration for base data path
+config = ConfigParser()
+config.read(filenames="./config.ini")
+BASE_DATA_PATH = Path(config.get(section="DATA", option="real_data"))
 
 
 def add_dcm_extension(filename: str) -> str:
@@ -156,215 +159,67 @@ def remove_double_extension(file: Path) -> str:
     return file.stem
 
 
-# ---- FreeSurfer utils ----
-
-
-def reconall(base_dir: Path) -> None:
+def read_json_file(json_path: Path) -> Dict:
     """
-    Run FreeSurfer's recon-all processing on NIfTI files within the base directory.
+    Read a JSON file from disk.
 
-    This function looks for NIfTI files in the 'NIFTI' subfolder of the base directory and
-    prepares subject IDs by removing double extensions. It checks whether each subject has been
-    processed based on the presence of key output files. Subjects needing processing are then
-    submitted to a MapNode running the ReconAll interface in a workflow.
+    Parameters
+    ----------
+    json_path : Path
+        Path to a ``.json`` file.
 
-    Args:
-        base_dir (Path): The root directory containing the NIFTI and FREESURFER folders.
+    Returns
+    -------
+    dict
+        Parsed JSON object on success. Returns an empty dict if the file
+        does not exist or cannot be read.
 
-    Returns:
-        None
-
-    Raises:
-        Exception: Propagates any exceptions raised during the workflow execution.
+    Notes
+    -----
+    Missing files are logged at exception level for visibility, but the
+    function handles the error by returning ``{}``.
     """
-    data_dir = base_dir / "NIFTI"
-    fs_folder = base_dir / "FREESURFER"
-
-    if not data_dir.exists():
-        logger.error(f"Data directory {data_dir} does not exist.")
-        return
-
-    nifti_files = sorted(data_dir.glob("*.nii.gz"))
-    if not nifti_files:
-        logger.error(f"No .nii.gz files found in {data_dir}.")
-        return
-
-    subject_ids = [remove_double_extension(f) for f in nifti_files]
-    logger.info(f"Found NIFTI files: {nifti_files}")
-    logger.info(f"Subject IDs: {subject_ids}")
-
-    subjects_to_process: List[str] = []
-    nifti_files_to_process: List[str] = []
-
-    for subj_id, nifti_file in zip(subject_ids, nifti_files):
-        subj_dir = fs_folder / subj_id
-        if subj_dir.exists():
-            key_files = [
-                subj_dir / "surf" / "lh.white",
-                subj_dir / "surf" / "rh.white",
-                subj_dir / "stats" / "lh.aparc.stats",
-                subj_dir / "stats" / "rh.aparc.stats",
-                subj_dir / "mri" / "aparc+aseg.mgz"
-            ]
-            if all(f.exists() for f in key_files):
-                logger.info(f"Subject {subj_id} already processed. Skipping.")
-                continue
-            else:
-                logger.info(f"Subject {subj_id} directory exists but processing incomplete. Re-processing.")
-        else:
-            logger.info(f"Subject {subj_id} has not been processed. Processing will begin.")
-
-        subjects_to_process.append(subj_id)
-        nifti_files_to_process.append(str(nifti_file))
-
-    if not subjects_to_process:
-        logger.info("All subjects have been processed. Nothing to do.")
-        return
-
-    reconall_node = MapNode(
-        interface=ReconAll(),
-        name='reconall',
-        iterfield=['subject_id', 'T1_files']
-    )
-    reconall_node.inputs.subject_id = subjects_to_process
-    reconall_node.inputs.directive = 'all'
-    reconall_node.inputs.subjects_dir = str(fs_folder)
-    reconall_node.inputs.T1_files = nifti_files_to_process
-    reconall_node.inputs.flags = "-qcache"
-
-    wf = Workflow(
-        name='reconall_workflow',
-        base_dir=str(base_dir / "WORKFLOWS" / "workingdir_reconflow")
-    )
-    wf.add_nodes([reconall_node])
-    wf.config['execution'] = {'stop_on_first_crash': False}
-
     try:
-        wf.run('MultiProc', plugin_args={'n_procs': os.cpu_count()})
-        logger.info("Recon-all completed for all subjects.")
-    except Exception as e:
-        logger.error(f"Error in FreeSurfer recon-all: {e}")
-        raise
-
-    logger.info(f"Subjects processed: {subjects_to_process}")
+        with json_path.open("r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        logger.exception("JSON file not found: %s", json_path)
+        return {}
 
 
-def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> None:
+def serve_json(patient: str, study: str, filename: str, err_msg: str) -> Tuple[Response, int]:
     """
-    Process lesion data using SAMSEG if the output does not already exist.
+     Serve a JSON file for a given patient/study or return an error payload.
 
-    Checks if the expected SAMSEG output files exist for the given series. If not, it constructs a
-    command line call to run SAMSEG with lesion processing enabled.
+     The path is constructed as:
+     ``<BASE_DATA_PATH>/<patient>/<study>/JSON/<filename>`` with
+     patient and study sanitized via :func:`sanitize_name`.
 
-    Args:
-        freesurfer_path (Path): The path to the FreeSurfer processed data.
-        samseg_path (Path): The path where SAMSEG outputs should be stored.
-        series (str): The series identifier for which lesions should be processed.
+     Parameters
+     ----------
+     patient : str
+         Patient identifier (unsanitized; will be sanitized internally).
+     study : str
+         Study identifier (unsanitized; will be sanitized internally).
+     filename : str
+         JSON filename to serve (e.g., ``"cortical.json"``).
+     err_msg : str
+         Error message to include in the 404 response payload when the file
+         is missing or unreadable.
 
-    Returns:
-        None
+     Returns
+     -------
+     (flask.Response, int)
+         ``(jsonify(payload), status_code)`` where status is 200 on success
+         and 404 otherwise.
 
-    Raises:
-        Exception: Propagates any exceptions encountered when running the SAMSEG command.
-
-    """
-    output_file = samseg_path / series / "samseg.stats"
-    # output_file2 = samseg_path / series / "samseg.fs.stats"
-    if output_file.is_file():
-        logger.info("samseg.stats file already exists - skipping")
-        return
-
-    cmd_args = f"--input {freesurfer_path / series / 'mri' / 'brain.mgz'} --output {samseg_path / series} --lesion"
-    samseg_cmd = CommandLine(command="run_samseg", args=cmd_args)
-    try:
-        samseg_cmd.run()
-        logger.info(f"Created {samseg_path / series}")
-    except Exception as e:
-        logger.error(f"Error running SAMSEG for series {series}: {e}")
-        raise
-
-
-def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> None:
-    """
-    Segment subregions for a given structure if the required output files are missing.
-
-    Based on the specified structure, the function checks for the presence of expected output files.
-    If any are missing, it runs the segmentation command via nipype's CommandLine interface.
-
-    Args:
-        structure (str): The brain structure to segment (e.g., "thalamus", "brainstem", "hippo-amygdala").
-        subject_id (str): The identifier for the subject.
-        subject_dir (Path): The directory containing subject data.
-
-    Returns:
-        None
-
-    Raises:
-        Exception: Propagates any exceptions raised during the segmentation process.
-    """
-    subject_path = subject_dir / subject_id
-    output_files = {
-        "thalamus": [
-            subject_path / "mri" / "ThalamicNuclei.mgz",
-            subject_path / "mri" / "ThalamicNuclei.volumes.txt",
-        ],
-        "brainstem": [
-            subject_path / "mri" / "brainstemSsLabels.mgz",
-            subject_path / "mri" / "brainstemSsLabels.volumes.txt",
-        ],
-        "hippo-amygdala": [
-            subject_path / "mri" / "rh.amygNucVolumes.txt",
-            subject_path / "mri" / "rh.hippoSfVolumes.txt",
-            subject_path / "mri" / "lh.amygNucVolumes.txt",
-            subject_path / "mri" / "lh.hippoSfVolumes.txt",
-            subject_path / "mri" / "lh.hippoAmygLabels.mgz",
-            subject_path / "mri" / "rh.hippoAmygLabels.mgz",
-        ],
-    }
-    missing_files = [f for f in output_files.get(structure, []) if not f.exists()]
-    if not missing_files:
-        logger.info(f"Skipping {structure} segmentation as all output files already exist")
-        return
-
-    logger.info(f"Missing output files for {structure}: {missing_files}. Running segmentation.")
-    cmd = f"{structure} --cross {subject_id} --sd {subject_dir}"
-    command = CommandLine(command="segment_subregions", args=cmd)
-    try:
-        command.run()
-        logger.info(f"{structure} segmentation completed")
-    except Exception as e:
-        logger.error(f"Error during {structure} segmentation: {e}")
-        raise
-
-
-def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
-    """
-    Run segmentation of the hypothalamus for a given subject.
-
-    Checks if the hypothalamus segmentation output file exists; if not, it executes the segmentation
-    command using the nipype CommandLine interface.
-
-    Args:
-        subject_id (str): The subject identifier.
-        subject_dir (Path): The directory containing subject data.
-
-    Returns:
-        None
-
-    Raises:
-        Exception: Propagates any exceptions raised during the segmentation process.
-    """
-    output_file = subject_dir / subject_id / "mri" / "hypothalamic_subunits_volumes.v1.csv"
-    if output_file.is_file():
-        logger.info(f"{output_file} already exists - skipping")
-        return
-
-    cmd = f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
-    command = CommandLine(command="mri_segment_hypothalamic_subunits", args=cmd)
-    logger.info(f"Executing command: {command.cmdline}")
-    try:
-        command.run()
-        logger.info("Hypothalamus segmentation completed")
-    except Exception as e:
-        logger.error(f"Error during hypothalamus segmentation: {e}")
-        raise
+     Notes
+     -----
+     Uses :func:`read_json_file` which returns an empty dict if the file cannot
+     be read. An empty result is treated as missing and yields a 404.
+     """
+    path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / filename
+    data = read_json_file(path)
+    if data:
+        return jsonify(data), 200
+    return jsonify({"error": err_msg}), 404

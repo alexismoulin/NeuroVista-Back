@@ -1,4 +1,3 @@
-import json
 import logging
 import os
 import time
@@ -9,21 +8,13 @@ from concurrent.futures import ThreadPoolExecutor
 from threading import Event
 from typing import List, Dict, Optional
 from functools import partial
-
 import dicom2nifti
 import pydicom
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 
 from core.jsonifier import run_jsonifier, run_json_average, run_global_json
-from core.utils import (
-    add_dcm_extension,
-    get_folder_names,
-    create_folders,
-    reconall,
-    process_lesions,
-    segment_subregions,
-    segment_hypothalamus
-)
+from core.utils import add_dcm_extension, get_folder_names, create_folders
+from core.fs_utils import reconall, process_lesions_for_series, segment_subregions, segment_hypothalamus
 from core.viewer import create_gltf_models
 
 logger = logging.getLogger(__name__)
@@ -57,6 +48,7 @@ def notify_step(step: str) -> None:
     """
     STEP_COMPLETION_QUEUE.put(step)
 
+
 def notify_failure(step: str) -> None:
     """
     Notify listeners that a processing step failed.
@@ -74,6 +66,7 @@ def notify_failure(step: str) -> None:
     None
     """
     notify_step(f"failed_{step}")
+
 
 def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_directory: Path) -> None:
     """
@@ -122,7 +115,9 @@ def save_dicoms(request_files: ImmutableMultiDict[str, FileStorage], dicom_direc
             dicom_file.save(dst=str(dest_file))
         except Exception as e:
             logger.exception("Skipping file %s due to error: %s", dicom_file.filename, e)
+            raise
     logger.info("DICOM files saved successfully")
+
 
 def convert_to_nifti(dicom_directory: Path, nifti_directory: Path) -> None:
     """
@@ -158,7 +153,9 @@ def convert_to_nifti(dicom_directory: Path, nifti_directory: Path) -> None:
             )
         except Exception as e:
             logger.exception("Error converting folder %s: %s", folder, e)
+            raise
     logger.info("NIFTI conversion completed")
+
 
 def run_reconall(base_dir: Path) -> None:
     """
@@ -191,33 +188,6 @@ def run_reconall(base_dir: Path) -> None:
         logger.exception("Error during FreeSurfer recon-all: %s", e)
         raise
 
-def process_lesions_for_series(series: str, freesurfer_path: Path, samseg_path: Path) -> None:
-    """
-        Run lesion processing for a single series.
-
-        Parameters
-        ----------
-        series : str
-            Series identifier (folder name).
-        freesurfer_path : Path
-            Root path containing FreeSurfer outputs organized by series.
-        samseg_path : Path
-            Root path for SAMSEG-related inputs/outputs for the series.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        Exception
-            Re-raises any error from :func:`process_lesions` after logging.
-        """
-    try:
-        process_lesions(freesurfer_path, samseg_path, series)
-    except Exception as e:
-        logger.exception("Error processing lesions for series %s: %s", series, e)
-        raise
 
 def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_path: Path) -> None:
     """
@@ -242,8 +212,10 @@ def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_pa
     ``max_workers = max(1, os.cpu_count())`` to parallelize series-level work.
     """
     with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
-        executor.map(partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path), folders)
+        executor.map(partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path),
+                     folders)
     logger.info("SAMSEG processing completed")
+
 
 def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> None:
     """
@@ -274,7 +246,9 @@ def segment_subregions_for_all(folders: List[str], freesurfer_path: Path) -> Non
                 segment_subregions(structure=structure, subject_id=folder, subject_dir=freesurfer_path)
             except Exception as e:
                 logger.exception("Error segmenting %s for series %s: %s", structure, folder, e)
+                raise
     logger.info("Subcortical segmentation completed")
+
 
 def segment_hypothalamus_for_all(folders: List[str], freesurfer_path: Path) -> None:
     """
@@ -300,6 +274,7 @@ def segment_hypothalamus_for_all(folders: List[str], freesurfer_path: Path) -> N
             segment_hypothalamus(subject_id=folder, subject_dir=freesurfer_path)
         except Exception as e:
             logger.exception("Error segmenting hypothalamus for series %s: %s", folder, e)
+            raise
     logger.info("FreeSurfer hypothalamus segmentation completed")
 
 
@@ -391,8 +366,8 @@ def process_viewer(folders: List[str], viewer_path: Path, freesurfer_path: Path)
         create_gltf_models(freesurfer_path=freesurfer_path, viewer_path=viewer_path, folder=folder)
 
 
-
-def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Optional[Dict[str, Path]]:
+def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, FileStorage]) -> Optional[
+    Dict[str, Path]]:
     """
     Prepare on-disk folders and persist uploaded DICOMs.
 
@@ -431,7 +406,7 @@ def prepare_processing(base_path: Path, request_files: ImmutableMultiDict[str, F
     except Exception as e:
         logger.exception("Error during DICOM saving: %s", e)
         notify_failure("dicom")
-        return None
+        raise
 
 
 def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
@@ -481,7 +456,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during NIFTI conversion: %s", e)
             notify_failure("nifti")
-            return
+            raise
 
         try:
             run_reconall(base_dir=base_path)
@@ -489,7 +464,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during brain reconstruction: %s", e)
             notify_failure("recon")
-            return
+            raise
 
         try:
             process_lesions_for_all(folders=series_folders, freesurfer_path=fs_path, samseg_path=samseg_path)
@@ -497,7 +472,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during lesions processing: %s", e)
             notify_failure("lesions")
-            return
+            raise
 
         try:
             segment_subregions_for_all(folders=series_folders, freesurfer_path=fs_path)
@@ -505,7 +480,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during subcortical segmentation: %s", e)
             notify_failure("subs")
-            return
+            raise
 
         try:
             segment_hypothalamus_for_all(folders=series_folders, freesurfer_path=fs_path)
@@ -513,7 +488,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during hypothalamus segmentation: %s", e)
             notify_failure("hyp")
-            return
+            raise
 
         # JSON file generation
         try:
@@ -527,7 +502,7 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during JSON file generation: %s", e)
             notify_failure("json")
-            return
+            raise
 
         # GLTF processing
         try:
@@ -536,34 +511,10 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
         except Exception as e:
             logger.exception("Error during viewer processing: %s", e)
             notify_failure("viewer")
-            return
+            raise
 
     finally:
         processing_event.clear()
 
-def read_json_file(json_path: Path) -> Dict:
-    """
-    Read a JSON file from disk.
 
-    Parameters
-    ----------
-    json_path : Path
-        Path to a ``.json`` file.
 
-    Returns
-    -------
-    dict
-        Parsed JSON object on success. Returns an empty dict if the file
-        does not exist or cannot be read.
-
-    Notes
-    -----
-    Missing files are logged at exception level for visibility, but the
-    function handles the error by returning ``{}``.
-    """
-    try:
-        with json_path.open("r") as f:
-            return json.load(f)
-    except FileNotFoundError:
-        logger.exception("JSON file not found: %s", json_path)
-        return {}

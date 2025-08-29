@@ -3,9 +3,8 @@ from flask_cors import CORS
 import logging
 import queue
 import mimetypes
-from core.utils import sanitize_name, list_folder_subfolders
-from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, read_json_file, \
-    prepare_processing
+from core.utils import sanitize_name, list_folder_subfolders, serve_json
+from core.processing import STEP_COMPLETION_QUEUE, BASE_DATA_PATH, processing_event, run_processing, prepare_processing
 from typing import Tuple
 from pathlib import Path
 
@@ -16,44 +15,6 @@ logger = logging.getLogger(__name__)
 # Add MIME types once at startup
 mimetypes.add_type("model/gltf+json", ".gltf")
 mimetypes.add_type("model/gltf-binary", ".glb")
-
-
-def serve_json(patient: str, study: str, filename: str, err_msg: str) -> Tuple[Response, int]:
-    """
-     Serve a JSON file for a given patient/study or return an error payload.
-
-     The path is constructed as:
-     ``<BASE_DATA_PATH>/<patient>/<study>/JSON/<filename>`` with
-     patient and study sanitized via :func:`sanitize_name`.
-
-     Parameters
-     ----------
-     patient : str
-         Patient identifier (unsanitized; will be sanitized internally).
-     study : str
-         Study identifier (unsanitized; will be sanitized internally).
-     filename : str
-         JSON filename to serve (e.g., ``"cortical.json"``).
-     err_msg : str
-         Error message to include in the 404 response payload when the file
-         is missing or unreadable.
-
-     Returns
-     -------
-     (flask.Response, int)
-         ``(jsonify(payload), status_code)`` where status is 200 on success
-         and 404 otherwise.
-
-     Notes
-     -----
-     Uses :func:`read_json_file` which returns an empty dict if the file cannot
-     be read. An empty result is treated as missing and yields a 404.
-     """
-    path = BASE_DATA_PATH / sanitize_name(patient) / sanitize_name(study) / "JSON" / filename
-    data = read_json_file(path)
-    if data:
-        return jsonify(data), 200
-    return jsonify({"error": err_msg}), 404
 
 
 @app.get("/")
