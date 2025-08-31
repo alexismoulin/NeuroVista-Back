@@ -6,3 +6,4 @@ crash-*
 .venv
 pyproject.toml
 uv.lock
+app.log
