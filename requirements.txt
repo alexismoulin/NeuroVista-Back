@@ -11,3 +11,4 @@ werkzeug
 numpy
 scikit-image
 trimesh
+pyyaml

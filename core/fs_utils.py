@@ -1,13 +1,10 @@
 import os
-import logging
 from pathlib import Path
 from nipype.interfaces.base import CommandLine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, MapNode
-from core.utils import remove_double_extension
+from core.utils import remove_double_extension, logger
 from typing import List
-
-logger = logging.getLogger(__name__)
 
 
 def reconall(base_dir: Path) -> None:
@@ -94,7 +91,7 @@ def reconall(base_dir: Path) -> None:
         wf.run('MultiProc', plugin_args={'n_procs': os.cpu_count()})
         logger.info("Recon-all completed for all subjects.")
     except Exception as e:
-        logger.error(f"Error in FreeSurfer recon-all: {e}")
+        logger.exception(f"Error in FreeSurfer recon-all: {e}")
         raise
 
     logger.info(f"Subjects processed: {subjects_to_process}")
@@ -131,7 +128,7 @@ def process_lesions(freesurfer_path: Path, samseg_path: Path, series: str) -> No
         samseg_cmd.run()
         logger.info(f"Created {samseg_path / series}")
     except Exception as e:
-        logger.error(f"Error running SAMSEG for series {series}: {e}")
+        logger.exception(f"Error running SAMSEG for series {series}: {e}")
         raise
 
 
@@ -213,7 +210,7 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> No
         command.run()
         logger.info(f"{structure} segmentation completed")
     except Exception as e:
-        logger.error(f"Error during {structure} segmentation: {e}")
+        logger.exception(f"Error during {structure} segmentation: {e}")
         raise
 
 
@@ -246,5 +243,5 @@ def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
         command.run()
         logger.info("Hypothalamus segmentation completed")
     except Exception as e:
-        logger.error(f"Error during hypothalamus segmentation: {e}")
+        logger.exception(f"Error during hypothalamus segmentation: {e}")
         raise

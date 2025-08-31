@@ -1,4 +1,3 @@
-import logging
 import os
 import time
 import queue
@@ -12,11 +11,9 @@ import pydicom
 from werkzeug.datastructures import ImmutableMultiDict, FileStorage
 
 from core.jsonifier import run_jsonifier, run_json_average, run_global_json
-from core.utils import add_dcm_extension, get_folder_names, create_folders
+from core.utils import add_dcm_extension, get_folder_names, create_folders, logger
 from core.fs_utils import reconall, process_lesions_for_series, segment_subregions, segment_hypothalamus
 from core.viewer import create_gltf_models
-
-logger = logging.getLogger(__name__)
 
 # Shared constants for the processing pipeline
 STEP_COMPLETION_QUEUE = queue.Queue()
@@ -206,8 +203,9 @@ def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_pa
     ``max_workers = max(1, os.cpu_count())`` to parallelize series-level work.
     """
     with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
-        executor.map(partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path),
-                     folders)
+        executor.map(
+            partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path),
+            folders)
     logger.info("SAMSEG processing completed")
 
 
@@ -509,6 +507,3 @@ def run_processing(base_path: Path, folders_dict: Dict[str, Path]) -> None:
 
     finally:
         processing_event.clear()
-
-
-

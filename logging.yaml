@@ -1,0 +1,29 @@
+version: 1
+
+formatters:
+  detailed:
+    format: "%(asctime)s - %(name)s - %(levelname)s - %(filename)s - %(funcName)s - %(lineno)d - %(message)s"
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    level: DEBUG
+    formatter: detailed
+    stream: ext://sys.stdout
+
+  file:
+    class: logging.FileHandler
+    level: DEBUG
+    formatter: detailed
+    filename: app.log
+    encoding: utf8
+
+loggers:
+  simpleLogger:
+    level: DEBUG
+    handlers: [console, file]
+    propagate: no
+
+root:
+  level: WARNING
+  handlers: [console]

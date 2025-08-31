@@ -1,16 +1,15 @@
 from flask import Flask, jsonify, request, Response, make_response, stream_with_context, send_from_directory
 from flask_cors import CORS
-import logging
 import queue
 import mimetypes
-from core.utils import BASE_DATA_PATH, sanitize_name, list_folder_subfolders, serve_json
+from core.utils import BASE_DATA_PATH, sanitize_name, list_folder_subfolders, serve_json, logger
 from core.processing import STEP_COMPLETION_QUEUE, processing_event, run_processing, prepare_processing
 from typing import Tuple
 from pathlib import Path
 
+# Create the Flask app
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
-logger = logging.getLogger(__name__)
 
 # Add MIME types once at startup
 mimetypes.add_type("model/gltf+json", ".gltf")

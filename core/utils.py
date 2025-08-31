@@ -1,6 +1,7 @@
-import logging
+import logging.config
 import re
 import json
+import yaml
 from pathlib import Path
 from configparser import ConfigParser
 from typing import List, Tuple, Dict
@@ -8,7 +9,12 @@ from flask import jsonify, Response
 import nibabel as nib
 from nibabel.spatialimages import SpatialImage
 
-logger = logging.getLogger(__name__)
+with open(file="logging.yaml", mode="r") as f:
+    config = yaml.safe_load(stream=f)
+    logging.config.dictConfig(config)
+
+# Create the app logger
+logger = logging.getLogger('simpleLogger')
 
 # Read configuration for base data path
 config = ConfigParser()
@@ -183,7 +189,7 @@ def read_json_file(json_path: Path) -> Dict:
         with json_path.open("r") as f:
             return json.load(f)
     except FileNotFoundError:
-        logger.exception("JSON file not found: %s", json_path)
+        logger.exception(f"JSON file not found: {json_path}")
         return {}
 
 

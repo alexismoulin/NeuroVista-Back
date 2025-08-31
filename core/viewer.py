@@ -1,15 +1,12 @@
-import logging
-from pathlib import Path
-from typing import Dict, Tuple, Union, TextIO, Optional, List
-
 import nibabel as nib
 import numpy as np
+import trimesh
+from pathlib import Path
+from typing import Dict, Tuple, Union, TextIO, Optional, List
 from nibabel.spatialimages import SpatialImage
 from nibabel.affines import apply_affine
 from skimage.measure import marching_cubes
-import trimesh
-
-logger = logging.getLogger(__name__)
+from core.utils import logger
 
 Color = Tuple[int, int, int, int]
 LUTEntry = Tuple[str, Color]
@@ -261,6 +258,7 @@ def fs_affine(img: SpatialImage) -> np.ndarray:
         try:
             return hdr.get_vox2ras_tkr()
         except Exception:
+            logger.warning("hdr no attribute get_vox2ras_tkr")
             pass
     return img.affine
 

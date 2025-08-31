@@ -1,12 +1,9 @@
 import json
-import logging
 import pathlib
 from collections import defaultdict
 from typing import Any, Dict, List, Optional, Union
 import pandas as pd
-from .utils import get_folder_names, get_nifti_dimensions
-
-logger = logging.getLogger(__name__)
+from .utils import get_folder_names, get_nifti_dimensions, logger
 
 
 def get_volume(name: str, nuclei: List[Dict[str, float]]) -> Optional[float]:
@@ -113,7 +110,7 @@ def record_nifti_dimensions(study_path: pathlib.Path) -> None:
             json.dump(series_dict, f, indent=4)
         logger.info(f"Wrote Nifti dimensions JSON to {study_path / 'JSON' / 'niftiDimensions.json'}")
     except Exception as e:
-        logger.error(f"Error writing global JSON file 'niftiDimensions.json': {e}")
+        logger.exception(f"Error writing global JSON file 'niftiDimensions.json': {e}")
 
 
 def process_hippocampus(mri: pathlib.Path) -> List[Dict[str, Union[str, float]]]:
@@ -466,7 +463,7 @@ def run_jsonifier(
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote {fname} to {out_file}")
         except Exception as e:
-            logger.error(f"Error writing {fname}: {e}")
+            logger.exception(f"Error writing {fname}: {e}")
 
 
 def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str) -> None:
@@ -544,7 +541,7 @@ def run_json_average(json_path: pathlib.Path, folders: List[str], main_type: str
             json.dump(averaged_result, f, indent=4)
         logger.info(f"Averaged data written to {output_file}")
     except Exception as e:
-        logger.error(f"Error writing to file {output_file}: {e}")
+        logger.exception(f"Error writing to file {output_file}: {e}")
 
 
 def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
@@ -575,7 +572,7 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
             with (json_path / folder / "general.json").open("r") as f:
                 global_general[folder] = json.load(f)
         except Exception as e:
-            logger.error(f"Error reading JSON files from folder {folder}: {e}")
+            logger.exception(f"Error reading JSON files from folder {folder}: {e}")
 
     try:
         with (json_path / "AVERAGES" / "subcortical.json").open("r") as f:
@@ -585,7 +582,7 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
         with (json_path / "AVERAGES" / "general.json").open("r") as f:
             global_general["AVERAGES"] = json.load(f)
     except Exception as e:
-        logger.error(f"Error reading AVERAGES JSON files: {e}")
+        logger.exception(f"Error reading AVERAGES JSON files: {e}")
 
     for fname, data in [
         ("subcortical.json", global_subcortical),
@@ -598,6 +595,6 @@ def run_global_json(json_path: pathlib.Path, folders: List[str]) -> None:
                 json.dump(data, f, indent=4)
             logger.info(f"Wrote global JSON to {json_path / fname}")
         except Exception as e:
-            logger.error(f"Error writing global JSON file {fname}: {e}")
+            logger.exception(f"Error writing global JSON file {fname}: {e}")
 
     record_nifti_dimensions(study_path=json_path.parent)
