@@ -83,12 +83,7 @@ def deterministic_color(label: int) -> Color:
         255,
     )
 
-def mgz_labels_to_gltf(
-    mgz_path: Path,
-    out_gltf: Union[str, Path, TextIO],
-    min_vertices: int = 0,
-    log_every: bool = True
-) -> None:
+def mgz_labels_to_gltf(mgz_path: Path, out_gltf: Union[str, Path, TextIO], min_vertices: int = 0) -> None:
     """
         Convert a labeled FreeSurfer MGZ segmentation volume into a multi-mesh GLTF scene.
 
@@ -108,8 +103,6 @@ def mgz_labels_to_gltf(
         min_vertices : int, optional
             Skip labels whose extracted surface has fewer than this many vertices.
             Default is 0 (export all).
-        log_every : bool, optional
-            If ``True``, emit an ``INFO`` log line per exported label. Default ``True``.
 
         Returns
         -------
@@ -223,12 +216,6 @@ def mgz_labels_to_gltf(
         )
         mesh.metadata = {"name": f"{label}_{name}"}
         scene.add_geometry(mesh, node_name=f"{label}_{name}")
-
-        if log_every:
-            logger.info(
-                "Label %d (%s): %d verts, %d faces (crop %s).",
-                label, name, len(verts_world), len(faces), sub.shape
-            )
 
     scene.export(export_target)
     logger.info("Wrote GLTF: %s", export_target)

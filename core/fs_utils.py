@@ -216,32 +216,69 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> No
 
 def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
     """
-    Run segmentation of the hypothalamus for a given subject.
-
-    Checks if the hypothalamus segmentation output file exists; if not, it executes the segmentation
-    command using the nipype CommandLine interface.
+    Run FreeSurfer hypothalamic subunit segmentation for a subject using Nipype's CommandLine,
+    with strong error detection and helpful logging.
 
     Args:
-        subject_id (str): The subject identifier.
-        subject_dir (Path): The directory containing subject data.
-
-    Returns:
-        None
+        subject_id: FreeSurfer subject ID.
+        subject_dir: Path to SUBJECTS_DIR (directory containing the subject folder).
 
     Raises:
-        Exception: Propagates any exceptions raised during the segmentation process.
+        RuntimeError: if the command fails (non-zero return code) or the expected output is missing.
     """
     output_file = subject_dir / subject_id / "mri" / "hypothalamic_subunits_volumes.v1.csv"
     if output_file.is_file():
-        logger.info(f"{output_file} already exists - skipping")
+        logger.info("%s already exists - skipping", output_file)
         return
 
-    cmd = f"--s {subject_id} --sd {subject_dir} --threads {os.cpu_count()}"
-    command = CommandLine(command="mri_segment_hypothalamic_subunits", args=cmd)
-    logger.info(f"Executing command: {command.cmdline}")
+    # Build the CLI
+    threads = os.cpu_count() or 1
+    args = f"--s {subject_id} --sd {subject_dir} --threads {threads}"
+
+    # Capture all output so we can surface errors even if the tool returns 0.
+    cli = CommandLine(
+        command="mri_segment_hypothalamic_subunits",
+        args=args,
+        terminal_output="allatonce"  # capture stdout/stderr in result.runtime
+    )
+
+    logger.info("Executing command: %s", cli.cmdline)
+
     try:
-        command.run()
-        logger.info("Hypothalamus segmentation completed")
+        result = cli.run()  # does not always raise even if the tool failed internally
     except Exception as e:
-        logger.exception(f"Error during hypothalamus segmentation: {e}")
+        logger.exception("Nipype raised while running hypothalamus segmentation")
         raise
+
+    # Pull captured output
+    rc = getattr(result.runtime, "returncode", None)
+    stdout = getattr(result.runtime, "stdout", "") or ""
+    stderr = getattr(result.runtime, "stderr", "") or ""
+
+    # Log a brief tail to keep logs readable; write full text at debug level
+    def _tail(txt: str, n: int = 60_000) -> str:  # ~60k chars tail for context
+        return txt[-n:] if len(txt) > n else txt
+
+    logger.info("===== mri_segment_hypothalamic_subunits STDOUT =====\n%s", stdout)
+    logger.info("===== mri_segment_hypothalamic_subunits STDERR =====\n%s", stderr)
+
+    # Treat non-zero return codes as failure
+    if rc not in (0, None):  # Some Nipype versions may not set rc; we handle that below with file existence.
+        snippet = (_tail(stderr) or _tail(stdout) or "").strip()
+        raise RuntimeError(
+            f"mri_segment_hypothalamic_subunits exited with return code {rc}.\n"
+            f"--- Tool output (tail) ---\n{snippet}"
+        )
+
+    # Even with rc==0, assert the expected artifact exists
+    if not output_file.is_file():
+        snippet = (_tail(stderr) or _tail(stdout) or "").strip()
+        raise RuntimeError(
+            "Hypothalamus segmentation did not produce the expected output file:\n"
+            f"  {output_file}\n"
+            "The command reported success but likely failed internally.\n"
+            "Troubleshooting hints:\n" + "\n" +
+            "\n--- Tool output (tail) ---\n" + snippet
+        )
+
+    logger.info("Hypothalamus segmentation completed and output verified: %s", output_file)
