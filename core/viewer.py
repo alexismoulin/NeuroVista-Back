@@ -356,11 +356,6 @@ def combine_mgzs_to_gltf(
             mesh.metadata = {"name": prefixed}
             scene.add_geometry(mesh, node_name=prefixed)
 
-            logger.info(
-                "Added %s label %d (%s): %d verts (mean RAS-X after offset = %.2f)",
-                side, label, name, len(verts_world), float(verts_world[:, 0].mean())
-            )
-
     scene.export(str(out_gltf))
     logger.info("Wrote combined GLTF: %s", out_gltf)
 
@@ -472,8 +467,6 @@ def extract_labels_to_gltf(
         mesh_name = f"{lab}_{name}"
         mesh.metadata = {"name": mesh_name}
         scene.add_geometry(mesh, node_name=mesh_name)
-
-        logger.info("Added label %d (%s) with %d verts", lab, name, len(verts_world))
 
     # Export single GLTF
     scene.export(str(out_gltf))

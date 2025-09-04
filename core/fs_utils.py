@@ -3,8 +3,9 @@ from pathlib import Path
 from nipype.interfaces.base import CommandLine
 from nipype.interfaces.freesurfer import ReconAll
 from nipype.pipeline.engine import Workflow, MapNode
+from nipype.interfaces.base.support import InterfaceResult
 from core.utils import remove_double_extension, logger
-from typing import List
+from typing import List, Dict
 
 
 def reconall(base_dir: Path) -> None:
@@ -214,71 +215,135 @@ def segment_subregions(structure: str, subject_id: str, subject_dir: Path) -> No
         raise
 
 
-def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
+def create_env_fullspeed(subject_dir: Path) -> Dict[str, str]:
     """
-    Run FreeSurfer hypothalamic subunit segmentation for a subject using Nipype's CommandLine,
-    with strong error detection and helpful logging.
+    Environment for the first (full-speed) attempt.
+
+    Sets SUBJECTS_DIR but does NOT cap thread pools, allowing libraries (OpenMP,
+    MKL/OpenBLAS, etc.) to use as many threads as they want.
+    """
+    env = os.environ.copy()
+    env["SUBJECTS_DIR"] = str(subject_dir)
+    return env
+
+
+def create_env_safemode(subject_dir: Path) -> Dict[str, str]:
+    """
+    Environment for the fallback (low-memory) attempt.
+
+    Caps all common thread pools to 1 to minimize memory usage.
+    """
+    env = os.environ.copy()
+    env["SUBJECTS_DIR"] = str(subject_dir)
+    env["OMP_NUM_THREADS"] = "1"
+    env["ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS"] = "1"
+    env["FREESURFER_NUM_THREADS"] = "1"
+    env["OPENBLAS_NUM_THREADS"] = "1"
+    env["MKL_NUM_THREADS"] = "1"
+    env["VECLIB_MAXIMUM_THREADS"] = "1"
+    env["NUMEXPR_NUM_THREADS"] = "1"
+    return env
+
+
+def run_hypo(subject_id: str, subject_dir: Path, threads: int, env: Dict[str, str]) -> InterfaceResult:
+    """
+    Run the `mri_segment_hypothalamic_subunits` command via Nipype.
 
     Args:
-        subject_id: FreeSurfer subject ID.
-        subject_dir: Path to SUBJECTS_DIR (directory containing the subject folder).
+        subject_id (str): FreeSurfer subject ID.
+        subject_dir (Path): Path to SUBJECTS_DIR.
+        threads (int): Number of threads to pass via `--threads`.
+        env (dict): Environment variables to use for the subprocess.
+
+    Returns:
+        nipype.interfaces.base.support.InterfaceResult: Execution result object
+        with runtime info (stdout, stderr, return code, etc.).
+    """
+    args = f"--s {subject_id} --sd {subject_dir} --threads {threads}"
+    cli = CommandLine(
+        command="mri_segment_hypothalamic_subunits",
+        args=args,
+        terminal_output="allatonce",  # capture stdout+stderr
+        environ=env,
+    )
+    logger.info("Executing command: %s", cli.cmdline)
+    return cli.run()
+
+
+def segment_hypothalamus(subject_id: str, subject_dir: Path) -> None:
+    """
+    Run FreeSurfer hypothalamic subunit segmentation with OOM-aware retry.
+
+    Strategy:
+        1) First run with all available CPUs (os.cpu_count()) and no env thread caps.
+        2) If OOM symptoms are detected (exit code 137 or 'Killed' in output),
+           retry once with threads=1 and strict env caps.
+        3) For other non-zero exit codes, fail immediately (no retry).
+        4) Always verify the expected CSV output exists before reporting success.
+
+    Args:
+        subject_id (str): FreeSurfer subject ID.
+        subject_dir (Path): Path to FreeSurfer SUBJECTS_DIR.
 
     Raises:
-        RuntimeError: if the command fails (non-zero return code) or the expected output is missing.
+        RuntimeError: If the command fails for non-OOM reasons, is OOM-killed
+            even on 1 thread, or does not produce the expected output CSV.
     """
     output_file = subject_dir / subject_id / "mri" / "hypothalamic_subunits_volumes.v1.csv"
     if output_file.is_file():
         logger.info("%s already exists - skipping", output_file)
         return
 
-    # Build the CLI
-    threads = os.cpu_count() or 1
-    args = f"--s {subject_id} --sd {subject_dir} --threads {threads}"
+    # ---- First attempt: full speed (max threads), no caps ----
+    max_threads = os.cpu_count() or 1
+    env_full = create_env_fullspeed(subject_dir)
 
-    # Capture all output so we can surface errors even if the tool returns 0.
-    cli = CommandLine(
-        command="mri_segment_hypothalamic_subunits",
-        args=args,
-        terminal_output="allatonce"  # capture stdout/stderr in result.runtime
+    result = run_hypo(subject_id, subject_dir, threads=max_threads, env=env_full)
+    rc = getattr(result.runtime, "returncode", None)
+    stdout = (getattr(result.runtime, "stdout", "") or "").strip()
+    stderr = (getattr(result.runtime, "stderr", "") or "").strip()
+
+    oomish = (rc == 137) or ("Killed" in stderr) or ("Killed" in stdout)
+
+    if not oomish:
+        if rc not in (0, None):
+            # Non-OOM failure → fail fast (don’t mask real errors)
+            raise RuntimeError(
+                f"mri_segment_hypothalamic_subunits failed with return code {rc}\n"
+                f"--- stderr (tail) ---\n{stderr[-60000:]}"
+            )
+        # Exit code ok; verify output exists
+        if output_file.is_file():
+            logger.info("Hypothalamus segmentation completed: %s", output_file)
+            return
+        raise RuntimeError(
+            "Segmentation exited cleanly but output file is missing:\n"
+            f"  {output_file}\n--- stderr (tail) ---\n{stderr[-60000:]}\n"
+            "--- stdout (tail) ---\n" + stdout[-60000:]
+        )
+
+    logger.warning(
+        "Likely OOM at %d threads (rc=%s). Retrying with 1 thread and capped env.",
+        max_threads, rc
     )
 
-    logger.info("Executing command: %s", cli.cmdline)
-
-    try:
-        result = cli.run()  # does not always raise even if the tool failed internally
-    except Exception as e:
-        logger.exception("Nipype raised while running hypothalamus segmentation")
-        raise
-
-    # Pull captured output
+    # ---- Fallback: 1 thread, strict env caps ----
+    env_safe = create_env_safemode(subject_dir)
+    result = run_hypo(subject_id, subject_dir, threads=1, env=env_safe)
     rc = getattr(result.runtime, "returncode", None)
-    stdout = getattr(result.runtime, "stdout", "") or ""
-    stderr = getattr(result.runtime, "stderr", "") or ""
+    stdout = (getattr(result.runtime, "stdout", "") or "").strip()
+    stderr = (getattr(result.runtime, "stderr", "") or "").strip()
 
-    # Log a brief tail to keep logs readable; write full text at debug level
-    def _tail(txt: str, n: int = 60_000) -> str:  # ~60k chars tail for context
-        return txt[-n:] if len(txt) > n else txt
-
-    logger.info("===== mri_segment_hypothalamic_subunits STDOUT =====\n%s", stdout)
-    logger.info("===== mri_segment_hypothalamic_subunits STDERR =====\n%s", stderr)
-
-    # Treat non-zero return codes as failure
-    if rc not in (0, None):  # Some Nipype versions may not set rc; we handle that below with file existence.
-        snippet = (_tail(stderr) or _tail(stdout) or "").strip()
+    if rc not in (0, None):
         raise RuntimeError(
-            f"mri_segment_hypothalamic_subunits exited with return code {rc}.\n"
-            f"--- Tool output (tail) ---\n{snippet}"
+            f"mri_segment_hypothalamic_subunits failed with return code {rc} (1 thread)\n"
+            f"--- stderr (tail) ---\n{stderr[-60000:]}"
         )
-
-    # Even with rc==0, assert the expected artifact exists
     if not output_file.is_file():
-        snippet = (_tail(stderr) or _tail(stdout) or "").strip()
         raise RuntimeError(
-            "Hypothalamus segmentation did not produce the expected output file:\n"
-            f"  {output_file}\n"
-            "The command reported success but likely failed internally.\n"
-            "Troubleshooting hints:\n" + "\n" +
-            "\n--- Tool output (tail) ---\n" + snippet
+            "Segmentation with 1 thread did not produce expected output:\n"
+            f"  {output_file}\n--- stderr (tail) ---\n{stderr[-60000:]}\n"
+            "--- stdout (tail) ---\n" + stdout[-60000:]
         )
 
-    logger.info("Hypothalamus segmentation completed and output verified: %s", output_file)
+    logger.info("Hypothalamus segmentation completed with 1 thread: %s", output_file)
