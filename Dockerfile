@@ -1,37 +1,20 @@
-# Use Ubuntu 22.04 as the base image
-FROM ubuntu:22.04
+# App layer on top of the cached base
+FROM freesurfer_ubuntu22:7.4.1
 
-# Use an ARG for FreeSurfer version (can be overridden at build time)
-ARG FS_VERSION=7.4.1
-
-# Set working directory early
 WORKDIR /app
 
-# Combine apt-get commands into a single RUN for efficiency
-RUN apt-get update && \
-    apt-get install -y wget python3-pip && \
-    apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists/*
+# Install Python deps first for better caching
+COPY requirements.txt .
+RUN pip3 install --no-cache-dir -r requirements.txt
 
-# Download, install, and remove FreeSurfer package in one layer
-RUN wget https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VERSION}/freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
-    apt-get update && apt-get install -y ./freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
-    rm -f freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
-    rm -rf /var/lib/apt/lists/*
-
-# Copy only the requirements and licence files first for better caching
-ENV FREESURFER_HOME=/usr/local/freesurfer/${FS_VERSION}
-COPY requirements.txt /app/
-COPY license.txt $FREESURFER_HOME
-
-# Install Python libraries
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application files
+# App code
 COPY . /app
 
-# Expose the port used by the Flask app
+# Put the FreeSurfer license into the FreeSurfer folder
+ENV FS_LICENSE=/usr/local/freesurfer/7.4.1/license.txt \
+    FREESURFER_HOME=/usr/local/freesurfer/7.4.1
+COPY license.txt ${FS_LICENSE}
+
 EXPOSE 5001
 
-# Start the application by sourcing FreeSurfer setup and running Flask
-CMD ["bash", "-c", "source $FREESURFER_HOME/SetUpFreeSurfer.sh && python3.10 app.py"]
+CMD ["bash","-lc","source ${FREESURFER_HOME}/SetUpFreeSurfer.sh && python3 app.py"]

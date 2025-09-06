@@ -1,0 +1,23 @@
+# Ubuntu 22.04
+FROM ubuntu:22.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+ARG FS_VERSION=7.4.1
+
+# Basics + libs FreeSurfer typically needs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget ca-certificates \
+    bc libgomp1 libx11-6 libxext6 libxt6 libxmu6 libxi6 perl tcsh \
+    python3 python3-pip \
+ && rm -rf /var/lib/apt/lists/*
+
+# Install FreeSurfer
+RUN wget -q https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/${FS_VERSION}/freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    apt-get update && apt-get install -y ./freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    rm -f freesurfer_ubuntu22-${FS_VERSION}_amd64.deb && \
+    rm -rf /var/lib/apt/lists/*
+
+# Env
+ENV FREESURFER_HOME=/usr/local/freesurfer/${FS_VERSION} \
+    FS_LICENSE=/usr/local/freesurfer/${FS_VERSION}/license.txt \
+    PATH=/usr/local/freesurfer/${FS_VERSION}/bin:$PATH
