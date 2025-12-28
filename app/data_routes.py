@@ -1,7 +1,12 @@
 from pathlib import Path
 from flask import Blueprint, jsonify, current_app, Response
-from core.utils import sanitize_name, get_nifti_dimensions, list_folder_subfolders, get_folder_names
-from core.processing import read_json_file
+from core.utils import (
+    sanitize_name,
+    get_nifti_dimensions,
+    list_folder_subfolders,
+    get_folder_names,
+    read_json_file,
+)
 from typing import Tuple
 import json
 
@@ -90,5 +95,9 @@ def get_series(patient: str, study: str) -> Tuple[Response, int]:
         return jsonify("Error DICOM"), 404
     for series in series_list:
         nifti_path = base / "NIFTI" / f"{series}.nii.gz"
-        result[series] = get_nifti_dimensions(file_path=nifti_path)
+        try:
+            result[series] = get_nifti_dimensions(file_path=nifti_path)
+        except Exception:
+            current_app.logger.warning("Missing or unreadable NIfTI for series %s", series)
+            return jsonify(error="Error NIfTI"), 404
     return jsonify(result), 200

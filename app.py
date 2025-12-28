@@ -1,3 +1,5 @@
+import time
+from threading import Thread
 from flask import Flask, jsonify, request, Response, make_response, stream_with_context, send_from_directory
 from flask_cors import CORS
 import queue
@@ -51,17 +53,18 @@ def stream() -> Response:
     """
     @stream_with_context
     def event_stream():
-        while True:
+        # Stream only while a job is active, then emit a final done marker
+        while processing_event.is_set():
             try:
-                # Wait for a step completion with a timeout
                 step_completed = STEP_COMPLETION_QUEUE.get(timeout=1)
                 yield f"data: {step_completed}\n\n"
             except queue.Empty:
-                # Send a heartbeat to keep the connection alive
                 yield "data: heartbeat\n\n"
+                time.sleep(0.1)
             except Exception as e:
                 logger.error("Unexpected error in event stream: %s", e)
                 break
+        yield "data: [DONE]\n\n"
 
     headers = {"Cache-Control": "no-cache"}
     return Response(event_stream(), headers=headers, mimetype="text/event-stream")
@@ -110,8 +113,19 @@ def run_script() -> Response:
 
     base_path = BASE_DATA_PATH / patient / study
     processing_event.set()
-    folders_dict = prepare_processing(base_path, request_files=request.files)
-    run_processing(base_path, folders_dict)
+    try:
+        folders_dict = prepare_processing(base_path, request_files=request.files)
+    except Exception as e:
+        logger.exception("Failed to save DICOMs: %s", e)
+        processing_event.clear()
+        response = make_response(jsonify({"error": f"Failed to save DICOMs: {e}"}))
+        response.status_code = 500
+        return response
+
+    # Launch the heavy pipeline in the background
+    worker = Thread(target=run_processing, args=(base_path, folders_dict), daemon=True)
+    worker.start()
+
     response = make_response(jsonify({"message": "Processing started"}))
     response.status_code = 202
     return response

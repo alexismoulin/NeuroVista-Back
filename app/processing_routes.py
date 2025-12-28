@@ -3,7 +3,7 @@ import time
 
 from flask import Blueprint, request, Response, jsonify, current_app, stream_with_context
 from core.utils import sanitize_name
-from core.processing import STEP_COMPLETION_QUEUE, processing_event, run_processing, prepare_processing, create_folders, save_dicoms
+from core.processing import STEP_COMPLETION_QUEUE, processing_event, run_processing, prepare_processing
 from typing import Generator, Tuple
 from threading import Thread
 

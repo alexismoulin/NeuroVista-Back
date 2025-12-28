@@ -30,13 +30,15 @@ def reconall(base_dir: Path) -> None:
     fs_folder = base_dir / "FREESURFER"
 
     if not data_dir.exists():
-        logger.error(f"Data directory {data_dir} does not exist.")
-        return
+        msg = f"Data directory {data_dir} does not exist."
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     nifti_files = sorted(data_dir.glob("*.nii.gz"))
     if not nifti_files:
-        logger.error(f"No .nii.gz files found in {data_dir}.")
-        return
+        msg = f"No .nii.gz files found in {data_dir}."
+        logger.error(msg)
+        raise RuntimeError(msg)
 
     subject_ids = [remove_double_extension(f) for f in nifti_files]
     logger.info(f"Found NIFTI files: {nifti_files}")
