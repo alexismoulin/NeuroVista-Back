@@ -1,15 +1,15 @@
 # NeuroVista
 
-To build the image, first run the command:
+To build the base image, first run the command:
 
 ```shell
-docker build -f Dockerfile.base -t freesurfer_ubuntu22:7.4.1 --platform linux/amd64 .
+docker build -f Dockerfile.base -t freesurfer_ubuntu24:8.2.0 --platform linux/amd64 .
 ``` 
 
 This will create a base image running on:
-- Ubuntu 22.04
-- Python 3.10
-- FreeSurfer 7.4.1
+- Ubuntu 24.04
+- Python 3.12
+- FreeSurfer 8.2.0
 
 Then you can build the final image with the command:
 
