@@ -202,10 +202,13 @@ def process_lesions_for_all(folders: List[str], freesurfer_path: Path, samseg_pa
     Uses a :class:`concurrent.futures.ThreadPoolExecutor` with
     ``max_workers = max(1, os.cpu_count())`` to parallelize series-level work.
     """
-    with ThreadPoolExecutor(max_workers=max(1, os.cpu_count())) as executor:
-        executor.map(
+    max_workers = os.cpu_count() or 1
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        # Exhaust the iterator so worker exceptions propagate to the caller.
+        list(executor.map(
             partial(process_lesions_for_series, freesurfer_path=freesurfer_path, samseg_path=samseg_path),
-            folders)
+            folders
+        ))
     logger.info("SAMSEG processing completed")
 
 
